@@ -385,7 +385,7 @@ summary.perturb<-function (object,...) {
 			coef.names = dimnames(tmp[["coefficients"]])[[1]]
 			coef.betas = tmp[["coefficients"]][,1]
 			coef.stderrs = tmp[["coefficients"]][,2]
-			coef.formula = tmp[["formula"]]
+			coef.formula = tmp[["call"]]
 		} else if (inherits(tmp,"summary.mle")) {
 			coef.names = dimnames(attr(tmp,"coef"))[[1]]
 			coef.betas = attr(tmp,"coef")[,1]

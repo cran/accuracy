@@ -102,7 +102,7 @@ sp=summary(plongley)
 print(sp)
 
 # look in summary object to extract more ...
-names(attributes(summary))
+names(attributes(sp))
 
 # print metrix of coefficients from all runs
 coef= attr(sp,"coef.betas.m")
