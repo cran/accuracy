@@ -1,0 +1,14 @@
+#public methods
+export(frexp)
+export(trueRandom, initPool, resetSeed,runifT)
+export(sechol)
+export(LRE)
+export(perturb, PTBi)
+export(PTBms, PTBmsb, PTBmsbr) 
+export(PTBn, PTBnc, PTBns, PTBnbr, PTBnbrr, PTBnsbr, PTBnsbrr) 
+export(PTBu, PTBuc, PTBus, PTBubr, PTBubrr, PTBusbr, PTBusbrr)
+# export methods subclassing other public methods
+S3method(print, perturb)
+S3method(print, perturbS)
+S3method(summary, perturb)
+useDynLib("accuracy")
