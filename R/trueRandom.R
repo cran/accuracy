@@ -94,8 +94,8 @@
 		return (NULL);
 	}
 
-	w = .Options$warn;
-	.Options$warn=-1;
+	w = options("warn");
+	options(warn=-1);
 	if (devrndok) {
 	   tri = integer();
            tr = try({tri=readBin('/dev/random', integer(0), signed=FALSE)},
@@ -123,7 +123,7 @@
                    hbok=FALSE;
 	   }
 	}
-	.Options$warn=as.integer(w);
+	options(warn=as.integer(w));
 	entropypool$hbok=hbok;
 	entropypool$devrndok=devrndok;
 	if (!devrndok && !hbok) {

@@ -67,6 +67,9 @@ and true.random() will return NULL.
 	\code{\link{.Random.seed}},
 }
 \examples{
+if (.Platform$OS.type == "unix" || !is.null(nsl("www.cran.org"))) {
+	# note, if you are using Windows, you must be on-line
+	# to get to entropy generator
 # reset the seed for runif() based on a true random value
 resetSeed()
 y=runif(100)
@@ -78,6 +81,9 @@ y=runifT(1000)
 ty= table(trunc(5*y))
 ty
 chisq.test(ty)
+} else {
+	print ("Sorry, for entropy gathering on windows, requires a net connection.");
+}
 
 }
 \keyword{misc}
