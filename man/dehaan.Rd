@@ -70,7 +70,7 @@ Micah Altman
 , Michael P. Mcdonald
 }
 
-\example{
+\examples{
 
   # The deHaan test is constructed as a maximum likelihood
   # test, with negative values for the likelihood.  The BOD problem

@@ -1,0 +1,4 @@
+1.04 -- Added PTBmu.gen and PTBmn.gen method for repeated disturbances
+	Fixed a bug in PTBu for size<>1
+	Minor documentation
+

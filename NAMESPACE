@@ -2,13 +2,19 @@
 export(frexp)
 export(initPool, resetSeed,runifT)
 export(sechol)
+export(dehaan,starr)
 export(LRE)
 export(perturb, PTBi)
 export(PTBms, PTBmsb, PTBmsbr) 
 export(PTBn, PTBnc, PTBns, PTBnbr, PTBnbrr, PTBnsbr, PTBnsbrr) 
 export(PTBu, PTBuc, PTBus, PTBubr, PTBubrr, PTBusbr, PTBusbrr)
+#1.04 PTB multiple nodes
+export(PTBmu.gen, PTBmn.gen)
 # export methods subclassing other public methods
 S3method(print, perturb)
 S3method(print, perturbS)
 S3method(summary, perturb)
+#1.04 Anova methods
+S3method(anova, perturb)
+S3method(print, perturbAnova)
 useDynLib("accuracy")

@@ -88,11 +88,14 @@ options(warn=0);
 
 resetSeed()
 y=runif(100)
+ty= table(trunc(5*y))
+print(ty);
+chisq.test(ty)
 
 # generate true random values directly (may block for long periods if 
 # if entropy pool is empty)
 
-y=runifT(1000)
+y=runifT(100)
 ty= table(trunc(5*y))
 print(ty);
 chisq.test(ty)

@@ -146,7 +146,7 @@ perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL) {
 ##############################################################
 
 PTBunif<-function(x ,size=1 , centered=FALSE, scaled=FALSE) {
-	delta=runif(length(as.matrix(x)))*size; 
+	delta=(runif(length(as.matrix(x)))-0.5)*size; 
 	
 	if (scaled && centered) {
 		warning("Using scaled and centering together is rarely what you really want to do.")
@@ -259,6 +259,8 @@ PTBnsbr<-function(x, size=1, lbound=0,ubound=1) {
 }
 
 PTBnsbrr<-function(x, size=1, lbound=0,ubound=1) {
+	cat("statistic: \n")
+	print(attr(x,"statistic"))
 	ptbBndHarness(x,lbound,ubound,size=size,mode="relresample",scaled=TRUE,
 		ran.gen=PTBunif)
 }
@@ -369,6 +371,114 @@ PTBms<-function(x,size=1) {
 	return(PTBmeps(x,centered=FALSE,scaled=TRUE,size=size))
 }
 
+############################################################
+#
+# Multiple Perturbations for vectors
+#
+# These functions take a vector and apply repeated uniform
+# or normal perturbations to them.
+#
+#
+# PTBmultiunif -- multiple uniform perturbations, similar to PTBunif
+# PTBmutinorm -- multiple uniform perturbations, similar to PTBnorm
+#
+#
+# Inputs:
+#
+#        Identical to PTBunif, with the addition of
+#        reps = number of repeater perturbations
+#
+# Returns:
+#        perturbed vector, matrix or dataframe
+#
+##############################################################
+
+
+PTBmultinorm<-function(x , size=1 , centered=FALSE, scaled=FALSE, reps=1) {
+       if (reps<1) {
+	stop("Reps less than 1");
+       }
+       delta=vector(length=length(as.matrix(x)));
+       for (i in 1:trunc(reps)) {
+	         delta=delta+rnorm( length(as.matrix(x)), mean=0, sd= 1) * size;
+       }
+       delta = delta/reps;
+
+        if (scaled && centered) {
+                warning("Using scaled and centering together is rarely what you really want to do.")
+        }
+
+        # centering to guarantee mean 0
+        if (centered) {
+                delta = (delta - mean(delta))/sqrt(var(delta))
+        }
+
+        # scaled disturbance
+        if (scaled) {
+                delta = delta * x
+        }
+
+        return(x+delta)
+}
+
+PTBmultiunif<-function(x , size=1 , centered=FALSE, scaled=FALSE, reps=1) {
+       if (reps<1) {
+	stop("Reps less than 1");
+       }
+      delta=vector(length=length(as.matrix(x)));
+       for (i in 1:trunc(reps)) {
+	  delta=delta+((runif(length(as.matrix(x)))-0.5)*size);
+       }
+      delta = delta/reps;
+
+        if (scaled && centered) {
+                warning("Using scaled and centering together is rarely what you really want to do.")
+        }
+
+        # centering to guarantee mean 0
+        if (centered) {
+                delta=delta-mean(delta)
+        }
+
+        # scaled disturbance
+        if (scaled) {
+                delta = delta * x
+        }
+
+        return(x+delta)
+}
+
+############################################################
+#
+# Multi-Perturbation Generator Function
+#
+#
+#
+# PTBmu.gen (rep=1)
+#
+# Returns a PTMmultiXXXX function with a pre-configured number of reps
+#
+# PTBmu.gen (rep=1)
+#
+# Returns a PTMmultiXXXX function with a pre-configured number of reps
+#
+##############################################################
+
+PTBmu.gen<-function(reps=1) {
+	return (
+		tmpfunc<-function(x, size=1) {
+			return(PTBmultiunif(x,reps=reps,size=size))
+		}
+	)
+}
+
+PTBmn.gen<-function(reps=1) {
+	return (
+		tmpfunc<-function(x, size=1) {
+			return(PTBmultinorm(x,reps=reps,size=size))
+		}
+	)
+}
 
 #
 # Summary Functions
@@ -434,7 +544,7 @@ summary.perturb<-function (object,...) {
 		   || sum( length(attr(s[[i]],"coef.betas")) != length( coef.betas))>0
 		   || sum( length(attr(s[[i]],"coef.stderrs")) != length( coef.stderrs))>0
 		) {
-			warning("replications does not match (", i,")")
+			warning("replications do not match (", i,")")
 		}
 		coef.names.m = rbind(coef.names.m, attr(s[[i]],"coef.names"))
 		coef.betas.m = rbind(coef.betas.m, attr(s[[i]],"coef.betas"))
@@ -460,26 +570,147 @@ summary.perturb<-function (object,...) {
 	return(s)
 }
 
-print.perturbS<-function(x,...) {
+anova.perturb<-function(object,...) {
+        n = length(object)
+        s = vector(n,mode="list")
 
-	cat("Replications: \n",attr(x,"R"),"\n\n")
-	cat("ran.gen: \n")
-	print(attr(x,"ran.gen"))
-	cat("s: \n")
-	print(attr(x,"s"))
-	cat("statistic: \n")
-	print(attr(x,"statistic"))
+        # generate individual summaries for list of replications
+        for (i in 1:n) {
 
-	cat("formula: \n","\n\n")
-	print(attr(x,"coef.formula"))
+      	    tmp = anova(object[[i]])
+                if (!inherits(tmp,"anova")) {
+		warning("Could not perform anova on perturbation #", i);
+		next;              
+                } 
+                coef.names = attr(tmp,"row.names")
+	    coef.df = tmp$"Df"
+  	    coef.sumsq=tmp$"Sum Sq"
+  	    coef.meansq=tmp$"Mean Sq"
+	    coef.f=tmp$"F value"
+	    coef.pr=tmp$"Pr(>F)"
+               
+                attr(tmp,"coef.names") = coef.names
+                attr(tmp,"coef.df") = coef.df
+                attr(tmp,"coef.sumsq") = coef.sumsq    
+                attr(tmp,"coef.meansq") = coef.meansq
+                attr(tmp,"coef.f") = coef.f
+                attr(tmp,"coef.pr") = coef.pr          
+                s[[i]]=tmp
+        }
+              # check consistency and summarize
+        coef.names = attr(s[[1]],"coef.names")
+        coef.names.m = coef.names
+        coef.df = attr(s[[1]],"coef.df")
+        coef.df.m = coef.df
+        coef.sumsq= attr(s[[1]],"coef.sumsq")
+        coef.sumsq.m = coef.sumsq;
+        coef.meansq= attr(s[[1]],"coef.meansq")
+        coef.meansq.m = coef.meansq;
+        coef.f= attr(s[[1]],"coef.f")
+        coef.f.m = coef.f;
+        coef.pr= attr(s[[1]],"coef.pr")
+        coef.pr.m = coef.pr;
 
-	cat("betas:\n\n")
-	print(summary(attr(x,"coef.betas.m")))
-	cat("stderrs:\n\n")
-	print(summary(attr(x,"coef.stderrs.m")))
-	
+        if (n>1) {
+           for (i in 2:n) {
+                if ( sum( attr(s[[i]],"coef.names") != coef.names)>0
+                   || sum( length(attr(s[[i]],"coef.df")) != length( coef.df))>0
+                   || sum( length(attr(s[[i]],"coef.sumsq")) != length( coef.sumsq))>0
+                   || sum( length(attr(s[[i]],"coef.meansq")) != length( coef.meansq))>0
+                   || sum( length(attr(s[[i]],"coef.f")) != length( coef.f))>0
+                   || sum( length(attr(s[[i]],"coef.pr")) != length( coef.pr))>0
+                ) {
+                        warning("replications do not match (", i,")")
+                }
+                coef.sumsq.m = rbind(coef.sumsq.m, attr(s[[i]],"coef.sumsq"))
+                coef.meansq.m = rbind(coef.meansq.m, attr(s[[i]],"coef.meansq"))
+                coef.f.m = rbind(coef.f.m, attr(s[[i]],"coef.f"))
+                coef.pr.m = rbind(coef.pr.m, attr(s[[i]],"coef.pr"))
+           }
+        }
+
+
+        row.names(coef.names.m) = NULL
+        attr(s,"coef.names.m") = coef.names.m
+
+        attr(s,"coef.df.m") = rename.matrix(coef.df.m,"DF")
+        attr(s,"coef.sumsq.m") = rename.matrix(coef.sumsq.m,coef.names.m)
+        attr(s,"coef.meansq.m") = rename.matrix(coef.meansq.m,coef.names.m)
+        attr(s,"coef.pr.m") = rename.matrix(coef.pr.m,coef.names.m)
+        attr(s,"coef.f.m") = rename.matrix(coef.f.m,coef.names.m)
+
+        attr(s, "ran.gen")= attr(object, "ran.gen")
+        attr(s, "R") = attr(object, "R")
+        attr(s, "s") = attr(object, "s")
+        attr(s,"statistic") = attr(object, "statistic")
+
+        class(s)="perturbAnova";
+        return(s)
 }
 
+
+print.perturbS<-function(x,...) {
+
+        cat("statistic: \n")
+        print(attr(x,"statistic"))
+        cat("s: \n")
+        print(attr(x,"s"))
+
+        cat("Replications: \n",attr(x,"R"),"\n\n")
+        cat("ran.gen: \n")
+        print(attr(x,"ran.gen"))
+        cat("formula: \n","\n\n")
+        print(attr(x,"coef.formula"))
+
+        cat("betas:\n\n")
+        print(summary(attr(x,"coef.betas.m")))
+        print(q95(attr(x,"coef.betas.m")))
+        cat("stderrs:\n\n")
+        print(summary(attr(x,"coef.stderrs.m")))
+        print(q95(attr(x,"coef.stderrs.m")))
+
+}
+
+print.perturbAnova<-function(x,...) {
+
+        cat("statistic: \n")
+        print(attr(x,"statistic"))
+        cat("s: \n")
+        print(attr(x,"s"))
+
+        cat("Replications: \n",attr(x,"R"),"\n\n")
+        cat("ran.gen: \n")
+        print(attr(x,"ran.gen"))
+        cat("formula: \n","\n\n")
+        print(attr(x,"coef.formula"))
+
+        cat("\nsumsq:\n\n")
+        print(summary(attr(x,"coef.sumsq.m")))
+        print(q95(attr(x,"coef.sumsq.m")))
+        cat("\nmeansq:\n\n")
+        print(summary(attr(x,"coef.meansq.m")))
+        print(q95(attr(x,"coef.meansq.m")))
+        cat("\npr:\n\n")
+        print(summary(attr(x,"coef.pr.m")))
+        print(q95(attr(x,"coef.pr.m")))
+
+}
+
+# Internal Helper functions for print methods
+
+rename.matrix<-function(m,nm){
+     row.names(m)=NULL
+     m=as.data.frame(m)
+     names(m)=nm
+     return(m)
+}
+
+q95<-function(x) {
+   sapply(as.data.frame(x),function(x){quantile(x,na.rm=TRUE,probs=c(0.025,.975))})
+}
+
+
+# Self test function
 
 perturbTest<-function(silent=TRUE) {
 	status=TRUE

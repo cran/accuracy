@@ -57,7 +57,7 @@ Micah Altman
 }
 
 
-\example{
+\examples{
 
 	x=rbind(c(1,1,1), c(1,2,1), c(1,1.1,1), c(1,2,1), c(3,4,5));
 	starr(rbind(1,1,2,2));}
