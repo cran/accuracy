@@ -135,7 +135,7 @@ Micah Altman
 }
 
 
-seealso{ \code{\link{perturb}}}
+\seealso{ \code{\link{perturb}}}
 \examples{
 	x=1:1000
 	x.i = PTBi(x)

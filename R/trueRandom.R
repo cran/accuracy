@@ -31,137 +31,137 @@
 
 "runifT" <- function(n, min=0, max=1) {
 	if (min>=max) {
-		stop("Max must be > min");
+		stop("Max must be > min")
 	}
-	tmp = trueRandom(n);
+	tmp = trueRandom(n)
 	if (is.null(tmp)) {
 		warning("No entropy available, returning pseudo-random numbers")
-		r = runif(n, min, max);
+		r = runif(n, min, max)
 	} else { 
-		r =(tmp/.Machine$integer.max  + 1) * ((max-min)/2);
+		r =(tmp/.Machine$integer.max  + 1) * ((max-min)/2)
 	}
-	return(r);
+	return(r)
 }
 
 "trueRandom" <-function (n) {
 	if (length(n)>1) {
-		size=length(n);
+		size=length(n)
 	} else {
-		size = n;
+		size = n
 	}
 
 	if (!exists(".EntropyPool",envir=.GlobalEnv)) {
-		pool=refreshPool(silent=TRUE);
+		pool=refreshPool(silent=TRUE)
 		if (is.null(pool)) {
-			return(NULL);
+			return(NULL)
 		}
 	} else {
-		pool=get(".EntropyPool",envir=.GlobalEnv);
+		pool=get(".EntropyPool",envir=.GlobalEnv)
 	}
 
-	tr = integer(size);
-	i = 1;
+	tr = integer(size)
+	i = 1
 	while (i<=size) {
 		if (pool$current < 1)  {
-			pool=refreshPool(silent=TRUE);
-			next;
+			pool=refreshPool(silent=TRUE)
+			next
 		} 
-		tr[i] = pool$pool[pool$current];
-		pool$current = pool$current -1;
-		i= i+1;
+		tr[i] = pool$pool[pool$current]
+		pool$current = pool$current -1
+		i= i+1
 	}	
 
-	assign(".EntropyPool",pool,envir=.GlobalEnv);
-	return(tr);
+	assign(".EntropyPool",pool,envir=.GlobalEnv)
+	return(tr)
 }
 
 "resetSeed" <-function() {
-	s = trueRandom(1);
+	s = trueRandom(1)
 	if (is.null(s)) {
 		warning("No entropy available, using system time as seed.")
-		s = as.integer(Sys.time());
+		s = as.integer(Sys.time())
 	}
-	set.seed(s);
+	set.seed(s)
 }
 
 "initPool"<-function(size=512, hbok=TRUE, devrndok=TRUE, silent=FALSE) {
-	entropypool = list();
-	entropypool$size=size;
-	entropypool$current=0;
-	entropypool$pool=integer(length=size);
-	class(entropypool)="EntropyPool";
+	entropypool = list()
+	entropypool$size=size
+	entropypool$current=0
+	entropypool$pool=integer(length=size)
+	class(entropypool)="EntropyPool"
 	
 	if (size<1 || size > 10000/.Machine$sizeof.long) {
-		warning("size out of range");
-		return (NULL);
+		warning("size out of range")
+		return (NULL)
 	}
 
-	w = options("warn");
-	options(warn=-1);
+	w = options("warn")
+	options(warn=-1)
 	if (devrndok) {
-	   tri = integer();
+	   tri = integer()
            tr = try({tri=readBin('/dev/random', integer(0), signed=FALSE)},
-                silent=TRUE);
+                silent=TRUE)
            if (inherits(tr, "try-error") || (length(tri) == 0)) {
-                devrndok=FALSE;
+                devrndok=FALSE
            }   
 	}
   
 	if (hbok) {
-	   tri = integer();
-	   hb = try({hburl(bytes= .Machine$sizeof.long)});
+	   tri = integer()
+	   hb = try({hburl(bytes= .Machine$sizeof.long)})
            if (is.null(hb) || inherits(hb, "try-error")) {
            	tr = try({tri=readBin(hb, integer(0), signed=FALSE)},
-                	silent=TRUE);
+                	silent=TRUE)
 
                  if (inherits(tr, "try-error") || (length(tri) == 0)) {
-                   hbok=FALSE;
+                   hbok=FALSE
                  }  else {
-	   		try(close(hb), silent=TRUE);
+	   		try(close(hb), silent=TRUE)
 		}
 	   } else {
-                   hbok=FALSE;
+                   hbok=FALSE
 	   }
 	}
-	options(warn=as.integer(w));
-	entropypool$hbok=hbok;
-	entropypool$devrndok=devrndok;
+	options(warn=as.integer(w))
+	entropypool$hbok=hbok
+	entropypool$devrndok=devrndok
 	if (!devrndok && !hbok ) {
 		if (!silent) {
-			warning("initialization failed, no true random sources found");
+			warning("initialization failed, no true random sources found")
 		}
-		return(NULL);
+		return(NULL)
 	}
-	assign(".EntropyPool",entropypool,envir=.GlobalEnv);
-	return(entropypool);
+	assign(".EntropyPool",entropypool,envir=.GlobalEnv)
+	return(entropypool)
 }
 
 "hburl" <-function(bytes=1,fmt="bin") {
 	hbstring = paste (
 		"http://www.fourmilab.ch/cgi-bin/uncgi/Hotbits?"
-		,"nbytes=",bytes,"&fmt=",fmt, sep="");
-	return(url(hbstring,open="rb"));
+		,"nbytes=",bytes,"&fmt=",fmt, sep="")
+	return(url(hbstring,open="rb"))
 }
 
 "refreshPool"<-function(silent=FALSE) {
 	if (!exists(".EntropyPool",envir=.GlobalEnv)) {
 		if (is.null(initPool(silent=TRUE))) { 
 			if (!silent) {
-				warning("Could not create pool");
+				warning("Could not create pool")
 			}
-			return(NULL);
+			return(NULL)
 		}
 	}
 	pool=get(".EntropyPool",envir=.GlobalEnv)
 	if (pool$devrndok) {
-		con = "/dev/random";
-		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size);
+		con = "/dev/random"
+		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size)
 	} else if (pool$hbok) {
-		con = hburl(bytes=pool$size);
-		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size);
-		close(con);
+		con = hburl(bytes=pool$size)
+		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size)
+		close(con)
 	}
-	pool$current=length(pool$pool);
-	assign(".EntropyPool",pool,envir=.GlobalEnv);
-	return(pool);
+	pool$current=length(pool$pool)
+	assign(".EntropyPool",pool,envir=.GlobalEnv)
+	return(pool)
 }

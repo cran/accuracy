@@ -58,49 +58,49 @@ perturb<-function(data,statistic,..., ptb.R=1,ptb.ran.gen=PTBms,
 	#	perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic,...)
 	#, simplify=FALSE);
 
-	attr(retval,"ran.gen")= ptb.ran.gen;
-	attr(retval, "R") = ptb.R;
-	attr(retval, "s") = ptb.s;
-	attr(retval, "statistic") = statistic;
-	class(retval)="perturb";
-	return(retval);
+	attr(retval,"ran.gen")= ptb.ran.gen
+	attr(retval, "R") = ptb.R
+	attr(retval, "s") = ptb.s
+	attr(retval, "statistic") = statistic
+	class(retval)="perturb"
+	return(retval)
 }
 
 print.perturb<-function(x,...) {
-	cat("Replications: \n",attr(x,"R"),"\n\n");
+	cat("Replications: \n",attr(x,"R"),"\n\n")
 	cat("ran.gen: \n")
-	print(attr(x,"ran.gen"));
-	cat("s: \n");
-	print(attr(x,"s"));
-	cat("statistic: \n");
-	print(attr(x,"statistic"));
+	print(attr(x,"ran.gen"))
+	cat("s: \n")
+	print(attr(x,"s"))
+	cat("statistic: \n")
+	print(attr(x,"statistic"))
 }
 
 perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL) {
-	ndata = as.data.frame(data);
+	ndata = as.data.frame(data)
 	if (length(ran.gen)==1) {
-		ind=which(sapply(ndata,is.numeric));
-		ran.gen=replicate(ncol(ndata),ran.gen);
+		ind=which(sapply(ndata,is.numeric))
+		ran.gen=replicate(ncol(ndata),ran.gen)
 		if (!is.null(ptb.s)) {
-			ptb.s = replicate(ncol(ndata),ptb.s);
+			ptb.s = replicate(ncol(ndata),ptb.s)
 		}
 	} else if (length(ran.gen)!=ncol(ndata)) {
-		stop("ran.gen must be a single function, or a vector of functions of length ncol(df)");
+		stop("ran.gen must be a single function, or a vector of functions of length ncol(df)")
 	} else {
-		ind = which(sapply(ran.gen,is.function));
+		ind = which(sapply(ran.gen,is.function))
 	}
 
 	for ( i in ind ) {
 		if (is.null(ptb.s)) {
-			ndata[i] = ran.gen[[i]](ndata[i]);
+			ndata[i] = ran.gen[[i]](ndata[i])
 		} else {
-			ndata[i] = ran.gen[[i]](ndata[i],size=ptb.s[i]);
+			ndata[i] = ran.gen[[i]](ndata[i],size=ptb.s[i])
 		}
 	}
 	
-	stat = statistic(data=ndata,...);
+	stat = statistic(data=ndata,...)
 	
-	return(stat);
+	return(stat)
 }
 
 
@@ -149,118 +149,118 @@ PTBunif<-function(x ,size=1 , centered=FALSE, scaled=FALSE) {
 	delta=runif(length(as.matrix(x)))*size; 
 	
 	if (scaled && centered) {
-		warning("Using scaled and centering together is rarely what you really want to do.");
+		warning("Using scaled and centering together is rarely what you really want to do.")
 	}
 
 	# centering to guarantee mean 0
 	if (centered) {		
-		delta=delta-mean(delta);
+		delta=delta-mean(delta)
 	}
 
 	# scaled disturbance
 	if (scaled) {
-		delta = delta * x;
+		delta = delta * x
 	}	
 	
-	return(x+delta);
+	return(x+delta)
 }
 
 PTBnorm<-function(x , size=1, centered=FALSE, scaled=FALSE) {
-	delta = rnorm( length(as.matrix(x)), mean=0, sd= 1) * size;
+	delta = rnorm( length(as.matrix(x)), mean=0, sd= 1) * size
 	
 
 	if (scaled && centered) {
-		warning("Using scaled and centering together is rarely what you really want to do.");
+		warning("Using scaled and centering together is rarely what you really want to do.")
 	}
 
 	# centering to guarantee mean 0
 	if (centered) {
-		delta = (delta - mean(delta))/sqrt(var(delta));
+		delta = (delta - mean(delta))/sqrt(var(delta))
 	}
 
 	if (scaled) {
-		delta = delta * x;
+		delta = delta * x
 	}	
 	
-	return(x+delta);
+	return(x+delta)
 }
 
 PTBmeps<-function(x, centered=FALSE, scaled=FALSE, size=1) {	
 	# scaled=FALSE leads to larger roundoff 
 	if (!scaled) {
-		warning("scaled=FALSE probably not what you want for PTBmeps");
+		warning("scaled=FALSE probably not what you want for PTBmeps")
 	}
 
-	n = length(as.matrix(x));
+	n = length(as.matrix(x))
 	
 	# note centering here does not guarantee zero mean!
 	if (centered) {
-		delta=integer(n);
-		delta[1:floor((n+1)/2)]=.Machine$double.eps *size;
-		delta[ceiling((n+1)/2):n]=-1*.Machine$double.neg.eps *size;
-		delta=sample(delta,n);
+		delta=integer(n)
+		delta[1:floor((n+1)/2)]=.Machine$double.eps *size
+		delta[ceiling((n+1)/2):n]=-1*.Machine$double.neg.eps *size
+		delta=sample(delta,n)
 	} else {
-		delta= runif(n)*2-1;
+		delta= runif(n)*2-1
 		delta= floor(delta)*.Machine$double.neg.eps +
-			ceiling(delta)*.Machine$double.eps;
+			ceiling(delta)*.Machine$double.eps
 	}
 
 	if (scaled) {
-		delta = delta*x;
+		delta = delta*x
 	}
-	return(x+delta);
+	return(x+delta)
 }
 
 # Wrapper functions for bounded perturbations
 
 PTBmsb<-function(x,size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="trunc",scaled=TRUE,
-		ran.gen=PTBmeps);
+		ran.gen=PTBmeps)
 }
 
 PTBmsbr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="resample", scaled=TRUE,
-		ran.gen=PTBmeps);
+		ran.gen=PTBmeps)
 }
 
 PTBubr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="resample",
-		ran.gen=PTBunif);
+		ran.gen=PTBunif)
 }
 
 PTBubrr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="relresample",
-		ran.gen=PTBunif);
+		ran.gen=PTBunif)
 }
 
 PTBnbr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="resample",
-		ran.gen=PTBunif);
+		ran.gen=PTBunif)
 }
 
 PTBnbrr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="relresample",
-		ran.gen=PTBunif);
+		ran.gen=PTBunif)
 }
 
 PTBusbr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="resample",scaled=TRUE,
-		ran.gen=PTBunif);
+		ran.gen=PTBunif)
 }
 
 PTBusbrr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="relresample",scaled=TRUE,
-		ran.gen=PTBunif);
+		ran.gen=PTBunif)
 }
 
 PTBnsbr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="resample", scaled=TRUE,
-		ran.gen=PTBunif);
+		ran.gen=PTBunif)
 }
 
 PTBnsbrr<-function(x, size=1, lbound=0,ubound=1) {
 	ptbBndHarness(x,lbound,ubound,size=size,mode="relresample",scaled=TRUE,
-		ran.gen=PTBunif);
+		ran.gen=PTBunif)
 }
 
 # bounded perturbation -- takes set of samples and ensure results
@@ -271,59 +271,59 @@ ptbBndHarness<-function(x,lbound,ubound,s=NULL,mode="trunc",
 
 	# check args
 	if (mode!="trunc" && mode !="resample" && mode != "relresample") {
-		stop("unknown mode");
+		stop("unknown mode")
 	}
 
 	# initialize bounds vectors
 	if (length(lbound)==1) {
-		lbound=replicate(length(x),lbound);
+		lbound=replicate(length(x),lbound)
 	} else if (length(lbound)!=length(x)) {
-		stop("lbound must be scalar or same length as x");
+		stop("lbound must be scalar or same length as x")
 	}
 	if (length(ubound)==1) {
-		ubound=replicate(length(x),ubound);
+		ubound=replicate(length(x),ubound)
 	} else if (length(ubound)!=length(x)) {
-		stop("ubound must be scalar or same length as x");
+		stop("ubound must be scalar or same length as x")
 	}
 
 	# set sizes for relresample mode
 	if (mode=="relresample") {
-		tmps=pmin(x-lbound,ubound-x);
-		s = pmin(s,tmps);
+		tmps=pmin(x-lbound,ubound-x)
+		s = pmin(s,tmps)
 	}
 
 
 	# initial sample	
 	if (is.null(s)) {
-		retv = ran.gen(x,...);
+		retv = ran.gen(x,...)
 	} else {
-		retv = ran.gen(x, s=s,...);
+		retv = ran.gen(x, s=s,...)
 	}
 	
 	if ( mode=="resample" || mode=="relresample") {
-		badi = which( retv<lbound | retv>ubound );
-		iter=0;
+		badi = which( retv<lbound | retv>ubound )
+		iter=0
 		while (length(badi)>0 && iter<=maxiter) {
 			if (is.null(s)) {
-				retv[badi] = ran.gen(x[badi],...);
+				retv[badi] = ran.gen(x[badi],...)
 			} else {
-				retv[badi] = ran.gen(x[badi], s=s,...);
+				retv[badi] = ran.gen(x[badi], s=s,...)
 			}
-			badi = which( retv<lbound | retv>ubound );
+			badi = which( retv<lbound | retv>ubound )
 			iter=iter+1;	
 		}
 		if (iter>maxiter) {
-			warning("resampling: maximum iterations exceeded, truncating to bounds");
+			warning("resampling: maximum iterations exceeded, truncating to bounds")
 		}
 	} 
 
 	# this is 'trunc' mode, also catches exceeded iterations on
 	# resampling, and numerical issues in comparisons
 
-	retv=pmax(lbound,retv);
-	retv=pmin(ubound,retv);
+	retv=pmax(lbound,retv)
+	retv=pmin(ubound,retv)
 
-	return(retv);
+	return(retv)
 	
 }
 
@@ -337,36 +337,36 @@ ptbBndHarness<-function(x,lbound,ubound,s=NULL,mode="trunc",
 ###############################################################
 
 PTBi<-function(x,size=1) {
-	return(x);
+	return(x)
 }
 
 PTBus<-function(x ,size=1) {
-	return(PTBunif(x,size=size,scaled=TRUE));
+	return(PTBunif(x,size=size,scaled=TRUE))
 }
 
 PTBuc<-function(x ,size=1) {
-	return(PTBunif(x,centered=TRUE,size=size));
+	return(PTBunif(x,centered=TRUE,size=size))
 }
 
 PTBu<-function(x ,size=1) {
-	return(PTBunif(x,centered=FALSE,scaled=FALSE,size=size));
+	return(PTBunif(x,centered=FALSE,scaled=FALSE,size=size))
 }
 
 
 PTBns<-function(x ,size=1) {
-	return(PTBnorm(x,scaled=TRUE,size=size));
+	return(PTBnorm(x,scaled=TRUE,size=size))
 }
 
 PTBnc<-function(x ,size=1) {
-	return(PTBnorm(x,centered=TRUE,size=size));
+	return(PTBnorm(x,centered=TRUE,size=size))
 }
 
 PTBn<-function(x ,size=1) {
-	return(PTBnorm(x,centered=FALSE,scaled=FALSE,size=1));
+	return(PTBnorm(x,centered=FALSE,scaled=FALSE,size=1))
 }
 
 PTBms<-function(x,size=1) {
-	return(PTBmeps(x,centered=FALSE,scaled=TRUE,size=size));
+	return(PTBmeps(x,centered=FALSE,scaled=TRUE,size=size))
 }
 
 
@@ -375,191 +375,195 @@ PTBms<-function(x,size=1) {
 #
 
 summary.perturb<-function (object,...) {
-	n = length(object);
-	s = vector(n,mode="list");
+	n = length(object)
+	s = vector(n,mode="list")
 
 	# generate individual summaries for list of replications
 	for (i in 1:n) {
-		tmp = summary(object[[i]]);
+		tmp = summary(object[[i]])
 		if (inherits(tmp,"summary.lm")) {
-			coef.names = dimnames(tmp[["coefficients"]])[[1]];
-			coef.betas = tmp[["coefficients"]][,1];
-			coef.stderrs = tmp[["coefficients"]][,2];
-			coef.formula = tmp[["formula"]];
+			coef.names = dimnames(tmp[["coefficients"]])[[1]]
+			coef.betas = tmp[["coefficients"]][,1]
+			coef.stderrs = tmp[["coefficients"]][,2]
+			coef.formula = tmp[["formula"]]
 		} else if (inherits(tmp,"summary.mle")) {
-			coef.names = dimnames(attr(tmp,"coef"))[[1]];
+			coef.names = dimnames(attr(tmp,"coef"))[[1]]
 			coef.betas = attr(tmp,"coef")[,1]
 			coef.stderrs = attr(tmp,"coef")[,2]
-			coef.formula = attr(tmp,"call");
+			coef.formula = attr(tmp,"call")
 		} else if (inherits(tmp,"summary.nls")) {
-			coef.names = dimnames(tmp[["parameters"]])[[1]];
-			coef.betas = tmp[["parameters"]][,1];
-			coef.stderrs = tmp[["parameters"]][,2];
-			coef.formula = tmp[["formula"]];
+			coef.names = dimnames(tmp[["parameters"]])[[1]]
+			coef.betas = tmp[["parameters"]][,1]
+			coef.stderrs = tmp[["parameters"]][,2]
+			coef.formula = tmp[["formula"]]
 		} else if (inherits(tmp,"summary.glm")) {
-			coef.names = dimnames(tmp[["coefficients"]])[[1]];
-			coef.betas = tmp[["coefficients"]][,1];
-			coef.stderrs = tmp[["coefficients"]][,2];
-			coef.formula = tmp[["terms"]];
+			coef.names = dimnames(tmp[["coefficients"]])[[1]]
+			coef.betas = tmp[["coefficients"]][,1]
+			coef.stderrs = tmp[["coefficients"]][,2]
+			coef.formula = tmp[["terms"]]
 		} else {
-			coef.names=names(coef(tmp));
-			coef.betas=coef(tmp);
-			coef.stderrs=NULL;
-			coef.formula=NULL;
+			coef.names=names(coef(tmp))
+			coef.betas=coef(tmp)
+			coef.stderrs=NULL
+			coef.formula=NULL
 			if (is.null(coef.betas)) {
 				stop("Don't know how to summarize replications of type ",
-					class(tmp) );
+					class(tmp) )
 			}
 		}
 	
- 		attr(tmp,"coef.names") = coef.names;
-		attr(tmp,"coef.betas") = coef.betas;
-		attr(tmp,"coef.stderrs") = coef.stderrs;
-		attr(tmp,"coef.formula") = coef.formula;
-		s[[i]]=tmp;
+ 		attr(tmp,"coef.names") = coef.names
+		attr(tmp,"coef.betas") = coef.betas
+		attr(tmp,"coef.stderrs") = coef.stderrs
+		attr(tmp,"coef.formula") = coef.formula
+		s[[i]]=tmp
 	}
 	
 	# check consistency and summarize
-	coef.names = attr(s[[1]],"coef.names");
-	coef.names.m = coef.names;
-	coef.betas = attr(s[[1]],"coef.betas");
-	coef.betas.m = coef.betas;
-	coef.stderrs= attr(s[[1]],"coef.stderrs");
+	coef.names = attr(s[[1]],"coef.names")
+	coef.names.m = coef.names
+	coef.betas = attr(s[[1]],"coef.betas")
+	coef.betas.m = coef.betas
+	coef.stderrs= attr(s[[1]],"coef.stderrs")
 	coef.stderrs.m = coef.stderrs;	
-	coef.formula = attr(s[[1]],"coef.formula");
+	coef.formula = attr(s[[1]],"coef.formula")
 	if (n>1) {
 	   for (i in 2:n) {
 		if ( sum( attr(s[[i]],"coef.names") != coef.names)>0
 		   || sum( attr(s[[i]],"coef.formula") != coef.formula)>0
 		   || sum( length(attr(s[[i]],"coef.betas")) != length( coef.betas))>0
-		   || sum( length(attr(s[[i]],"coef.stderrs")) != length( coef.stderrs)>0)
+		   || sum( length(attr(s[[i]],"coef.stderrs")) != length( coef.stderrs))>0
 		) {
-			warning("replications does not match (", i,")");
+			warning("replications does not match (", i,")")
 		}
-		coef.names.m = rbind(coef.names.m, attr(s[[i]],"coef.names"));
-		coef.betas.m = rbind(coef.betas.m, attr(s[[i]],"coef.betas"));
-		coef.stderrs.m = rbind(coef.stderrs.m, attr(s[[i]],"coef.stderrs"));
+		coef.names.m = rbind(coef.names.m, attr(s[[i]],"coef.names"))
+		coef.betas.m = rbind(coef.betas.m, attr(s[[i]],"coef.betas"))
+		coef.stderrs.m = rbind(coef.stderrs.m, attr(s[[i]],"coef.stderrs"))
 	   }
 	}
 
 
-	row.names(coef.betas.m) = NULL;
-	row.names(coef.stderrs.m) = NULL;
-	attr(s,"coef.names.m") = coef.names.m;
-	attr(s,"coef.betas.m") = coef.betas.m;
-	attr(s,"coef.stderrs.m") = coef.stderrs.m;
-	attr(s,"coef.formula") = coef.formula;
+	row.names(coef.betas.m) = NULL
+	row.names(coef.stderrs.m) = NULL
+	attr(s,"coef.names.m") = coef.names.m
+	attr(s,"coef.betas.m") = coef.betas.m
+	attr(s,"coef.stderrs.m") = coef.stderrs.m
+	attr(s,"coef.formula") = coef.formula
 
 
-	attr(s, "ran.gen")= attr(object, "ran.gen");
-	attr(s, "R") = attr(object, "R");
-	attr(s, "s") = attr(object, "s");
-	attr(s,"statistic") = attr(object, "statistic");
+	attr(s, "ran.gen")= attr(object, "ran.gen")
+	attr(s, "R") = attr(object, "R")
+	attr(s, "s") = attr(object, "s")
+	attr(s,"statistic") = attr(object, "statistic")
 
 	class(s)="perturbS";	
-	return(s);
+	return(s)
 }
 
 print.perturbS<-function(x,...) {
 
-	cat("Replications: \n",attr(x,"R"),"\n\n");
+	cat("Replications: \n",attr(x,"R"),"\n\n")
 	cat("ran.gen: \n")
-	print(attr(x,"ran.gen"));
-	cat("s: \n");
-	print(attr(x,"s"));
-	cat("statistic: \n");
-	print(attr(x,"statistic"));
+	print(attr(x,"ran.gen"))
+	cat("s: \n")
+	print(attr(x,"s"))
+	cat("statistic: \n")
+	print(attr(x,"statistic"))
 
-	cat("formula: \n","\n\n");
-	print(attr(x,"coef.formula"));
+	cat("formula: \n","\n\n")
+	print(attr(x,"coef.formula"))
 
-	cat("betas:\n\n");
-	print(summary(attr(x,"coef.betas.m")));
-	cat("stderrs:\n\n");
-	print(summary(attr(x,"coef.stderrs.m")));
+	cat("betas:\n\n")
+	print(summary(attr(x,"coef.betas.m")))
+	cat("stderrs:\n\n")
+	print(summary(attr(x,"coef.stderrs.m")))
 	
 }
 
 
 perturbTest<-function(silent=TRUE) {
-	status=TRUE;
-	data(longley);
+	status=TRUE
+	if(version$major<2) {
+		data(longley, package="base")
+	} else {
+		data(longley, package="datasets")
+	}
+
 	for (i in c(PTBnc,PTBuc)) {
-		pl = i(longley);
+		pl = i(longley)
 		if (sum(pl==longley) != 0) {
-			status=FALSE;
+			status=FALSE
 			if (!silent) {
-				warning("not perturbing --");
-				print(i);
+				warning("not perturbing --")
+				print(i)
 			}
 		}
 		if (abs(mean(mean(pl-longley)))>.000001) {
-			status=FALSE;
+			status=FALSE
 			if (!silent) {
-				warning("perturbations too big--");
-				print(i);
+				warning("perturbations too big--")
+				print(i)
 			}
 		}
 	}
 	for (i in c(PTBms,PTBn,PTBu)) {
-		pl = i(longley);
+		pl = i(longley)
 		if (sum(pl==longley) != 0) {
-			status=FALSE;
+			status=FALSE
 			if (!silent) {
-				warning("not perturbing --");
-				print(i);
+				warning("not perturbing --")
+				print(i)
 			}
 		}
 		if (abs(mean(mean(pl-longley)))>1) {
-			status=FALSE;
+			status=FALSE
 			if (!silent) {
-				warning("perturbations too big--");
-				print(i);
+				warning("perturbations too big--")
+				print(i)
 			}
 		}
 	}
 	for (i in c(PTBns,PTBus)) {
-		pl = i(longley);
+		pl = i(longley)
 		if (sum(pl==longley) != 0) {
-			status=FALSE;
+			status=FALSE
 			if (!silent) {
-				warning("not perturbing --");
-				print(i);
+				warning("not perturbing --")
+				print(i)
 			}
 		}
 		if (abs(mean(mean(pl-longley)))>abs(mean(mean(longley)))) {
-			status=FALSE;
+			status=FALSE
 			if (!silent) {
-				warning("perturbations too big--");
-				print(i);
+				warning("perturbations too big--")
+				print(i)
 			}
 		}
 	}
 	for (i in c(PTBnbr,PTBubr)) {
-		t = runif(20)*2-1;
-		pl = i(t, lbound=-1, ubound=1);
+		t = runif(20)*2-1
+		pl = i(t, lbound=-1, ubound=1)
 		if (sum(t>=1) > 0 || sum(t<=-1)> 0) {
-			status = FALSE;
+			status = FALSE
 			if (!silent) {
-				warning("bounded perturbations not bounded--");
-				print(i);
+				warning("bounded perturbations not bounded--")
+				print(i)
 			}
 		}
 	}
 
 	#data test
-	data(longley)
 	plongley = perturb(longley,lm,Employed~., ptb.R=10,
     	   ptb.ran.gen=c(PTBi, replicate(5,PTBus),PTBi), ptb.s=c(1,replicate(5,.001),1))
 	sp=summary(plongley)
 	coef= attr(sp,"coef.betas.m")
 	if (nrow(coef)!=10 || ncol(coef)!=7) {
-		status = FALSE;
+		status = FALSE
 		if (!silent) {
-			warning("perturb framework malfunction");
-			print(i);
+			warning("perturb framework malfunction")
+			print(i)
 		}
 	}
 
-	return(status);
+	return(status)
 }

@@ -95,17 +95,17 @@
     L[n,n] <- A[n,n] <- sqrt(A[n,n] - L[n,(n-1)]^2)
     
    r = t(Pprod)%*%t(L)%*%t(Pprod)
-   attr(r,"delta")=delta;
+   attr(r,"delta")=delta
    return(r)
 }
 
 "secholTest"<-function(silent=TRUE) {
-     rv = TRUE;
+     rv = TRUE
      # non singular
-     S <- matrix(c(2,0,2.4,0,2,0,2.4,0,3),ncol=3);
-     rv = (sum( signif(chol(S),digits=14) == signif(sechol(S),digits=14)) ==9);
+     S <- matrix(c(2,0,2.4,0,2,0,2.4,0,3),ncol=3)
+     rv = (sum( signif(chol(S),digits=14) == signif(sechol(S),digits=14)) ==9)
      if (!rv && !silent) {
-		warning("sechol alters PD matrix");
+		warning("sechol alters PD matrix")
      }
      S <- matrix(c(2,0,10,0,2,0,10,0,3),ncol=3)
      t =(
@@ -116,10 +116,10 @@
 	  ) == 9 )
 
      if (!t && !silent) {
-		warning("sechol results don't match benchmark");
+		warning("sechol results don't match benchmark")
      }
-     rv= rv && t;	
-     return(rv);
+     rv= rv && t
+     return(rv)
 }
 
 

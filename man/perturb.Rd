@@ -75,8 +75,7 @@ Micah Altman
 # 
 # Summary should show that estimated coefficients are not substantively affected by noise.
 
-library(MASS)
-data(anorexia)
+data(anorexia,package="MASS")
 panorexia = perturb(anorexia, glm, Postwt ~ Prewt + Treat + offset(Prewt),
      family=gaussian, 
     ptb.R=100, ptb.ran.gen=c(PTBi,PTBus,PTBus), ptb.s=c(1,.005,.005) )
@@ -89,7 +88,12 @@ summary(panorexia)
 # In this example we are not perturbing the dependent variable (employed) or 
 # the year variable. So we assign then PTBi or NULL in ptb.ran.gen )
 
-data(longley)
+if(version$major<2) {
+	data(longley, package="base")
+} else {
+	data(longley, package="datasets")
+}
+
 plongley = perturb(longley,lm,Employed~., ptb.R=100, 
     ptb.ran.gen=c(PTBi, replicate(5,PTBus),PTBi), ptb.s=c(1,replicate(5,.001),1))
 sp=summary(plongley)

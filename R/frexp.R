@@ -25,50 +25,50 @@
 
 "frexp" <-
 function(v) {
-	r = replicate(length(v), NA);
-	r = cbind(r,r);
-	i = which(is.finite(v) | !is.na(v));
+	r = replicate(length(v), NA)
+	r = cbind(r,r)
+	i = which(is.finite(v) | !is.na(v))
 	tmp = .C("R_frexp", PACKAGE="accuracy", as.double(v[i]), as.integer(length(v[i])),
 		mantissa=double(length(v[i])),
-		exponent=integer(length(v[i])));
-	r[i,] = cbind(tmp$mantissa,tmp$exponent);
+		exponent=integer(length(v[i])))
+	r[i,] = cbind(tmp$mantissa,tmp$exponent)
 	dimnames(r)[[2]]=c("Mantissa","Exponent")
-	return(r);
+	return(r)
 }
 
 
 "frexpTest" <-
 function(silent=TRUE) {
-	d=options()$digits;
-	options(digits=15);
-	f=round(frexp(c(1,2,4,1.1,2.1,4.1,1000,20000,1.02E213)),digits=5);
+	d=options()$digits
+	options(digits=15)
+	f=round(frexp(c(1,2,4,1.1,2.1,4.1,1000,20000,1.02E213)),digits=5)
 	x=cbind(rbind(.5,.5,.5,.55,.525,.5125,.97656,.61035,.75747),
-		 rbind(1,2,3,1,2,3,10,15,708));
-	options(digits=d);
-	ret=(sum(f==x)==18);
+		 rbind(1,2,3,1,2,3,10,15,708))
+	options(digits=d)
+	ret=(sum(f==x)==18)
 	if (!ret && !silent) {
-		warning("Failed frexp self test.");
+		warning("Failed frexp self test.")
 	}
-	return(ret);
+	return(ret)
 }
 
 "LRE"<-
 function(x,correct, use.LAE=TRUE) {
-        zeros = which(x==0);
-        nonzeros = which(x!=0);
-        nas = which(x==NA);
+        zeros = which(x==0)
+        nonzeros = which(x!=0)
+        nas = which(x==NA)
 
-        res=double(length(x));
+        res=double(length(x))
 
-        res[nas]=NA;
+        res[nas]=NA
         res[nonzeros]= -1 * 
-                log10(abs(x[nonzeros]-correct[nonzeros])/correct[nonzeros]); 
+                log10(abs(x[nonzeros]-correct[nonzeros])/correct[nonzeros]) 
         if (use.LAE) {
-                res[zeros]=-1*log10(abs(x[zeros]-correct[zeros]));
+                res[zeros]=-1*log10(abs(x[zeros]-correct[zeros]))
         } else {
-                res[zeros]=NA;
+                res[zeros]=NA
         }
 
-        return(res);
+        return(res)
 }
 

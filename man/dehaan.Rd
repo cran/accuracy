@@ -78,17 +78,17 @@ Micah Altman
   # is implemented using the negative of the sum of squares for consistency
   # with the deHaan framework of maximum likelihood.
 
-  data("BOD");
-  stval=expand.grid(A = seq(10, 100, 10), lrc = seq(.5, .8, .1));
+  data("BOD",package="stats")
+  stval=expand.grid(A = seq(10, 100, 10), lrc = seq(.5, .8, .1))
   llfun<-function(A,lrc)
         -sum((BOD$demand - A*(1-exp(-exp(lrc)*BOD$Time)))^2)
-  lls=NULL; 
+  lls=NULL 
   for (i in 1:nrow(stval))  {
-     lls = rbind(lls, llfun(stval[i,1], stval[i,2]));
+     lls = rbind(lls, llfun(stval[i,1], stval[i,2]))
   }
   fm1 <- nls(demand ~ A*(1-exp(-exp(lrc)*Time)),  
                 data = BOD, start = c(A = 20, lrc = log(.35)))
-  ss = -sum(resid(fm1)^2);
+  ss = -sum(resid(fm1)^2)
   dehaan(lls, ss)
 
 }
