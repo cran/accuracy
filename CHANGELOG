@@ -25,3 +25,7 @@
 -- Change object name to "sensitivity", to reduce conflict with perturb module
 -- Performance enhancements
 -- Fixed bugs using codetools
+
+1.10
+-- Moved citation file
+-- Added vignette (really)
