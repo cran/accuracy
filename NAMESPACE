@@ -16,6 +16,7 @@ export(LRE)
 
 #perturbation
 export(perturb )  # main  routine for running perturbations
+export(sensitivity)  # main  routine for running perturbations
 export(PTBi, PTBms, PTBmsb, PTBmsbr)  # noise functions for vections
 export(PTBn, PTBnc, PTBns, PTBnbr, PTBnbrr, PTBnsbr, PTBnsbrr) 
 export(PTBu, PTBuc, PTBus, PTBubr, PTBubrr, PTBusbr, PTBusbrr)
@@ -24,27 +25,28 @@ export(PTBmu.gen, PTBmn.gen)  #1.04 PTB multiple times
 export(PTBdiscrete,PTBdefault,PTBdefaultfn,reclass.mat.diag,reclass.mat.random) 
 
 #### (plot,print,summary)
-S3method(print, perturb)
-S3method(print, perturbS)
-S3method(plot, perturb)
-S3method(summary, perturb)
-S3method(plot,perturbS) # 1.06
+S3method(print, sensitivity)
+S3method(print, sensitivity.summary)
+S3method(plot, sensitivity)
+S3method(summary, sensitivity)
+S3method(plot,sensitivity.summary) # 1.06
 
 ### anova support
-S3method(anova, perturb) # 1.04
-S3method(print, perturbAnova) # 1.05
-S3method(plot, perturbAnova) # 1.05
+S3method(anova, sensitivity) # 1.04
+S3method(print, sensitivity.anova) # 1.05
+S3method(plot, sensitivity.anova) # 1.05
 
 ### zelig integration
-export(pzelig,psim)
-export(setx.perturb)
-S3method(print, perturb.sim) # 1.05
-S3method(plot, perturb.sim) # 1.05
-S3method(print, perturb.sim.summary) 
-S3method(summary, perturb.sim) # 1.05
+export(pzelig,psim,sensitivityZelig)
+export(setx.sensitivity)
+S3method(print, sensitivity.sim) # 1.05
+S3method(plot, sensitivity.sim) # 1.05
+S3method(print, sensitivity.sim.summary) 
+S3method(summary, sensitivity.sim) # 1.05
 
 # R2HTML Support
-export(HTML.perturbS)
-export(HTML.perturb.sim.summary)
+export(HTML.sensitivity.summary)
+export(HTML.sensitivity.sim.summary)
+export(HTML.sensitivity.anova)
 
 useDynLib("accuracy")

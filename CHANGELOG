@@ -20,3 +20,8 @@
 
 1.08
 -- Added HTML methods for R2HTML support
+
+1.09 
+-- Change object name to "sensitivity", to reduce conflict with perturb module
+-- Performance enhancements
+-- Fixed bugs using codetools

@@ -1,20 +1,20 @@
-\name{HTML.perturbS}
-\alias{HTML.perturbS}
-\alias{HTML.perturb.sim.summary}
-\alias{HTML.perturbAnova}
+\name{HTML.sensitivity.summary}
+\alias{HTML.sensitivity.summary}
+\alias{HTML.sensitivity.sim.summary}
+\alias{HTML.sensitivity.anova}
 \title{HTML methods for perturbation analysis}
 \description{
 	HTML pretty printing methods for use rith R2HTML package
 }
 \usage{
-	HTML.perturbS(x,...)
-	HTML.perturb.sim.summary(x,...)
-	HTML.perturbAnova(x,...)
+	HTML.sensitivity.summary(x,...)
+	HTML.sensitivity.sim.summary(x,...)
+	HTML.sensitivity.anova(x,...)
 
 }
 
 \arguments{
-  \item{x}{ a perturb summary object} 
+  \item{x}{ a sensitivity summary object} 
   \item{\dots}{ arguments to pass to default functions}
 }
 

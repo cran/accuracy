@@ -1,13 +1,13 @@
 \name{psim}
 \alias{psim}
-\alias{setx.perturb}
+\alias{setx.sensitivity}
 \title{perform zelig simulations for perturbed models}
 \description{
 	This performs \code{sim()} for perturbed models.
 }
 \usage{
 	psim(object,x=setx(object),...)
-	 setx.perturb(obj,...)
+	 setx.sensitivity(obj,...)
 
 }
 

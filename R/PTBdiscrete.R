@@ -29,7 +29,7 @@ reclass.mat.default<-function(x,q=.99) {
      } else if(is.numeric(x)) {
        r=reclass.mat.diag(length(levels(as.factor(x))),q)
      } else if(is.ordered(x)) {
-       reclass.mat.diag(length(levels(vec)),q)
+       reclass.mat.diag(length(levels(x)),q)
      } else {
         r=reclass.mat.random(length(levels(as.factor(x))),q)
      }

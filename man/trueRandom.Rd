@@ -71,7 +71,7 @@ Micah Altman
 \email{Micah\_Altman@harvard.edu}
 \url{http://www.hmdc.harvard.edu/micah_altman/}
 }
-\warning{  This relies on external sources of true random numbers.
+\note{  This relies on external sources of true random numbers.
 If a source of true random numbers is unavailable reset.seed() uses the clock value
 and true.random() will return NULL.
 	 }

@@ -144,6 +144,8 @@
 		return(NULL)
 	}
 	assign(".EntropyPool",entropypool,envir=.GlobalEnv)
+	refreshPool(silent=silent)
+	entropypool=get(".EntropyPool",envir=.GlobalEnv)
 	return(entropypool)
 }
 
@@ -165,14 +167,14 @@
 		}
 	}
 	pool=get(".EntropyPool",envir=.GlobalEnv)
-	if (pool$devrndok) {
-		con = "/dev/random"
-		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size)
-	} else if (pool$hbok) {
+	if (pool$hbok) {
 		con = hburl(bytes=pool$size)
 		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size)
 		close(con)
-	}
+	} else if (pool$devrndok) {
+		con = "/dev/random"
+		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size)
+	} 
 	pool$current=length(pool$pool)
 	assign(".EntropyPool",pool,envir=.GlobalEnv)
 	return(pool)

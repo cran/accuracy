@@ -1,5 +1,6 @@
-\name{perturb}
+\name{sensitivty}
 \alias{perturb}
+\alias{sensitivity}
 \title{ Data Perturbations based Sensitivity Analysis }
 \description{
 This function replicates an statistical analysis using slightly perturbed
@@ -11,16 +12,21 @@ model to susch changes.  This can be used to draw attention to
 
 }
 \usage{
-perturb(data, statistic, ..., ptb.R = 50, ptb.ran.gen = NULL , ptb.s = NULL)
+sensitivity(data, statistic, ..., ptb.R = 50, ptb.ran.gen = NULL , ptb.s = NULL, 
+	summarize=FALSE)
+perturb(...)
 }
 \arguments{
   \item{data}{ data matrix to be perturbed }
   \item{statistic}{ statistic model to be run on data }
-  \item{\dots}{ additional arguments to statistical model }
+  \item{\dots}{ additional arguments to statistical model}
   \item{ptb.R}{ number of replications for perturbation analysis }
   \item{ptb.ran.gen}{ a single function, or a vector of functions to be
 		used to perturb each vector see \code{\link{PTBi}} }
   \item{ptb.s}{ a size, or vector of sizes, to be used in the vector perturbation functions}
+  \item{summarize}{ if true, return a sensitivity summary, as would \code{summary(sensitivity())}. This 
+reduces system memory use and can significantly speed up the analysis of large datasets. }
+
 }
 \details{
 
@@ -46,6 +52,9 @@ or ill-conditioning.
 \note{  
 If ptb.ran.gen is not specified,  then \code{PTBdefault} will be used, with q=ptb.s, for each
 variable in the input data. 
+
+Note "sensitivity" was  originally called "perturb". The name was changed to avoid a conflict
+with another module, introduced afterwards.
 }
 
 \value{
@@ -68,7 +77,7 @@ Micah Altman
 }
 
 
-\seealso{ See Also as \code{\link{PTBi}}, \code{\link{pzelig}}, \code{\link{PTBdefault}}, \code{\link{PTBdiscrete}}}
+\seealso{ See Also as \code{\link{PTBi}}, \code{\link{sensitivityZelig}}, \code{\link{PTBdefault}}, \code{\link{PTBdiscrete}}}
 \examples{
 
 # Examine the sensitivity of the GLM from Venables & Ripley (2002, p.189)
@@ -81,7 +90,7 @@ Micah Altman
 # Summary should show that estimated coefficients are not substantively affected by noise.
 
 data(anorexia,package="MASS")
-panorexia = perturb(anorexia, glm, Postwt ~ Prewt + Treat + offset(Prewt),
+panorexia = sensitivity(anorexia, glm, Postwt ~ Prewt + Treat + offset(Prewt),
      family=gaussian, 
     ptb.R=100, ptb.ran.gen=c(PTBi,PTBus,PTBus), ptb.s=c(1,.005,.005) )
 summary(panorexia)
@@ -94,11 +103,11 @@ summary(panorexia)
 # the year variable. So we assign then PTBi or NULL in ptb.ran.gen )
 
 data(longley)
-plongley = perturb(longley,lm,Employed~.) # defaults
+plongley = sensitivity(longley,lm,Employed~.) # defaults
 
 # Alternatively, choose specific perturbation functions
 #
-#plongley = perturb(longley,lm,Employed~., ptb.R=100, 
+#plongley = sensitivity(longley,lm,Employed~., ptb.R=100, 
 #    ptb.ran.gen=c(PTBi, replicate(5,PTBus),PTBi), ptb.s=c(1,replicate(5,.001),1))
 
 # summarizes range
@@ -153,7 +162,7 @@ summary(coef)
      llD<-function(data, ymax=15, xhalf=6)
          -sum(stats::dpois(data[[2]], lambda=ymax/(1+data[[1]]/xhalf), log=TRUE))
 
-     summary(perturb(dat, mleD,llD))
+     summary(sensitivity(dat, mleD,llD))
 
 
 

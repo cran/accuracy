@@ -1,4 +1,4 @@
-# globaltests
+
 #
 # Tests for global optimality of non-linear and maximum-likelihood solutions
 #
@@ -69,8 +69,8 @@ dehaanSelftest<-function(silent = TRUE) {
         l1= c(1,2,3,4,5)
         max1 = 4; 
 
-        if (dehaan(c(1,2,3,4,5),4) ||
-	    !dehaan(c(1,2,3,4,5),1000) )  {
+        if (dehaan(l1,max1) ||
+	    !dehaan(l1,1000) )  {
                 ret = FALSE
                  if (!silent) {
                         warning("failed selftest ")
@@ -89,19 +89,6 @@ dehaanSelftest<-function(silent = TRUE) {
                   warning("failed selftest")
            }
         } 
-
-        return(ret)
-}
-
-
-starr<-function(betas, tol=.0001, dmethod="euclidean") {
-
-  if (!is.matrix(betas)) {
-    stop("betas must be matrix")
-  }
-  if (length(tol)!=1 || (tol<0) || !is.numeric(tol)) {
-    stop("tolmust be scalar >=0")
-  }
 
         return(ret)
 }
@@ -137,7 +124,7 @@ starr<-function(betas, tol=.0001, dmethod="euclidean") {
         optc[i] = tmp
     }
   }
-  nopt = sum(optc>0); 
+  #nopt = sum(optc>0); 
 
   ndouble = sum(optc==2)
   nsingle = sum(optc==1)

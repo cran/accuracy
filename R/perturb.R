@@ -34,9 +34,15 @@
 # ran.gen= function or vector of functions to apply to data to add noise
 # ptb.s = size, or vector of sizes for noise generators
 
-perturb<-function(data,statistic,..., ptb.R=50,
+"perturb"<-function(...) {
+	sensitivity(...)
+}
+
+sensitivity<-function(data,statistic,..., ptb.R=50,
   ptb.ran.gen=NULL,
-	ptb.s=NULL ) {
+	ptb.s=NULL,
+	summarize=FALSE
+	) {
 
 	ptb.R=as.integer(trunc(ptb.R))
 	
@@ -63,22 +69,25 @@ perturb<-function(data,statistic,..., ptb.R=50,
 		    perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic,...,
 			ptb.s=ptb.s)
 		} 
+		if (summarize) {
+			retval[[i]] = sensitivitySummaryIteration(retval[[i]])
+		}
 	}
 
-	# replicate swallows ... in R 1.9.0 ???!!??, worked in 1.6-1.8
-	#retval = replicate(ptb.R,
-	#	perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic,...)
-	#, simplify=FALSE);
-
-	attr(retval,"ran.gen")= ptb.ran.gen
 	attr(retval, "R") = ptb.R
-	attr(retval, "s") = ptb.s
-	attr(retval, "statistic") = statistic
-	class(retval)="perturb"
+	if (summarize) {
+	  retval = sensitivitySummaryMerge(retval)
+	  class(retval)="sensitivity.summary"
+	} else {
+	   attr(retval,"ran.gen")= ptb.ran.gen
+	   attr(retval, "s") = ptb.s
+	   attr(retval, "statistic") = statistic
+	   class(retval)="sensitivity"
+	}
 	return(retval)
 }
 
-print.perturb<-function(x,quiet=T,...) {
+print.sensitivity<-function(x,quiet=T,...) {
   print("perturbation list")
 	if (!quiet) {
      cat("ran.gen: \n")
@@ -92,7 +101,7 @@ print.perturb<-function(x,quiet=T,...) {
   cat("Replications: \n",attr(x,"R"),"\n\n")
 }
 
-perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL) {
+perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL,nameData=F) {
 	ndata = as.data.frame(data)
 	if (length(ran.gen)==1) {
 		ind=which(sapply(ndata,is.numeric))
@@ -119,9 +128,17 @@ perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL) {
            ne = new.env(parent=environment(statistic))
            environment(statistic)=ne
            assign("ndata",ndata,envir=ne)
-           res = statistic(data=ndata,...)
+	   if (nameData) {
+           	res = statistic(data=as.name("ndata"),...)
+	   } else {
+           	res = statistic(data=ndata,...)
+	   }
         }  else  {
-           res= do.call(statistic,...,data=as.name(ndata))
+	   if (nameData) {
+           	res= do.call(statistic,list(...,data=as.name("ndata")))
+	   } else {
+           	res= do.call(statistic,list(...,data=ndata))
+	   }
         }
 
         return(res)
@@ -509,82 +526,85 @@ PTBmn.gen<-function(reps=1) {
 # Summary Functions
 #
 
-summary.perturb<-function (object,...) {
-	n = length(object)
-	s = vector(n,mode="list")
+summary.sensitivity<-function (object,...) {
 
-	# generate individual summaries for list of replications
-	for (i in 1:n) {
-		tmp = try(summary(object[[i]]),silent=T)
-		if (is.null(cf<-coef(tmp)) || inherits( tmp,"try-error")){
-		   if(is.null(cf<-coef(object[[i]]))) {
-			warn("Don't know how to summarize replications of type ", 
-				class(tmp) )
-			return(NULL)
-		   }
-		}
-		coef.names=names(cf)
-		if ( inherits( coef.formula<-try(tmp[["call"]],silent=T),"try-error")) {
-		   if ( inherits( coef.formula<-try(tmp[["formula"]],silent=T),"try-error")) {
-			coef.formula=NULL
-		  }
-		}
-		if ( is.null(dim(cf)[2]) || (dim(cf)[2]<2) ) {
-			coef.betas=cf
-			coef.stderrs=NULL
-		} else {
-			coef.betas=cf[,1]
-			coef.stderrs=cf[,2]
-		}	
-	
- 		attr(tmp,"coef.names") = coef.names
-		attr(tmp,"coef.betas") = coef.betas
-		attr(tmp,"coef.stderrs") = coef.stderrs
-		attr(tmp,"coef.formula") = coef.formula
-		s[[i]]=tmp
+	tmps = list()
+	for (i in 1:length(object)) {
+		tmps[[i]] = sensitivitySummaryIteration(object[[i]])
 	}
+	ret = sensitivitySummaryMerge(tmps)	
+	attr(ret, "R") = attr(object, "R")
+	class(ret)="sensitivity.summary";	
+	return (ret);
+}
+
+
+sensitivitySummaryIteration<-function(iteration) {
+	# generate individual summaries for list of replications
+	tmp = try(summary(iteration),silent=T)
+	if (is.null(cf<-coef(tmp)) || inherits( tmp,"try-error")){
+	   if(is.null(cf<-coef(iteration))) {
+		return(NULL)
+	   }
+	}
+	coef.names=names(cf)
+	if ( inherits( coef.formula<-try(tmp[["call"]],silent=T),"try-error")) {
+	   if ( inherits( coef.formula<-try(tmp[["formula"]],silent=T),"try-error")) {
+		coef.formula=NULL
+	    }
+	}
+	if ( is.null(dim(cf)[2]) || (dim(cf)[2]<2) ) {
+		coef.betas=cf
+		coef.stderrs=NULL
+	} else {
+		coef.betas=cf[,1]
+		coef.stderrs=cf[,2]
+	}	
 	
+	tmp = coef.betas
+ 	attr(tmp,"coef.names") = coef.names
+	attr(tmp,"coef.betas") = coef.betas
+	attr(tmp,"coef.stderrs") = coef.stderrs
+	attr(tmp,"coef.formula") = coef.formula
+	return(tmp)	
+}
+
+sensitivitySummaryMerge<-function(s) {
+	n = length(s)
+
 	# check consistency and summarize
-	coef.names = attr(s[[1]],"coef.names")
-	coef.names.m = coef.names
-	coef.betas = attr(s[[1]],"coef.betas")
-	coef.betas.m = coef.betas
-	coef.stderrs= attr(s[[1]],"coef.stderrs")
-	coef.stderrs.m = coef.stderrs;	
-	coef.formula = attr(s[[1]],"coef.formula")
+	coef.names = coef.names.m = attr(s[[1]],"coef.names")
+	coef.betas = coef.betas.m = attr(s[[1]],"coef.betas")
+	coef.stderrs = coef.stderrs.m = attr(s[[1]],"coef.stderrs")
+	nomatch = FALSE
 	if (n>1) {
 	   for (i in 2:n) {
 		if ( sum( attr(s[[i]],"coef.names") != coef.names)>0
 		   || sum( length(attr(s[[i]],"coef.betas")) != length( coef.betas))>0
 		   || sum( length(attr(s[[i]],"coef.stderrs")) != length( coef.stderrs))>0
 		) {
-			warning("replications do not match (", i,")")
+			nomatch=TRUE
 		}
 		coef.names.m = rbind(coef.names.m, attr(s[[i]],"coef.names"))
 		coef.betas.m = rbind(coef.betas.m, attr(s[[i]],"coef.betas"))
 		coef.stderrs.m = rbind(coef.stderrs.m, attr(s[[i]],"coef.stderrs"))
 	   }
 	}
-
-
+	if (nomatch) {
+		warning("replications do not match (", i,")")
+	}
+	ret = list(coef.betas.m)
 	row.names(coef.betas.m) = NULL
 	row.names(coef.stderrs.m) = NULL
-	attr(s,"coef.names.m") = coef.names.m
-	attr(s,"coef.betas.m") = coef.betas.m
-	attr(s,"coef.stderrs.m") = coef.stderrs.m
-	attr(s,"coef.formula") = coef.formula
 
+	attr(ret,"coef.names.m") = coef.names.m
+	attr(ret,"coef.betas.m") = coef.betas.m
+	attr(ret,"coef.stderrs.m") = coef.stderrs.m
 
-	attr(s, "ran.gen")= attr(object, "ran.gen")
-	attr(s, "R") = attr(object, "R")
-	attr(s, "s") = attr(object, "s")
-	attr(s,"statistic") = attr(object, "statistic")
-
-	class(s)="perturbS";	
-	return(s)
+	return(ret)
 }
 
-anova.perturb<-function(object,...) {
+anova.sensitivity<-function(object,...) {
         n = length(object)
         s = vector(n,mode="list")
 
@@ -658,35 +678,15 @@ anova.perturb<-function(object,...) {
         attr(s, "s") = attr(object, "s")
         attr(s,"statistic") = attr(object, "statistic")
 
-        class(s)="perturbAnova";
+        class(s)="sensitivity.anova";
         return(s)
 }
 
-print.perturbS<-function(x,quiet=T,...) {
-    if (!quiet) {
-        cat("statistic: \n")
-        print(attr(x,"statistic"))
-        cat("s: \n")
-        print(attr(x,"s"))
-
-        cat("Replications: \n",attr(x,"R"),"\n\n")
-        cat("ran.gen: \n")
-        print(attr(x,"ran.gen"))
-        cat("formula: \n","\n\n")
-        print(attr(x,"coef.formula"))
-
-
-        cat("betas:\n\n")
-        print(summary(attr(x,"coef.betas.m"),...))
-        print(q95(attr(x,"coef.betas.m")))
-        cat("\n\nstderrs:\n\n")
-        print(summary(attr(x,"coef.stderrs.m"),...))
-        print(q95(attr(x,"coef.stderrs.m")))
-     }
+print.sensitivity.summary<-function(x,quiet=T,...) {
      cat("Sensitivity of coefficients to perturbations:\n")
      print(hSummary(attr(x,"coef.betas.m")),...)
 
-     if (!is.null(attr(x,"coeff.stderrs.m"))) {
+     if (!is.null(attr(x,"coef.stderrs.m"))) {
         cat("\n\nSensitivity of stderrs to perturbations:\n")
         print(hSummary(attr(x,"coef.stderrs.m")),...)
      }
@@ -713,7 +713,7 @@ hSummary<-function(df) {
      return(resm)
 }
 
-plot.perturbS<-function(x,...) {
+plot.sensitivity.summary<-function(x,...) {
    cf=as.data.frame(attr(x,"coef.betas.m"))
    op=par(no.readonly=T)
    par(mfrow=c(1,length(cf)))
@@ -726,7 +726,7 @@ plot.perturbS<-function(x,...) {
 
 
 
-print.perturbAnova<-function(x,quiet=T,...) {
+print.sensitivity.anova<-function(x,quiet=T,...) {
    if (!quiet) {
         cat("statistic: \n")
         print(attr(x,"statistic"))
@@ -749,7 +749,7 @@ print.perturbAnova<-function(x,quiet=T,...) {
 
 }
 
-plot.perturb<-function(x,ask=dev.interactive(),...) {
+plot.sensitivity<-function(x,ask=dev.interactive(),...) {
   if (ask) {
         op <- par(ask = TRUE)
         on.exit(par(op))
@@ -763,8 +763,8 @@ plot.perturb<-function(x,ask=dev.interactive(),...) {
   return(invisible())
 }
 
-plot.perturbAnova<-function(x,...) {
-  plot.perturb(x,...)
+plot.sensitivity.anova<-function(x,...) {
+  plot.sensitivity(x,...)
   return(invisible())
 }
 

@@ -1,18 +1,18 @@
-\name{plot.perturb}
-\alias{plot.perturb}
-\alias{summary.perturb}
-\alias{print.perturb}
-\alias{anova.perturb}
-\alias{plot.perturbS}
+\name{plot.sensitivity}
+\alias{plot.sensitivity}
+\alias{summary.sensitivity}
+\alias{print.sensitivity}
+\alias{anova.sensitivity}
+\alias{plot.sensitivity.summary}
 \title{ Generic methods for perturbations. }
 \description{
  Perturbations objects can be printed, summarized, and plotted .
 }
 \usage{
-plot.perturb(x, ask=dev.interactive(), ...)
-anova.perturb(object, ...)
-print.perturb(x, quiet=T, ...)
-summary.perturb(object, ...)
+plot.sensitivity(x, ask=dev.interactive(), ...)
+anova.sensitivity(object, ...)
+print.sensitivity(x, quiet=T, ...)
+summary.sensitivity(object, ...)
 }
 \arguments{
   \item{x}{ perturb object to plotted or printed }
@@ -25,10 +25,10 @@ summary.perturb(object, ...)
 \value{
 	see the related generic functions
 }
-\notes{ A perturb object can be summarized, printed, plotted, or summarized via anova if applicable. 
+\note{ A perturb object can be summarized, printed, plotted, or summarized via anova if applicable. 
 The idiom \code{plot(anova(perturb(...)))} will plot the anova summaries, as well. And the \code{plot(summary(perturb(...)))} will plot the sensitivity of the coefficients.
  See \code{perturb} for an example.}
-\example{
+\examples{
 # see perturb()
 }
 \author{

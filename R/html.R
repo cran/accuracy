@@ -1,4 +1,4 @@
-HTML.perturbS<-function(x, ...) {
+HTML.sensitivity.summary<-function(x, ...) {
    HTML("Sensitivity of coefficients to perturbations:\n",...)
    HTML(hSummary(attr(x,"coef.betas.m")),...)
 
@@ -8,7 +8,7 @@ HTML.perturbS<-function(x, ...) {
      }
 }
 
-HTML.perturbAnova<-function(x,...) {
+HTML.sensitivity.anova<-function(x,...) {
         HTML("\nsumsq:\n\n",...)
         HTML(hSummary(attr(x,"coef.sumsq.m")), ...)
         HTML("\nmeansq:\n\n",...)

@@ -1,12 +1,14 @@
-\name{pzelig}
+\name{sensitivityZelig}
 \alias{pzelig}
+\alias{sensitivityZelig}
 \title{Perturbations-based Sensitivity Analysis of Zelig Models}
 \description{
 	This is a wrapper to perturb analyses launches through Zelig, with
 	extension functions to summarize results.
 }
 \usage{
-	pzelig(z, ptb.R = 30, ptb.ran.gen = NULL, ptb.s = NULL, explanatoryOnly=FALSE)
+sensitivityZelig(z, ptb.R=30, ptb.ran.gen=NULL, ptb.s=NULL, explanatoryOnly=FALSE, summarize=FALSE, simulate=FALSE, simArgs=NULL)
+	pzelig(...)
 }
 \arguments{
   \item{z} { an analysis output by \code{zelig} }
@@ -15,9 +17,15 @@
 		used to perturb each vector see \code{\link{PTBi}} }
   \item{ptb.s}{ a size, or vector of sizes, to be used in the vector perturbation functions}
   \item{explanatoryOnly}{ a flag indicating whether explanatory variables should be perturbed by default}
+  \item{summarize}{ if true, return a sensitivity summary, as would \code{summary(sensitivityZelig())}. }
+  \item{simulate}{ if true, return a sensitivity summary, and a zelig simulation,
+                as would \code{psim(sensitivityZelig())}. This decreases system memory use,
+                and can significantly speed up analysis for large datasets.}
+  \item{simArgs}{ a list of arguments to pass to psim, if simulate is true}
+  \item{\dots}{args as in sensitivityZelig}
 }
 \details{
-	Uses \code{perturb} to perform sensistivity analysis on a \code{zelig} model.
+	Uses \code{sensitivity} to perform sensitivity analysis on a \code{zelig} model.
 }
 \value{
 	Returns a list which contains the result  of each model run. Along
@@ -26,9 +34,12 @@ with attributes about the settings used in the perturbations.
  of the model parameters across the entire set of runs.
 }
 \note{
+	This was originally called "pzelig".
 	If ptb.ran.gen is not specified,  then \code{PTBdefault} will be used, with q=ptb.s, for each
 	explanatory variable in the input data. By default, response variables will also 
 	be perturbed, unless \code{explanatoryOnly} is true.
+
+	
 }
 
 \references{
@@ -59,7 +70,7 @@ Micah Altman
 
    zelig.out=zelig(Employed~.,"ls",longley) # run longley regression
    # default settings
-   perturb.zelig.out = pzelig(zelig.out)		   
+   perturb.zelig.out = sensitivityZelig(zelig.out)		   
 
    # Note: without zelig, the preceding would be:  perturb.out = perturb(longley,lm,Employed~.) 
 
