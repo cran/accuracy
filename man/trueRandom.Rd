@@ -12,9 +12,8 @@ the seed value for subsequent PRNG generation.
 }
 \usage{
 	runifT(n,min=0,max=1)
-	trueRandom(n)
 	resetSeed()
-	initPool(size=512, hbok=TRUE, devrndok=TRUE) 
+	initPool(size=512, hbok=TRUE, devrndok=TRUE, silent=FALSE) 
 }
 \arguments{
   \item{n}{ number of observations. If 'length(n) > 1', the length is taken to be the number required. }
@@ -23,10 +22,18 @@ the seed value for subsequent PRNG generation.
   \item{min,max}{ lower and upper limits of the distribution }
   \item{size}{ number of bytes of entropy to be retrieved into the local entropy pool}
   \item{hbok}{ use the "hotbits" entropy server }
+  \item{silent}{ do not issue warnings }
   \item{devrndok}{ use /dev/random on Unix-derived systems }
 }
 
 \details{
+\code{runifT} returns true random numbers in a uniform distribution.
+
+\code{resetSeed} resets R's own PRNG seed, \code{set.seed}, supplying a true random number
+
+\code{initPool} provides lower level control over how the external entropy sources
+used by \code{runifT} and \code{resetSeed} are accessed
+
 These routines	provides true random numbers by accessing external entropy collectors.
 Currently entropy can be retrieved from two different
 sources. (1) The "Hotbits" server \url{http://www.fourmilab.ch/hotbits/} supplies
@@ -43,7 +50,9 @@ block size.
 }
 
 \value{
-	Returns a vector of uniformly distributed true random numbers.
+\code{runifT} 	Returns a vector of uniformly distributed true random numbers.
+\code{resetSeed} returns the status of \code{set.seed()}
+
 }
 
 \references{
@@ -67,10 +76,16 @@ and true.random() will return NULL.
 	\code{\link{.Random.seed}},
 }
 \examples{
-if (.Platform$OS.type == "unix" || !is.null(nsl("www.cran.org"))) {
-	# note, if you are using Windows, you must be on-line
-	# to get to entropy generator
+# note, if you are using Windows, you must be on-line
+# to get to entropy generator, will fall-back to pseudo-random
+# numbers when off-line
+
+# only needed  to pass R CMD check on online windows
+w = options("warn");
+options(warn=0);
+
 # reset the seed for runif() based on a true random value
+
 resetSeed()
 y=runif(100)
 
@@ -79,11 +94,9 @@ y=runif(100)
 
 y=runifT(1000)
 ty= table(trunc(5*y))
-ty
+print(ty);
 chisq.test(ty)
-} else {
-	print ("Sorry, for entropy gathering on windows, requires a net connection.");
-}
+options(warn=as.integer(w));
 
 }
 \keyword{misc}

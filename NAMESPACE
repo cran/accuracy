@@ -1,6 +1,6 @@
 #public methods
 export(frexp)
-export(trueRandom, initPool, resetSeed,runifT)
+export(initPool, resetSeed,runifT)
 export(sechol)
 export(LRE)
 export(perturb, PTBi)

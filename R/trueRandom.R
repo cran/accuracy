@@ -35,10 +35,11 @@
 	}
 	tmp = trueRandom(n);
 	if (is.null(tmp)) {
-		warning("Could not get true random source, return pseudo-random numbers")
-		tmp = runif(n);
-	} 
-	r = min + (((tmp/.Machine$integer.max) + 1) * ((max-min)/2));
+		warning("No entropy available, returning pseudo-random numbers")
+		r = runif(n, min, max);
+	} else { 
+		r =(tmp/.Machine$integer.max  + 1) * ((max-min)/2);
+	}
 	return(r);
 }
 
@@ -50,7 +51,7 @@
 	}
 
 	if (!exists(".EntropyPool",envir=.GlobalEnv)) {
-		pool=refreshPool();
+		pool=refreshPool(silent=TRUE);
 		if (is.null(pool)) {
 			return(NULL);
 		}
@@ -62,7 +63,7 @@
 	i = 1;
 	while (i<=size) {
 		if (pool$current < 1)  {
-			pool=refreshPool();
+			pool=refreshPool(silent=TRUE);
 			next;
 		} 
 		tr[i] = pool$pool[pool$current];
@@ -77,12 +78,13 @@
 "resetSeed" <-function() {
 	s = trueRandom(1);
 	if (is.null(s)) {
+		warning("No entropy available, using system time as seed.")
 		s = as.integer(Sys.time());
 	}
 	set.seed(s);
 }
 
-"initPool"<-function(size=512, hbok=TRUE, devrndok=TRUE) {
+"initPool"<-function(size=512, hbok=TRUE, devrndok=TRUE, silent=FALSE) {
 	entropypool = list();
 	entropypool$size=size;
 	entropypool$current=0;
@@ -100,21 +102,19 @@
 	   tri = integer();
            tr = try({tri=readBin('/dev/random', integer(0), signed=FALSE)},
                 silent=TRUE);
-           if ((class(tr) == "try-error") || (length(tri) == 0)) {
+           if (inherits(tr, "try-error") || (length(tri) == 0)) {
                 devrndok=FALSE;
            }   
 	}
   
-	if (  is.null(nsl("cran.r-project.org")) ) {
-		hbok=FALSE;
-	}
 	if (hbok) {
 	   tri = integer();
 	   hb = try({hburl(bytes= .Machine$sizeof.long)});
-           if (is.null(hb) || (class(hb) == "try-error")) {
+           if (is.null(hb) || inherits(hb, "try-error")) {
            	tr = try({tri=readBin(hb, integer(0), signed=FALSE)},
                 	silent=TRUE);
-                 if ((class(tr) == "try-error") || (length(tri) == 0)) {
+
+                 if (inherits(tr, "try-error") || (length(tri) == 0)) {
                    hbok=FALSE;
                  }  else {
 	   		try(close(hb), silent=TRUE);
@@ -126,8 +126,10 @@
 	options(warn=as.integer(w));
 	entropypool$hbok=hbok;
 	entropypool$devrndok=devrndok;
-	if (!devrndok && !hbok) {
-		warning("initialization failed, no true random sources found");
+	if (!devrndok && !hbok ) {
+		if (!silent) {
+			warning("initialization failed, no true random sources found");
+		}
 		return(NULL);
 	}
 	assign(".EntropyPool",entropypool,envir=.GlobalEnv);
@@ -141,10 +143,12 @@
 	return(url(hbstring,open="rb"));
 }
 
-"refreshPool"<-function() {
+"refreshPool"<-function(silent=FALSE) {
 	if (!exists(".EntropyPool",envir=.GlobalEnv)) {
-		if (is.null(initPool())) { 
-			warning("Could not create pool");
+		if (is.null(initPool(silent=TRUE))) { 
+			if (!silent) {
+				warning("Could not create pool");
+			}
 			return(NULL);
 		}
 	}
