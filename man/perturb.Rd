@@ -11,7 +11,7 @@ model to susch changes.  This can be used to draw attention to
 
 }
 \usage{
-perturb(data, statistic, ..., ptb.R = 1, ptb.ran.gen = PTBms, ptb.s = NULL)
+perturb(data, statistic, ..., ptb.R = 50, ptb.ran.gen = NULL , ptb.s = NULL)
 }
 \arguments{
   \item{data}{ data matrix to be perturbed }
@@ -43,6 +43,11 @@ numerical instability, statistical sensitivity to measurement error,
 or ill-conditioning.
 
 }
+\note{  
+If ptb.ran.gen is not specified,  then \code{PTBdefault} will be used, with q=ptb.s, for each
+variable in the input data. 
+}
+
 \value{
 	Returns a list which contains the result  of each model run. Along
 with attributes about the settings used in the perturbations.
@@ -63,7 +68,7 @@ Micah Altman
 }
 
 
-\seealso{ See Also as \code{\link{PTBi}}}
+\seealso{ See Also as \code{\link{PTBi}}, \code{\link{pzelig}}, \code{\link{PTBdefault}}, \code{\link{PTBdiscrete}}}
 \examples{
 
 # Examine the sensitivity of the GLM from Venables & Ripley (2002, p.189)
@@ -88,23 +93,33 @@ summary(panorexia)
 # In this example we are not perturbing the dependent variable (employed) or 
 # the year variable. So we assign then PTBi or NULL in ptb.ran.gen )
 
-if(version$major<2) {
-	data(longley, package="base")
-} else {
-	data(longley, package="datasets")
-}
+data(longley)
+plongley = perturb(longley,lm,Employed~.) # defaults
 
-plongley = perturb(longley,lm,Employed~., ptb.R=100, 
-    ptb.ran.gen=c(PTBi, replicate(5,PTBus),PTBi), ptb.s=c(1,replicate(5,.001),1))
-sp=summary(plongley)
+# Alternatively, choose specific perturbation functions
+#
+#plongley = perturb(longley,lm,Employed~., ptb.R=100, 
+#    ptb.ran.gen=c(PTBi, replicate(5,PTBus),PTBi), ptb.s=c(1,replicate(5,.001),1))
 
 # summarizes range
+sp=summary(plongley)
 print(sp)
+
+# models with anova methods can also be summarized this way
+anova(plongley) 
+
+# plots different replications
+plot(plongley) # plots the perturbed replications individually, pausing in between
+
+# plots anova results (where applicable)
+plot(anova(plongley))
+
+
 
 # look in summary object to extract more ...
 names(attributes(sp))
 
-# print metrix of coefficients from all runs
+# print matrix of coefficients from all runs
 coef= attr(sp,"coef.betas.m")
 summary(coef)
 

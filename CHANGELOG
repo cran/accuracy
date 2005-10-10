@@ -2,3 +2,12 @@
 	Fixed a bug in PTBu for size<>1
 	Minor documentation
 
+1.05
+-- Added a framework for discrete perturbations using a reclassification matrix
+(PTBdiscrete,reclass.mat.diag)
+-- Updated default perturb options to detect discrete variables and
+   use appropriate method
+-- Added plot method for perturb.summary
+-- Added built-in support for perturbing Zelig models and plotting and summarizing
+   the results
+

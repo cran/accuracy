@@ -34,11 +34,23 @@
 # ran.gen= function or vector of functions to apply to data to add noise
 # ptb.s = size, or vector of sizes for noise generators
 
-perturb<-function(data,statistic,..., ptb.R=1,ptb.ran.gen=PTBms,
-	ptb.s=NULL) {
-	ptb.R=as.integer(trunc(ptb.R))
+perturb<-function(data,statistic,..., ptb.R=50,
+  ptb.ran.gen=NULL,
+	ptb.s=NULL ) {
 
-	if ( (is.integer(ptb.R)==FALSE) || (ptb.R<=0) || (length(ptb.R)>1) ) {
+	ptb.R=as.integer(trunc(ptb.R))
+	
+	if (is.null(ptb.ran.gen)) {
+    		if (is.null(ptb.s)) {
+     			ptb.ran.gen = sapply(as.data.frame(data), PTBdefaultfn)
+    		} else {
+     			ptb.ran.gen = sapply(as.data.frame(data),
+                  		function(x)PTBdefaultfn(x,ptb.s))
+     			ptb.s=NULL
+    		}
+   	}
+
+	if ( (ptb.R<=0) || (length(ptb.R)>1) ) {
 		stop("ptb.R must be int > 0")
 	}
 	retval = list(ptb.R);
@@ -66,14 +78,18 @@ perturb<-function(data,statistic,..., ptb.R=1,ptb.ran.gen=PTBms,
 	return(retval)
 }
 
-print.perturb<-function(x,...) {
-	cat("Replications: \n",attr(x,"R"),"\n\n")
-	cat("ran.gen: \n")
-	print(attr(x,"ran.gen"))
-	cat("s: \n")
-	print(attr(x,"s"))
-	cat("statistic: \n")
-	print(attr(x,"statistic"))
+print.perturb<-function(x,quiet=T,...) {
+  print("perturbation list")
+	if (!quiet) {
+     cat("ran.gen: \n")
+	   print(attr(x,"ran.gen"))
+	   cat("s: \n")
+	   print(attr(x,"s"))
+	   cat("statistic: \n")
+	   print(attr(x,"statistic"))
+   }
+  cat("Class: \n",class(x[[1]]),"\n\n")
+  cat("Replications: \n",attr(x,"R"),"\n\n")
 }
 
 perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL) {
@@ -91,10 +107,10 @@ perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL) {
 	}
 
 	for ( i in ind ) {
-		if (is.null(ptb.s)) {
-			ndata[i] = ran.gen[[i]](ndata[i])
+		if (is.null(ptb.s[[i]])) {
+			ndata[[i]] = ran.gen[[i]](ndata[[i]])
 		} else {
-			ndata[i] = ran.gen[[i]](ndata[i],size=ptb.s[i])
+			ndata[[i]] = ran.gen[[i]](ndata[[i]],size=ptb.s[i])
 		}
 	}
 	
@@ -579,15 +595,15 @@ anova.perturb<-function(object,...) {
 
       	    tmp = anova(object[[i]])
                 if (!inherits(tmp,"anova")) {
-		warning("Could not perform anova on perturbation #", i);
-		next;              
+		               warning("Could not perform anova on perturbation #", i);
+	                 	next;
                 } 
                 coef.names = attr(tmp,"row.names")
-	    coef.df = tmp$"Df"
-  	    coef.sumsq=tmp$"Sum Sq"
-  	    coef.meansq=tmp$"Mean Sq"
-	    coef.f=tmp$"F value"
-	    coef.pr=tmp$"Pr(>F)"
+	              coef.df = tmp$"Df"
+  	            coef.sumsq=tmp$"Sum Sq"
+  	            coef.meansq=tmp$"Mean Sq"
+	              coef.f=tmp$"F value"
+	              coef.pr=tmp$"Pr(>F)"
                
                 attr(tmp,"coef.names") = coef.names
                 attr(tmp,"coef.df") = coef.df
@@ -649,8 +665,8 @@ anova.perturb<-function(object,...) {
 }
 
 
-print.perturbS<-function(x,...) {
-
+print.perturbS<-function(x,quiet=T,...) {
+    if (!quiet) {
         cat("statistic: \n")
         print(attr(x,"statistic"))
         cat("s: \n")
@@ -661,18 +677,19 @@ print.perturbS<-function(x,...) {
         print(attr(x,"ran.gen"))
         cat("formula: \n","\n\n")
         print(attr(x,"coef.formula"))
+    }
 
         cat("betas:\n\n")
         print(summary(attr(x,"coef.betas.m")))
         print(q95(attr(x,"coef.betas.m")))
-        cat("stderrs:\n\n")
+        cat("\n\nstderrs:\n\n")
         print(summary(attr(x,"coef.stderrs.m")))
         print(q95(attr(x,"coef.stderrs.m")))
 
 }
 
-print.perturbAnova<-function(x,...) {
-
+print.perturbAnova<-function(x,quiet=T,...) {
+   if (!quiet) {
         cat("statistic: \n")
         print(attr(x,"statistic"))
         cat("s: \n")
@@ -683,6 +700,7 @@ print.perturbAnova<-function(x,...) {
         print(attr(x,"ran.gen"))
         cat("formula: \n","\n\n")
         print(attr(x,"coef.formula"))
+    }
 
         cat("\nsumsq:\n\n")
         print(summary(attr(x,"coef.sumsq.m")))
@@ -696,11 +714,30 @@ print.perturbAnova<-function(x,...) {
 
 }
 
+plot.perturb<-function(x,ask=dev.interactive(),...) {
+  if (ask) {
+        op <- par(ask = TRUE)
+        on.exit(par(op))
+  }
+  count=1
+  for (tmp in x) {
+     cat("\n\n****Plotting perturbation #", count,"\n")
+     count=count+1
+     plot(tmp,...)
+  }
+  return(invisible())
+}
+
+plot.perturbAnova<-function(x,...) {
+  plot.perturb(x,...)
+  return(invisible())
+}
+
 # Internal Helper functions for print methods
 
 rename.matrix<-function(m,nm){
      row.names(m)=NULL
-     m=as.data.frame(m)
+     m=as.data.frame(matrix(m,ncol=length(nm)))
      names(m)=nm
      return(m)
 }

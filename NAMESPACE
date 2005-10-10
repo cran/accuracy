@@ -1,20 +1,43 @@
 #public methods
+
+# frexp related
 export(frexp)
+
+# true random numbers
 export(initPool, resetSeed,runifT)
+
+# generalized inverse
 export(sechol)
+
+# optimization testing
 export(dehaan,starr)
 export(LRE)
-export(perturb, PTBi)
-export(PTBms, PTBmsb, PTBmsbr) 
+
+#perturbation
+export(perturb )  # main  routine for running perturbations
+export(PTBi, PTBms, PTBmsb, PTBmsbr)  # noise functions for vections
 export(PTBn, PTBnc, PTBns, PTBnbr, PTBnbrr, PTBnsbr, PTBnsbrr) 
 export(PTBu, PTBuc, PTBus, PTBubr, PTBubrr, PTBusbr, PTBusbrr)
-#1.04 PTB multiple nodes
-export(PTBmu.gen, PTBmn.gen)
-# export methods subclassing other public methods
+export(PTBmu.gen, PTBmn.gen)  #1.04 PTB multiple times
+#Discrete Perturbation Methods (1.05)
+export(PTBdiscrete,PTBdefault,PTBdefaultfn,reclass.mat.diag,reclass.mat.random) 
+
+#### (plot,print,summary)
 S3method(print, perturb)
 S3method(print, perturbS)
+S3method(plot, perturb)
 S3method(summary, perturb)
-#1.04 Anova methods
-S3method(anova, perturb)
-S3method(print, perturbAnova)
+
+### anova support
+S3method(anova, perturb) # 1.04
+S3method(print, perturbAnova) # 1.05
+S3method(plot, perturbAnova) # 1.05
+
+### zelig integration
+export(pzelig,psim)
+export(setx.perturb)
+S3method(print, perturb.sim) # 1.05
+S3method(plot, perturb.sim) # 1.05
+S3method(summary, perturb.sim) # 1.05
+
 useDynLib("accuracy")
