@@ -104,12 +104,15 @@ plongley = perturb(longley,lm,Employed~.) # defaults
 # summarizes range
 sp=summary(plongley)
 print(sp)
+plot(sp) # plots rance of influence
 
 # models with anova methods can also be summarized this way
 anova(plongley) 
 
 # plots different replications
 plot(plongley) # plots the perturbed replications individually, pausing in between
+plot(sp) # plots boxplots of the distribution of the coefficients under perturbation
+
 
 # plots anova results (where applicable)
 plot(anova(plongley))

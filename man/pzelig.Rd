@@ -67,6 +67,7 @@ Micah Altman
    plot(perturb.zelig.out) 	  
    # summarizes the overall sensitivity of coefficient estimates
    summary(perturb.zelig.out)		  
+   plot(summary(perturb.zelig.out))
    
    # since the "ls" model relies on "lm" which supports anova, can summarize
    # using anova

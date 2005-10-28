@@ -29,6 +29,19 @@
 #
 
 
+"runifS" <- function(n, ... , period=10000) {
+	k = floor(n/period)
+	resetSeed()
+	res=runif(n-(period*k), ...)
+	if (k>0) {
+	   for (i in 1:k) {
+		resetSeed()
+		res = c(res,runif(period))
+	   }
+	}
+	return(res)
+}
+
 "runifT" <- function(n, min=0, max=1) {
 	if (min>=max) {
 		stop("Max must be > min")
@@ -111,16 +124,14 @@
 	   tri = integer()
 	   hb = try({hburl(bytes= .Machine$sizeof.long)})
            if (is.null(hb) || inherits(hb, "try-error")) {
-           	tr = try({tri=readBin(hb, integer(0), signed=FALSE)},
-                	silent=TRUE)
-
+                hbok=FALSE
+	   } else {
+           	tr = try({tri=readBin(hb, integer(0), signed=FALSE)}, silent=TRUE)
                  if (inherits(tr, "try-error") || (length(tri) == 0)) {
                    hbok=FALSE
                  }  else {
 	   		try(close(hb), silent=TRUE)
 		}
-	   } else {
-                   hbok=FALSE
 	   }
 	}
 	options(warn=as.integer(w))
@@ -135,6 +146,7 @@
 	assign(".EntropyPool",entropypool,envir=.GlobalEnv)
 	return(entropypool)
 }
+
 
 "hburl" <-function(bytes=1,fmt="bin") {
 	hbstring = paste (

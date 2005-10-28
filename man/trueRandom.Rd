@@ -2,6 +2,7 @@
 \alias{trueRandom}
 \alias{resetSeed}
 \alias{runifT}
+\alias{runifS}
 \alias{initPool}
 \title{ Function to return TRUE (not pseudo) random numbers, based on system and networked entropy collection. }
 \description{
@@ -12,6 +13,7 @@ the seed value for subsequent PRNG generation.
 }
 \usage{
 	runifT(n,min=0,max=1)
+	runifS(n,...,period=10000)
 	resetSeed()
 	initPool(size=512, hbok=TRUE, devrndok=TRUE, silent=FALSE) 
 }
@@ -24,10 +26,13 @@ the seed value for subsequent PRNG generation.
   \item{hbok}{ use the "hotbits" entropy server }
   \item{silent}{ do not issue warnings }
   \item{devrndok}{ use /dev/random on Unix-derived systems }
+  \item{\dots}{ pass on to runif}
+  \item{period}{number of random numbers to generate before reseeding}
 }
 
 \details{
 \code{runifT} returns true random numbers in a uniform distribution.
+\code{runifS} returns pseudo-random numbers, reseeding with a true random number every period draws.
 
 \code{resetSeed} resets R's own PRNG seed, \code{set.seed}, supplying a true random number
 

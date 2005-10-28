@@ -15,10 +15,10 @@
   if (sum(search()=="package:perturb")>0) {
 	PerturbHooks()
   }
-  #setHook(packageEvent("Zelig", "attach"), ZeligHooks)
-  #if (sum(search()=="package:Zelig")>0) {
-  #	ZeligHooks()
-  #}
+  setHook(packageEvent("Zelig", "attach"), ZeligHooks)
+  if (sum(search()=="package:Zelig")>0) {
+  	ZeligHooks()
+  }
   return(TRUE)
 }
 

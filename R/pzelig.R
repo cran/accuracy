@@ -1,56 +1,78 @@
 pzelig = function (z,
   ptb.R=50,
   ptb.ran.gen=NULL,
-	ptb.s=NULL,
-	explanatoryOnly=FALSE
+        ptb.s=NULL,
+        explanatoryOnly=FALSE
   ) {
-
-	if (is.null(z)) {
-		warning("z is null")
-		return(NULL)
-	}
-	if (is.null(z$zelig) || is.null(z$call) || is.null(z$model)) {
-		warning("z is not a zelig object")
-		return(NULL)
-	}
-  tm=terms(as.formula(as.list(z$call)$formula),data=z$model)
-	res = names(attr(tm,"factors")[attr(tm,"response")])
-	if (is.null(ptb.ran.gen)) {
+  if (!inherits(z,"strata") &&
+           (is.null(z$zelig) || is.null(z$call) || is.null(z$model))) {
+                warning("z is not a zelig object")
+                return(NULL)
+  }
+  if (inherits(z,"strata")) {
+          tmpz=z[[1]]
+  } else {
+          tmpz=z
+  }
+  perturbedData=eval(tmpz$call$data)[c(names(tmpz$model),tmpz$call$by)]
+  tm=terms(as.formula(as.list(tmpz$call)$formula),data=perturbedData)
+        res = names(attr(tm,"factors")[attr(tm,"response")])
+  if (is.null(ptb.ran.gen)) {
     if (is.null(ptb.s)) {
-         ptb.ran.gen = sapply(as.data.frame(z$model), PTBdefaultfn)
+         ptb.ran.gen = sapply(as.data.frame(perturbedData), PTBdefaultfn)
     } else {
      ptb.default.size=ptb.s
      ptb.s=NULL
-     ptb.ran.gen = sapply(as.data.frame(z$model),
+     ptb.ran.gen = sapply(as.data.frame(perturbedData),
                   function(x)PTBdefaultfn(x,ptb.default.size))
 
     }
 
-    # don't perturb responser terms
+    # don't perturb response terms
     if (explanatoryOnly) {
-      for (i in which(names(z$model)==res)) {
+      for (i in which(names(perturbedData)==res)) {
        ptb.ran.gen[[i]] = PTBi
-      } 
+      }
+      if (inherits(z,"strata")) {
+        ptb.ran.gen[[which(names(perturbedData)==tmpz$call$by)]] = PTBi
+      }
     }
   }
-  
+
   zfun <- function (data,...) {
-       zfcall = as.list(z$call)
+       zfcall=tmpz$call
        zfcall$data = data
-       eval(as.call(zfcall))
+       eval(zfcall)
   }
-  
-	pz=perturb(
-          z$model,
+
+  pz=perturb(
+          perturbedData,
           zfun,
           ptb.R=ptb.R,
           ptb.ran.gen=ptb.ran.gen,
           ptb.s=ptb.s
-          )
+  )
   attr(pz,"origZelig")=z;
   return(pz)
 }
 
+psim<-function(object,x=setx(object),...) {
+   if (length(object)==0) {
+        warning("zero length perturbation list")
+        return(NULL)
+   }
+
+  if (inherits(try(sim(object[[1]],setx(object),num=c(5,2)),silent=F ),"try-error"))
+  {
+        warning("perturbed model does not support sim method")
+        return(NULL)
+  }
+
+  res = sapply(object,function(tmp){sim(tmp,x,...)}, simplify=F)
+  attr(res,"mergedSims")=mergeSims(res);
+  class(res)="perturb.sim"
+  return(res)
+}
 
 
 setx.perturb<-function(obj,...) {
@@ -59,7 +81,9 @@ setx.perturb<-function(obj,...) {
 
 
 ZeligHooks<-function (...) {
-
+   if (exists(".simHooked",envir=.GlobalEnv)) {
+	return(TRUE)
+   }
    origsim=get("sim",envir=as.environment("package:Zelig"))
    sim.replacement=function (object, x, ...) {
     if  (inherits(object,"perturb")) {
@@ -72,49 +96,49 @@ ZeligHooks<-function (...) {
    unlockBinding("sim",as.environment("package:Zelig"))
    assign("sim",sim.replacement, envir=as.environment("package:Zelig"))
    assign("sim",sim.replacement, envir=.GlobalEnv)
+   assign(".simHooked",TRUE,envir=.GlobalEnv)
 }
 
 
 mergeSims<-function(x) {
-
   tsim=x[[1]]
-  tqev=NULL
-  tqpr=NULL
-  tpar=NULL
-  for (tmp in x) {
-      tpar=rbind(tpar, tmp$par)
-      tqev=rbind(tqev, tmp$qi$ev)
-      tqpr=rbind(tqpr, tmp$qi$ev)
+  if (inherits(x[[1]],"zelig.strata")) {
+     simlevs=names(tsim)
+  } else {
+     simlevs=c(1)
+     tsim=list(tsim)
   }
-  dimnames(tpar)=dimnames(tsim$par)
-  tsim$par=tpar
-  if (!is.null(tsim$qi$ev)) {
-     tsim$qi$ev=tqev
+  for (lev in simlevs) {
+     tqev=NULL
+     tqpr=NULL
+     tpar=NULL
+
+     for (tmpl in x) {
+        if (!inherits(x[[1]],"zelig.strata")){
+           tmp=list(tmpl)
+        } else {
+           tmp=tmpl
+        }
+        tpar=rbind(tpar, tmp[[lev]]$par)
+        tqev=rbind(tqev, tmp[[lev]]$qi$ev)
+        tqpr=rbind(tqpr, tmp[[lev]]$qi$ev)
+     }
+
+     dimnames(tpar)=dimnames(tsim[[lev]]$par)
+     tsim[[lev]]$par=tpar
+     if (!is.null(tsim[[lev]]$qi$ev)) {
+         tsim[[lev]]$qi$ev=tqev
+     }
+     if (!is.null(tsim[[lev]]$qi$pr)) {
+         tsim[[lev]]$qi$pr=tqpr
+     }
   }
-  if (!is.null(tsim$qi$pr)) {
-         tsim$qi$pr=tqpr
+  if (!inherits(x[[1]],"zelig.strata")){
+     tsim=tsim[[1]]
   }
   return(tsim)
 }
 
-psim<-function(object,x=setx(object),...) {
-   if (length(object)==0) {
-	warning("zero length perturbation list")
-	return(NULL)
-   }
-
-  if ( sum( names( object[[1]] )=="zelig" )==0
-       && sum( methods( class=class( object[[1]] ) ) =="sim" ) ==0  )
-  {
-       	warning("perturbed model does not support sim method")
-       	return(NULL)
-  }
-
-  res = sapply(object,function(tmp){sim(tmp,x,...)}, simplify=F)
-  attr(res,"mergedSims")=mergeSims(res);
-  class(res)="perturb.sim"
-  return(res)
-}
 
 print.perturb.sim<-function(x,...) {
   cat("\n\n****",length(x), " COMBINED perturbation simulations","\n")

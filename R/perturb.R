@@ -114,9 +114,18 @@ perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL) {
 		}
 	}
 	
-	stat = statistic(data=ndata,...)
+        res=NULL
+        if (class(statistic)=="function")    {
+           ne = new.env(parent=environment(statistic))
+           environment(statistic)=ne
+           assign("ndata",ndata,envir=ne)
+           res = statistic(data=ndata,...)
+        }  else  {
+           res= do.call(statistic,...,data=as.name(ndata))
+        }
+
+        return(res)
 	
-	return(stat)
 }
 
 
@@ -506,37 +515,27 @@ summary.perturb<-function (object,...) {
 
 	# generate individual summaries for list of replications
 	for (i in 1:n) {
-		tmp = summary(object[[i]])
-		if (inherits(tmp,"summary.lm")) {
-			coef.names = dimnames(tmp[["coefficients"]])[[1]]
-			coef.betas = tmp[["coefficients"]][,1]
-			coef.stderrs = tmp[["coefficients"]][,2]
-			coef.formula = tmp[["call"]]
-		} else if (inherits(tmp,"summary.mle")) {
-			coef.names = dimnames(attr(tmp,"coef"))[[1]]
-			coef.betas = attr(tmp,"coef")[,1]
-			coef.stderrs = attr(tmp,"coef")[,2]
-			coef.formula = attr(tmp,"call")
-		} else if (inherits(tmp,"summary.nls")) {
-			coef.names = dimnames(tmp[["parameters"]])[[1]]
-			coef.betas = tmp[["parameters"]][,1]
-			coef.stderrs = tmp[["parameters"]][,2]
-			coef.formula = tmp[["formula"]]
-		} else if (inherits(tmp,"summary.glm")) {
-			coef.names = dimnames(tmp[["coefficients"]])[[1]]
-			coef.betas = tmp[["coefficients"]][,1]
-			coef.stderrs = tmp[["coefficients"]][,2]
-			coef.formula = tmp[["terms"]]
-		} else {
-			coef.names=names(coef(tmp))
-			coef.betas=coef(tmp)
-			coef.stderrs=NULL
-			coef.formula=NULL
-			if (is.null(coef.betas)) {
-				stop("Don't know how to summarize replications of type ",
-					class(tmp) )
-			}
+		tmp = try(summary(object[[i]]),silent=T)
+		if (is.null(cf<-coef(tmp)) || inherits( tmp,"try-error")){
+		   if(is.null(cf<-coef(object[[i]]))) {
+			warn("Don't know how to summarize replications of type ", 
+				class(tmp) )
+			return(NULL)
+		   }
 		}
+		coef.names=names(cf)
+		if ( inherits( coef.formula<-try(tmp[["call"]],silent=T),"try-error")) {
+		   if ( inherits( coef.formula<-try(tmp[["formula"]],silent=T),"try-error")) {
+			coef.formula=NULL
+		  }
+		}
+		if ( is.null(dim(cf)[2]) || (dim(cf)[2]<2) ) {
+			coef.betas=cf
+			coef.stderrs=NULL
+		} else {
+			coef.betas=cf[,1]
+			coef.stderrs=cf[,2]
+		}	
 	
  		attr(tmp,"coef.names") = coef.names
 		attr(tmp,"coef.betas") = coef.betas
@@ -556,7 +555,6 @@ summary.perturb<-function (object,...) {
 	if (n>1) {
 	   for (i in 2:n) {
 		if ( sum( attr(s[[i]],"coef.names") != coef.names)>0
-		   || sum( attr(s[[i]],"coef.formula") != coef.formula)>0
 		   || sum( length(attr(s[[i]],"coef.betas")) != length( coef.betas))>0
 		   || sum( length(attr(s[[i]],"coef.stderrs")) != length( coef.stderrs))>0
 		) {
@@ -664,7 +662,6 @@ anova.perturb<-function(object,...) {
         return(s)
 }
 
-
 print.perturbS<-function(x,quiet=T,...) {
     if (!quiet) {
         cat("statistic: \n")
@@ -677,16 +674,54 @@ print.perturbS<-function(x,quiet=T,...) {
         print(attr(x,"ran.gen"))
         cat("formula: \n","\n\n")
         print(attr(x,"coef.formula"))
-    }
+
 
         cat("betas:\n\n")
-        print(summary(attr(x,"coef.betas.m")))
+        print(summary(attr(x,"coef.betas.m"),...))
         print(q95(attr(x,"coef.betas.m")))
         cat("\n\nstderrs:\n\n")
-        print(summary(attr(x,"coef.stderrs.m")))
+        print(summary(attr(x,"coef.stderrs.m"),...))
         print(q95(attr(x,"coef.stderrs.m")))
+     }
+     cat("Sensitivity of coefficients to perturbations:\n")
+     print(hSummary(attr(x,"coef.betas.m")),...)
 
+     if (!is.null(attr(x,"coeff.stderrs.m"))) {
+        cat("\n\nSensitivity of stderrs to perturbations:\n")
+        print(hSummary(attr(x,"coef.stderrs.m")),...)
+     }
 }
+
+hSummary<-function(df) {
+     df=as.data.frame(df)
+     df=na.omit(df)
+     resm=NULL;
+     for (i in df) {
+
+         res = c(mean(i),sd(i), min(i),
+                 quantile(as.matrix(i),
+                  probs=c(0.025,.975)),
+                  max(i))
+        res=matrix(res,ncol=length(res))
+        resm=rbind(resm,res)
+     }
+     colnames(resm) = c("mean","stderr","min", "2.5%","97.5%","max")
+     row.names(resm)=colnames(df)
+     return(resm)
+}
+
+plot.perturbS<-function(x,...) {
+   cf=as.data.frame(attr(x,"coef.betas.m"))
+   op=par(no.readonly=T)
+   par(mfrow=c(1,length(cf)))
+   for (i in 1:length(cf)) {
+       boxplot(cf[i],...)
+       title(main=names(cf[i]))
+   }
+   par(op)
+}
+
+
 
 print.perturbAnova<-function(x,quiet=T,...) {
    if (!quiet) {

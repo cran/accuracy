@@ -60,7 +60,28 @@ Micah Altman
 \examples{
 
 	x=rbind(c(1,1,1), c(1,2,1), c(1,1.1,1), c(1,2,1), c(3,4,5));
-	starr(rbind(1,1,2,2));}
+	starr(rbind(1,1,2,2));
+
+  	data("BOD",package="stats")
+       stval=expand.grid(A = seq(10, 100, 10), lrc = seq(.5, .8, .1))
+       llfun<-function(A,lrc)
+             -sum((BOD$demand - A*(1-exp(-exp(lrc)*BOD$Time)))^2)
+       lls=NULL 
+       for (i in 1:nrow(stval))  {
+          lls = rbind(lls, llfun(stval[i,1], stval[i,2]))
+       }
+       fm1 <- nls(demand ~ A*(1-exp(-exp(lrc)*Time)),  
+                     data = BOD, start = c(A = 20, lrc = log(.35)))
+       ss = -sum(resid(fm1)^2)
+       dehaan(lls, ss)
+       
+       llb=NULL
+       for (i in 1:nrow(stval))  {
+	llb = rbind(llb,coef( 
+  	nls(demand ~ A*(1-exp(-exp(lrc)*Time)),  
+                     data = BOD, start = c(A=stval[i,1], lrc = stval[i,2]))))
+      }
+       starr(llb)
 
 }
 \keyword{manip}

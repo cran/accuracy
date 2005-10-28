@@ -5,6 +5,7 @@ export(frexp)
 
 # true random numbers
 export(initPool, resetSeed,runifT)
+export(runifS) # 1.06
 
 # generalized inverse
 export(sechol)
@@ -27,6 +28,7 @@ S3method(print, perturb)
 S3method(print, perturbS)
 S3method(plot, perturb)
 S3method(summary, perturb)
+S3method(plot,perturbS) # 1.06
 
 ### anova support
 S3method(anova, perturb) # 1.04
