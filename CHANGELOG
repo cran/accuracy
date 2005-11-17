@@ -11,3 +11,9 @@
 -- Added built-in support for perturbing Zelig models and plotting and summarizing
    the results
 
+1.06 
+-- Add plot(summary()) 
+-- Support for Zelig strata
+
+1.07
+-- Added vignette

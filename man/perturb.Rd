@@ -127,6 +127,36 @@ coef= attr(sp,"coef.betas.m")
 summary(coef)
 
 
+# Example where model does not accept a dataset as an argument...
+
+# MLE does not accept a dataset as an argument, so need to
+# create a wrapper function
+     library(stats4)
+     mleD<-function(data,lld,...) {
+           # construct LL function with embedded data
+           f=formals(lld)
+           f[1]=NULL
+           ll <-function()  {
+              cl=as.list(match.call())
+              cl[1]=NULL
+              cl$data=as.name("data")
+              do.call(lld,cl)
+           }
+           formals(ll)=f
+
+           # call mle
+           mle(ll,...)
+     }
+
+     dat=as.data.frame(cbind( 0:10 , c(26, 17, 13, 12, 20, 5, 9, 8, 5, 4, 8) ))
+
+     llD<-function(data, ymax=15, xhalf=6)
+         -sum(stats::dpois(data[[2]], lambda=ymax/(1+data[[1]]/xhalf), log=TRUE))
+
+     summary(perturb(dat, mleD,llD))
+
+
+
 }
 \keyword{misc}
 \keyword{optimize}

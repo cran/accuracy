@@ -14,7 +14,7 @@ pzelig = function (z,
   } else {
           tmpz=z
   }
-  perturbedData=eval(tmpz$call$data)[c(names(tmpz$model),tmpz$call$by)]
+  perturbedData=eval(tmpz$call$data,parent.frame())[c(names(tmpz$model),tmpz$call$by)]
   tm=terms(as.formula(as.list(tmpz$call)$formula),data=perturbedData)
         res = names(attr(tm,"factors")[attr(tm,"response")])
   if (is.null(ptb.ran.gen)) {
@@ -53,6 +53,7 @@ pzelig = function (z,
           ptb.s=ptb.s
   )
   attr(pz,"origZelig")=z;
+  attr(pz,"origZeligEnv")=sys.parent();
   return(pz)
 }
 
@@ -75,10 +76,11 @@ psim<-function(object,x=setx(object),...) {
 }
 
 
-setx.perturb<-function(obj,...) {
-     setx(attr(obj,"origZelig"),...)
+setx.perturb<-function (obj, ...) {
+    oz = attr(obj,"origZelig")
+    oze = attr(obj,"origZeligEnv")
+    eval(call("setx",oz),oze)
 }
-
 
 ZeligHooks<-function (...) {
    if (exists(".simHooked",envir=.GlobalEnv)) {
