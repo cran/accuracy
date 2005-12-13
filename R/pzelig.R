@@ -1,5 +1,5 @@
 pzelig = function (z,
-  ptb.R=50,
+  ptb.R=30,
   ptb.ran.gen=NULL,
         ptb.s=NULL,
         explanatoryOnly=FALSE
@@ -141,10 +141,19 @@ mergeSims<-function(x) {
   return(tsim)
 }
 
-
 print.perturb.sim<-function(x,...) {
-  cat("\n\n****",length(x), " COMBINED perturbation simulations","\n")
-  return(print(attr(x,"mergedSims"),...))
+  print(summary(x),...)
+}
+
+print.perturb.sim.summary<-function(x,...) {
+  cat("\n\n****",x$reps, " COMBINED perturbation simulations","\n")
+  print(x$zsum,...)
+}
+
+HTML.perturb.sim.summary<-function(x,...) {
+  HTML(
+    paste("\n\n****",x$reps, " COMBINED perturbation simulations","\n",sep=""), ...)
+  HTML(x$zsum,...)
 }
 
 plot.perturb.sim<-function(x,...) {
@@ -153,13 +162,10 @@ plot.perturb.sim<-function(x,...) {
 }
 
 summary.perturb.sim<-function(object,...) {
-  cat("\n\n****",length(object), " COMBINED perturbation simulations","\n")
-  return(summary(attr(object,"mergedSims"),...))
+  ret=list();
+  ret$zsum=summary(attr(object,"mergedSims"),...)
+  ret$reps=length(object)
+  class(ret)="perturb.sim.summary"
+  ret
 }
-
-
-
-
-
-
 

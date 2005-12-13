@@ -17,3 +17,6 @@
 
 1.07
 -- Added vignette
+
+1.08
+-- Added HTML methods for R2HTML support

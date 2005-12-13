@@ -40,6 +40,11 @@ export(pzelig,psim)
 export(setx.perturb)
 S3method(print, perturb.sim) # 1.05
 S3method(plot, perturb.sim) # 1.05
+S3method(print, perturb.sim.summary) 
 S3method(summary, perturb.sim) # 1.05
+
+# R2HTML Support
+export(HTML.perturbS)
+export(HTML.perturb.sim.summary)
 
 useDynLib("accuracy")

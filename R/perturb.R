@@ -694,14 +694,17 @@ print.perturbS<-function(x,quiet=T,...) {
 
 hSummary<-function(df) {
      df=as.data.frame(df)
-     df=na.omit(df)
      resm=NULL;
      for (i in df) {
-
-         res = c(mean(i),sd(i), min(i),
+         i=na.omit(i)
+         if (length(i)==0) {
+          res =    c(NA,NA,NA,NA,NA,NA)
+         }   else {
+           res = c(mean(i),sd(i), min(i),
                  quantile(as.matrix(i),
                   probs=c(0.025,.975)),
                   max(i))
+        }
         res=matrix(res,ncol=length(res))
         resm=rbind(resm,res)
      }
@@ -738,14 +741,11 @@ print.perturbAnova<-function(x,quiet=T,...) {
     }
 
         cat("\nsumsq:\n\n")
-        print(summary(attr(x,"coef.sumsq.m")))
-        print(q95(attr(x,"coef.sumsq.m")))
+        print(hSummary(attr(x,"coef.sumsq.m")))
         cat("\nmeansq:\n\n")
-        print(summary(attr(x,"coef.meansq.m")))
-        print(q95(attr(x,"coef.meansq.m")))
+        print(hSummary(attr(x,"coef.meansq.m")))
         cat("\npr:\n\n")
-        print(summary(attr(x,"coef.pr.m")))
-        print(q95(attr(x,"coef.pr.m")))
+        print(hSummary(attr(x,"coef.pr.m")))
 
 }
 

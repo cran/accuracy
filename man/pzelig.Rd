@@ -6,7 +6,7 @@
 	extension functions to summarize results.
 }
 \usage{
-	pzelig(z, ptb.R = 50, ptb.ran.gen = NULL, ptb.s = NULL, explanatoryOnly=FALSE)
+	pzelig(z, ptb.R = 30, ptb.ran.gen = NULL, ptb.s = NULL, explanatoryOnly=FALSE)
 }
 \arguments{
   \item{z} { an analysis output by \code{zelig} }
