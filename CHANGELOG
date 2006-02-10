@@ -29,3 +29,6 @@
 1.10
 -- Moved citation file
 -- Added vignette (really)
+
+1.11
+-- Workarounds for Zelig 2.52 changes. More sophisticated analysis of zelig formulas.

@@ -68,7 +68,9 @@ Micah Altman
  if (library(Zelig,logical.return=TRUE)) {  
    data(longley)
 
-   zelig.out=zelig(Employed~.,"ls",longley) # run longley regression
+   # zelig 2.52 breaks with '.' in formulas
+   #zelig.out=zelig(Employed~.,"ls",longley) # run longley regression
+   zelig.out=zelig(Employed~Year+GNP,"ls",longley) # run longley regression
    # default settings
    perturb.zelig.out = sensitivityZelig(zelig.out)		   
 

@@ -14,8 +14,7 @@ sensitivityZelig = function (z,
   if (simulate) {
 	summarize=TRUE
   }
-  if (!inherits(z,"strata") &&
-           (is.null(z$zelig) || is.null(z$call) || is.null(z$model))) {
+  if (!inherits(z,"strata") && is.null(z$zelig)) {
                 warning("z is not a zelig object")
                 return(NULL)
   }
@@ -24,9 +23,23 @@ sensitivityZelig = function (z,
   } else {
           tmpz=z
   }
-  perturbedData=eval(tmpz$call$data,parent.frame())[c(names(tmpz$model),tmpz$call$by)]
-  tm=terms(as.formula(as.list(tmpz$call)$formula),data=perturbedData)
-        res = names(attr(tm,"factors")[attr(tm,"response")])
+
+
+
+  #tm=terms(as.formula(as.list(tmpz$call)$formula),data=perturbedData)
+  tm = tmpz$terms
+  if ( class ( datanames <- try ( names( eval(tmpz$call$data,parent.frame())) , silent = T )) !=
+        "try-error" ) {
+	tmpenv = parent.frame()
+  } else {
+	tmpenv = attr(tm,".Environment")
+	datanames = eval(tmpz$call$data, tmpenv )
+  }
+  depvars  = as.character(intersect (datanames, c(tmpz$call$by, call2names(tm[[2]]) )))
+  expvars  = as.character(intersect (datanames, c(tmpz$call$by, call2names(tm[[3]]) )))
+  framevars = c(depvars, expvars)
+  perturbedData=eval(tmpz$call$data,tmpenv)[framevars]
+  #res = names(attr(tm,"factors")[attr(tm,"response")])
   if (is.null(ptb.ran.gen)) {
     if (is.null(ptb.s)) {
          ptb.ran.gen = sapply(as.data.frame(perturbedData), PTBdefaultfn)
@@ -40,7 +53,7 @@ sensitivityZelig = function (z,
 
     # don't perturb response terms
     if (explanatoryOnly) {
-      for (i in which(names(perturbedData)==res)) {
+      for (i in which(is.element(names(perturbedData),depvars))) {
        ptb.ran.gen[[i]] = PTBi
       }
       if (inherits(z,"strata")) {
@@ -239,5 +252,22 @@ summary.sensitivity.sim<-function(object,...) {
   ret$reps=length(object)
   class(ret)="sensitivity.sim.summary"
   ret
+}
+
+call2names<-function(x) {
+  if (class(x)=="name") {
+     return(x)
+  }
+  if(class(x)=="call") {
+     if (length(x)==1) {
+        return(NULL)
+     }
+     cl = sapply(x[2:length(x)],class)
+     return( c(
+        as.list(x[which(cl=="name")+1]),
+        sapply(x[which(cl=="call")+1],call2names),
+         recursive=T))
+  }
+  return(NULL)
 }
 
