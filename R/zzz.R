@@ -23,9 +23,6 @@
 }
 
 
-
-
-
 PerturbHooks<-function (...) {
      cat("\n\n****ACCURACY: detaching perturb package because of conflicts with accuracy, but keeping reclassify\n(use help('reclassify',package='perturb') for help)\n\n")
      penv = as.environment("package:perturb")

@@ -1,7 +1,7 @@
 # truerandom.R
 #
 # R methods to obtain true random numbers from the /dev/random
-# entropy collector.
+# entropy collector and web based sources
 #
 # Part of the Accuracy package. Available from www.r-project.org and
 # www.hmdc.harvard.edu/numerical_issues/
@@ -23,10 +23,25 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #
-# Uses Linux /dev/random if available to get high-quality true random
+# These routines use the Linux /dev/random if available to get high-quality true random
 # numbers for use in setting the PRNG seed. Uses hotbits to get
 # numbers as well.
 #
+# For efficiency, the entropy gathered from these sources is cached in a local 'pool' of entropy,
+# and only refreshed when the pool is empty. Each of the exposed routines draws from
+# the same pool
+
+######################################################
+#
+# runifS
+#
+# Calls runif() reseeding periodically from entropy sources
+# 
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
 
 
 "runifS" <- function(n, ... , period=10000) {
@@ -42,6 +57,19 @@
 	return(res)
 }
 
+######################################################
+#
+# runifS
+#       
+# Returns random uniform values drawn from entropy pools
+# 
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
+
 "runifT" <- function(n, min=0, max=1) {
 	if (min>=max) {
 		stop("Max must be > min")
@@ -55,6 +83,19 @@
 	}
 	return(r)
 }
+
+######################################################
+#
+# trueRandom
+#       
+# Returns raw random bits
+# 
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
 
 "trueRandom" <-function (n) {
 	if (length(n)>1) {
@@ -88,6 +129,19 @@
 	return(tr)
 }
 
+######################################################
+#
+# resetSeed
+#       
+# Resets see with true random value
+# 
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
+
 "resetSeed" <-function() {
 	s = trueRandom(1)
 	if (is.null(s)) {
@@ -96,6 +150,20 @@
 	}
 	set.seed(s)
 }
+
+######################################################
+#
+# initPool
+#       
+# Initializes the entropy pool storage structure
+# 
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
+
 
 "initPool"<-function(size=512, hbok=TRUE, devrndok=TRUE, silent=FALSE) {
 	entropypool = list()
@@ -149,6 +217,22 @@
 	return(entropypool)
 }
 
+######################################################
+#
+# hbUrl
+#
+# [Internal Function]
+#       
+# generates the hotbytes url
+# 
+# Parameters:
+#
+# - bytes --  number of bytes requested
+# - fmt -- hotbits return value (use "bin" except
+#	for debugging!)
+# 
+######################################################
+
 
 "hburl" <-function(bytes=1,fmt="bin") {
 	hbstring = paste (
@@ -156,6 +240,20 @@
 		,"nbytes=",bytes,"&fmt=",fmt, sep="")
 	return(url(hbstring,open="rb"))
 }
+
+######################################################
+#
+# refreshPool
+#
+# [Internal Function]
+#       
+# refreshes the entropy pool storage structure 
+# 
+# Parameters:
+#
+# silent - print debugging messages
+# 
+######################################################
 
 "refreshPool"<-function(silent=FALSE) {
 	if (!exists(".EntropyPool",envir=.GlobalEnv)) {

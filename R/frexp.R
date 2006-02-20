@@ -23,6 +23,19 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
+
+######################################################
+#       
+# frexp
+#       
+# wrapper around C library frexp()
+#       
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
 "frexp" <-
 function(v) {
 	r = replicate(length(v), NA)
@@ -36,21 +49,19 @@ function(v) {
 	return(r)
 }
 
+######################################################
+#       
+# LRE
+#       
+# Calculates the Log Relative Error between two values.
+#       
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
 
-"frexpTest" <-
-function(silent=TRUE) {
-	d=options()$digits
-	options(digits=15)
-	f=round(frexp(c(1,2,4,1.1,2.1,4.1,1000,20000,1.02E213)),digits=5)
-	x=cbind(rbind(.5,.5,.5,.55,.525,.5125,.97656,.61035,.75747),
-		 rbind(1,2,3,1,2,3,10,15,708))
-	options(digits=d)
-	ret=(sum(f==x)==18)
-	if (!ret && !silent) {
-		warning("Failed frexp self test.")
-	}
-	return(ret)
-}
+
 
 "LRE"<-
 function(x,correct, use.LAE=TRUE) {
@@ -72,3 +83,32 @@ function(x,correct, use.LAE=TRUE) {
         return(res)
 }
 
+######################################################
+#       
+# frexpTest
+#       
+# [Internal Function]
+#
+# self test of frexp, sanity checks
+#       
+# Parameters:
+#
+# silent - print debugging output
+# 
+######################################################
+
+
+"frexpTest" <-
+function(silent=TRUE) {
+	d=options()$digits
+	options(digits=15)
+	f=round(frexp(c(1,2,4,1.1,2.1,4.1,1000,20000,1.02E213)),digits=5)
+	x=cbind(rbind(.5,.5,.5,.55,.525,.5125,.97656,.61035,.75747),
+		 rbind(1,2,3,1,2,3,10,15,708))
+	options(digits=d)
+	ret=(sum(f==x)==18)
+	if (!ret && !silent) {
+		warning("Failed frexp self test.")
+	}
+	return(ret)
+}

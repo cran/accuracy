@@ -22,6 +22,19 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
+
+######################################################
+#       
+# dehaan
+#       
+# Calculates dehaan test for global optimality
+#       
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
 dehaan<-function(llTest, llMax, pval=.05 ) {
   # returns TRUE if "llMax" likelihood is greater than
   # the (1-pval) confidence interval for the true optimum
@@ -58,40 +71,18 @@ dehaan<-function(llTest, llMax, pval=.05 ) {
   }
 }
 
-dehaanSelftest<-function(silent = TRUE) {
-        
-        # Tests of deHaan function
 
-        ret = TRUE
-
-        # This test data should always return a FALSE.
-
-        l1= c(1,2,3,4,5)
-        max1 = 4; 
-
-        if (dehaan(l1,max1) ||
-	    !dehaan(l1,1000) )  {
-                ret = FALSE
-                 if (!silent) {
-                        warning("failed selftest ")
-                }
-        }
-
-	if (  dehaan(1:100,1) ||
-	      dehaan(1:100,101) || 
-	      dehaan(1:100,99) || 
-	      dehaan(1:20,21,pval=.9999) ||
-              !dehaan(1:100,101,pval=.001)|| 
-	      !dehaan(1:20,21) 
- 	) {
-           ret = FALSE
-           if (!silent) {
-                  warning("failed selftest")
-           }
-        } 
-
-        return(ret)
-}
+######################################################
+#       
+# starr
+#       
+# calculates starr test for global optimality
+#       
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
 
 
 starr<-function(betas, tol=.0001, dmethod="euclidean") {
@@ -135,6 +126,20 @@ starr<-function(betas, tol=.0001, dmethod="euclidean") {
                               
 }
 
+######################################################
+#       
+# starrSelfTest
+#       
+# [Internal Function]
+#
+# self test of starr, sanity checks
+#       
+# Parameters:
+#
+# silent - print debugging output
+# 
+######################################################
+
 starrSelftest<-function (silent=TRUE) {
 
   # BOD test
@@ -161,10 +166,53 @@ starrSelftest<-function (silent=TRUE) {
 
 }
 
-starrRun<-function(start,optfunc,...) {
-  r= NULL
-  dstart = as.data.frame(start)
-  for (i in 1:nrow(dstart)) {
-    r = rbind(r, coef(optfunc(..., t(dstart)[,i])))
-  }
+
+######################################################
+#       
+# dehaanTest
+#       
+# [Internal Function]
+#
+# self test of dehaan, sanity checks
+#       
+# Parameters:
+#
+# silent - print debugging output
+# 
+######################################################
+
+dehaanSelftest<-function(silent = TRUE) {
+        
+        # Tests of deHaan function
+
+        ret = TRUE
+
+        # This test data should always return a FALSE.
+
+        l1= c(1,2,3,4,5)
+        max1 = 4; 
+
+        if (dehaan(l1,max1) ||
+	    !dehaan(l1,1000) )  {
+                ret = FALSE
+                 if (!silent) {
+                        warning("failed selftest ")
+                }
+        }
+
+	if (  dehaan(1:100,1) ||
+	      dehaan(1:100,101) || 
+	      dehaan(1:100,99) || 
+	      dehaan(1:20,21,pval=.9999) ||
+              !dehaan(1:100,101,pval=.001)|| 
+	      !dehaan(1:20,21) 
+ 	) {
+           ret = FALSE
+           if (!silent) {
+                  warning("failed selftest")
+           }
+        } 
+
+        return(ret)
 }
+

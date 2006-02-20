@@ -1,11 +1,11 @@
 # sechol.R
 #
-# Schnable-Eskow generalized cholesky.
+# Schnabel-Eskow generalized cholesky.
 #
 # Part of the Accuracy package. Available from www.r-project.org and
 # www.hmdc.harvard.edu/numerical_issues/
 #
-#    Copyright (C) 2004  Jeff Gill
+#    Copyright (C) 2004-6  Jeff Gill, Micah Altman
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+######################################################
+#       
+# sechol
+#       
+# Schnabel-Eskow generalized cholesky.
+#       
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
 
 "sechol" <- function(A, tol = .Machine$double.eps, silent= TRUE )  {
     n <- nrow(A)
@@ -98,6 +110,21 @@
    attr(r,"delta")=delta
    return(r)
 }
+
+######################################################
+#       
+# secholTest
+#       
+# [Internal Function]
+#
+# self test of sechol, sanity checks
+#       
+# Parameters:
+#
+# silent - print debugging output
+# 
+######################################################
+
 
 "secholTest"<-function(silent=TRUE) {
      rv = TRUE

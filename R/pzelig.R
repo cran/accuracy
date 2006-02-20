@@ -1,3 +1,52 @@
+# 
+# Sensitivity Analysis for Zelig
+#
+#
+#    Copyright (C) 2004-6  Micah Altman
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#  Runs sensitivity() bases sensitivitivity analysi
+# The core functions extract the calls and data from Zelig objects and
+# then use sensitivity() on the constructed function. 
+#
+# Zelig sim is extended so that sim() can be called on the results, yielding
+# a vector of indepedent simulation runs
+#
+# A separate summary function merges the resulting simulations into
+# one zelig simulation object so that Zelig can summarize the results
+#
+# Also included: pretty printing functions
+
+
+######################################################
+#       
+# pzelig/sensitivityZelig
+#       
+# This is the core function. It extracts the call and data
+# information from the zelig object
+#
+# It then passes the call to perturbAndSim to do the actual
+# call to sensitivity()
+#       
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
 pzelig<-function(...) {
 	sensitivityZelig(...)
 }
@@ -24,9 +73,6 @@ sensitivityZelig = function (z,
           tmpz=z
   }
 
-
-
-  #tm=terms(as.formula(as.list(tmpz$call)$formula),data=perturbedData)
   tm = tmpz$terms
   if ( class ( datanames <- try ( names( eval(tmpz$call$data,parent.frame())) , silent = T )) !=
         "try-error" ) {
@@ -39,7 +85,6 @@ sensitivityZelig = function (z,
   expvars  = as.character(intersect (datanames, c(tmpz$call$by, call2names(tm[[3]]) )))
   framevars = c(depvars, expvars)
   perturbedData=eval(tmpz$call$data,tmpenv)[framevars]
-  #res = names(attr(tm,"factors")[attr(tm,"response")])
   if (is.null(ptb.ran.gen)) {
     if (is.null(ptb.s)) {
          ptb.ran.gen = sapply(as.data.frame(perturbedData), PTBdefaultfn)
@@ -102,6 +147,30 @@ sensitivityZelig = function (z,
   return(pz)
 }
 
+######################################################
+#       
+# perturbAndSim
+#       
+# [Internal Function]
+#       
+# This is used to manage calling summary() and sim() after
+# each sensitivity replication. Doing these in parallel, rather
+# than running them at the end saves a lot of memory
+#
+# Parameters:
+#
+# - These get passed to sensitivity() as described in the docs
+# 	+ data
+# 	+ statistic
+# 	+ ptb.ran.gen
+# 	+ ptb.s
+#
+# - summarize -- do summaries?
+# - simulate -- run sim() (implies summarize)
+# - simArgs -- a list() of arguments to pass to sim()
+# 
+######################################################
+
 perturbAndSim<-function (data, statistic , ptb.R, ptb.ran.gen, ptb.s, summarize, simulate, simArgs) {
         retval = list(ptb.R);
 	simlist = list(ptb.R);
@@ -142,6 +211,21 @@ perturbAndSim<-function (data, statistic , ptb.R, ptb.ran.gen, ptb.s, summarize,
 
 }
 
+######################################################
+#       
+# psim
+#       
+# A wrapper around Zelig's sim() that detects whether 
+# a sensitivity() produced replication vector is used, and if so,
+# applys sim() to each of the replications
+#       
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
+
 psim<-function(object,x=setx(object),...) {
    if (length(object)==0) {
         warning("zero length perturbation list")
@@ -160,12 +244,35 @@ psim<-function(object,x=setx(object),...) {
   return(res)
 }
 
+######################################################
+#       
+# setx.sensitivity
+#
+# Zelig setx method for sensitivity
+#       
+# Parameters:
+#
+# See the R documentation file for setx
+# 
+######################################################
+
 
 setx.sensitivity<-function (obj, ...) {
     oz = attr(obj,"origZelig")
     oze = attr(obj,"origZeligEnv")
     eval(call("setx",oz),oze)
 }
+
+######################################################
+#       
+# ZeligHooks
+#       
+#  [Internal]
+#
+# Hooks sim() so that it calls psim() instead, since 
+# Zelig subclassing mechanism is not general enough to handle this case
+#       
+######################################################
 
 ZeligHooks<-function (...) {
    if (exists(".simHooked",envir=.GlobalEnv)) {
@@ -186,6 +293,21 @@ ZeligHooks<-function (...) {
    assign(".simHooked",TRUE,envir=.GlobalEnv)
 }
 
+
+######################################################
+#       
+# mergeSims
+#       
+# [Internal]
+#
+# Merges the simulations of a vector of sensitivity analyses
+# so that Zelig summary() methods can be applied
+#       
+# Parameters:
+#
+# x - a sensitivity.sim object
+# 
+######################################################
 
 mergeSims<-function(x) {
   tsim=x[[1]]
@@ -226,6 +348,45 @@ mergeSims<-function(x) {
   return(tsim)
 }
 
+######################################################
+#       
+# call2names
+#
+# [Internal]
+#       
+# Recursively conversts a call to a list of names (symbols)
+# This is a helper function used to assist in determining
+# the original response variables in a formula
+#       
+# Parameters:
+#
+# x -- a call (from a formula)
+# 
+######################################################
+
+call2names<-function(x) {
+  if (class(x)=="name") {
+     return(x)
+  }
+  if(class(x)=="call") {
+     if (length(x)==1) {
+        return(NULL)
+     }
+     cl = sapply(x[2:length(x)],class)
+     return( c(
+        as.list(x[which(cl=="name")+1]),
+        sapply(x[which(cl=="call")+1],call2names),
+         recursive=T))
+  }
+  return(NULL)
+}
+
+#
+# Generic methods for display. See the corresponding 
+# documentation for print(), summary(), and [R2HTML] HTML()
+#
+#
+
 print.sensitivity.sim<-function(x,...) {
   print(summary(x),...)
 }
@@ -252,22 +413,5 @@ summary.sensitivity.sim<-function(object,...) {
   ret$reps=length(object)
   class(ret)="sensitivity.sim.summary"
   ret
-}
-
-call2names<-function(x) {
-  if (class(x)=="name") {
-     return(x)
-  }
-  if(class(x)=="call") {
-     if (length(x)==1) {
-        return(NULL)
-     }
-     cl = sapply(x[2:length(x)],class)
-     return( c(
-        as.list(x[which(cl=="name")+1]),
-        sapply(x[which(cl=="call")+1],call2names),
-         recursive=T))
-  }
-  return(NULL)
 }
 
