@@ -34,6 +34,29 @@
 ######################################################
 
 "sechol" <- function(A, tol = .Machine$double.eps, silent= TRUE )  {
+    if (is.complex(A))  {
+        warning("complex matrices not permitted at present")
+	return(NULL)
+    } else if (!is.numeric(A))  {
+        warning("non-numeric argument to 'sechol'")
+	return(NULL)
+    }
+    if (is.matrix(A)) {
+        if (nrow(A) != ncol(A)) {
+            warning("non-square matrix in 'sechol'")
+	    return(NULL)
+	}
+    } else {
+        if (length(A) != 1) {
+            warning("non-matrix argument to 'sechol'")
+	    return(NULL)
+	}
+	if (A>0) {
+		return(as.matrix(sqrt(A)))
+	} 
+	 warning("the leading minor of order 1 is not positive definite")
+	 return(NULL)
+    }
     n <- nrow(A)
     L <- matrix(rep(0,n*n),ncol=ncol(A))
     tau <- tol ^(1/3)  # made to match gauss

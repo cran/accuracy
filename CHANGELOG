@@ -35,3 +35,10 @@
 
 1.12
 -- Code reorg and comments
+
+1.13
+-- Makefile  and .Rnw stub to force vignette to be indexed
+-- Check types of sechol() input
+
+1.14
+-- Real vignette
