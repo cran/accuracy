@@ -42,3 +42,10 @@
 
 1.14
 -- Real vignette
+
+1.15
+-- Workaround for zelig summary/plot on sim() results  for logit
+1.16
+-- don't inject sim() for now
+1.17
+-- fix LRE, re-fix sim

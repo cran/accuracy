@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2006.1.19)  20 APR 2006 15:41
+This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2006.1.19)  7 JUN 2006 21:58
 **accuracy_vignette.tex
 (./accuracy_vignette.tex{/usr/share/texmf/pdftex/config/pdftex.cfg}
 LaTeX2e <2001/06/01>
@@ -157,12 +157,33 @@ Package: vmargin 2000/08/01
 Package: vmargin 2000/08/01 V2.3 (VK) set document margins
 \PaperWidth=\dimen119
 \PaperHeight=\dimen120
-) (/usr/lib64/R/share/texmf/Sweave.sty
+) (/usr/lib/R/share/texmf/Sweave.sty
 
-LaTeX Warning: You have requested package `/usr/lib64/R/share/texmf/Sweave',
+LaTeX Warning: You have requested package `/usr/lib/R/share/texmf/Sweave',
                but the package provides `Sweave'.
 
 Package: Sweave 
+(/usr/share/texmf/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2000/03/21
+
+Style option: `fancyvrb' v2.7, with DG/SPQR fixes <2000/03/21> (tvz)
+\FV@CodeLineNo=\count101
+\FV@InFile=\read1
+\FV@TabBox=\box29
+\c@FancyVerbLine=\count102
+\FV@StepNumber=\count103
+\FV@OutFile=\write3
+)
+(/usr/lib/R/share/texmf/upquote.sty
+Package: upquote 2003/08/11 v1.1 Covington's upright-quote modification to verb
+atim and verb
+
+(/usr/share/texmf/tex/latex/base/textcomp.sty
+Package: textcomp 2001/06/05 v1.94 Standard LaTeX package
+
+(/usr/share/texmf/tex/latex/base/ts1enc.def
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+)))
 (/usr/share/texmf/tex/latex/base/fontenc.sty
 Package: fontenc 2001/06/05 v1.94 Standard LaTeX package
 
@@ -184,49 +205,28 @@ LaTeX Font Info:    Try loading font information for T1+aer on input line 95.
 
 (/usr/share/texmf/tex/latex/ae/t1aer.fd
 File: t1aer.fd 1997/11/16 Font definitions for T1/aer.
-)))
-(/usr/share/texmf/tex/latex/fancyvrb/fancyvrb.sty
-Package: fancyvrb 2000/03/21
-
-Style option: `fancyvrb' v2.7, with DG/SPQR fixes <2000/03/21> (tvz)
-\FV@CodeLineNo=\count101
-\FV@InFile=\read1
-\FV@TabBox=\box29
-\c@FancyVerbLine=\count102
-\FV@StepNumber=\count103
-\FV@OutFile=\write3
-)
-(/usr/lib64/R/share/texmf/upquote.sty
-Package: upquote 2003/08/11 v1.1 Covington's upright-quote modification to verb
-atim and verb
-
-(/usr/share/texmf/tex/latex/base/textcomp.sty
-Package: textcomp 2001/06/05 v1.94 Standard LaTeX package
-
-(/usr/share/texmf/tex/latex/base/ts1enc.def
-File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
-))))
-No file accuracy_vignette.aux.
+)))) (./accuracy_vignette.aux)
 \openout1 = `accuracy_vignette.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 48.
-LaTeX Font Info:    ... okay on input line 48.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 48.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 48.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 47.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 47.
+
 (/usr/share/texmf/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    ... okay on input line 47.
 
 (/usr/share/texmf/tex/context/base/supp-pdf.tex
 (/usr/share/texmf/tex/context/base/supp-mis.tex
@@ -256,7 +256,7 @@ loading : Context Support Macros / PDF
 \nofMParguments=\count111
 \everyMPtoPDFconversion=\toks25
 )
-LaTeX Font Info:    Try loading font information for T1+aett on input line 82.
+LaTeX Font Info:    Try loading font information for T1+aett on input line 81.
  (/usr/share/texmf/tex/latex/ae/t1aett.fd
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 )
@@ -267,20 +267,20 @@ File: accuracy_vignette-003.pdf Graphic file (type pdf)
 
 {/usr/share/texmf/dvips/config/pdftex.map}]
 [2]
-LaTeX Font Info:    Try loading font information for U+msa on input line 152.
+LaTeX Font Info:    Try loading font information for U+msa on input line 151.
  (/usr/share/texmf/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2002/01/19 v2.2g AMS font definitions
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 152.
+LaTeX Font Info:    Try loading font information for U+msb on input line 151.
 
 (/usr/share/texmf/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2002/01/19 v2.2g AMS font definitions
 ) [3 <./accuracy_vignette-003.pdf>] [4] [5]
 
 LaTeX Font Warning: Font shape `T1/aett/bx/n' undefined
-(Font)              using `T1/aett/m/n' instead on input line 276.
+(Font)              using `T1/aett/m/n' instead on input line 275.
 
-[6] <accuracy_vignette-010.pdf, id=63, 433.62pt x 144.54pt>
+[6] <accuracy_vignette-010.pdf, id=60, 433.62pt x 144.54pt>
 File: accuracy_vignette-010.pdf Graphic file (type pdf)
 
 <use accuracy_vignette-010.pdf> [7] [8 <./accuracy_vignette-010.pdf>] [9]
@@ -288,19 +288,16 @@ File: accuracy_vignette-010.pdf Graphic file (type pdf)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 3214 strings out of 95437
- 40337 string characters out of 1190233
- 85257 words of memory out of 1000001
- 6127 multiletter control sequences out of 10000+50000
+ 3220 strings out of 95437
+ 40410 string characters out of 1190233
+ 85554 words of memory out of 1000001
+ 6131 multiletter control sequences out of 10000+50000
  37095 words of font info for 86 fonts, out of 500000 for 1000
  14 hyphenation exceptions out of 1000
  35i,8n,22p,543b,217s stack positions out of 1500i,500n,5000p,200000b,5000s
- 116 PDF objects out of 300000
+ 110 PDF objects out of 300000
  0 named destinations out of 131072
  10 words of extra memory for PDF output out of 65536
 {/usr/share/texmf/dvips/tetex/bbad153f.enc}</usr/share/texmf/fonts/type1/blue
@@ -317,4 +314,4 @@ ex/74afc74c.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/share
 y/cm/cmbx10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmtt10.pfb></usr/share
 /texmf/fonts/type1/bluesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/c
 m/cmbx12.pfb>
-Output written on accuracy_vignette.pdf (15 pages, 169395 bytes).
+Output written on accuracy_vignette.pdf (15 pages, 167251 bytes).

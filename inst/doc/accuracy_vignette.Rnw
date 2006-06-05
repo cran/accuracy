@@ -35,7 +35,6 @@
 %%% Vignette Headers
 %%%%%%%
 
-%\VignetteIndexEntry{accuracy}
 %\VignetteKeywords{statistical computing}
 %\VignetteVersion{1.0}
 %\VignetteTitle{Tools For Accurate and Reliable Statistical Computing} 
@@ -597,3 +596,4 @@ f View of the User.''
 
 \newpage
 \end{document}
+%\VignetteIndexEntry{accuracy}

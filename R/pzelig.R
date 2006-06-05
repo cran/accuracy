@@ -275,23 +275,38 @@ setx.sensitivity<-function (obj, ...) {
 ######################################################
 
 ZeligHooks<-function (...) {
-   if (exists(".simHooked",envir=.GlobalEnv)) {
-	return(TRUE)
-   }
-   origsim=get("sim",envir=as.environment("package:Zelig"))
+   if (!is.null(zeligOrigSim())) {
+        return(TRUE)
+   } 
+   zeligOrigSim(new=Zelig::sim)
    sim.replacement=function (object, x, ...) {
     if  (inherits(object,"sensitivity")) {
        psim(object,x,...)
     } else {
-      origsim(object,x,...)
+       getFromNamespace("zeligOrigSim","accuracy")()(object,x,...)
     }
    }
+   body(sim,envir=as.environment("package:Zelig"))=body(sim.replacement)
+   environment(sim.replacement)=environment(zelig);
    assignInNamespace("sim",sim.replacement,"Zelig")
-   unlockBinding("sim",as.environment("package:Zelig"))
-   assign("sim",sim.replacement, envir=as.environment("package:Zelig"))
    assign("sim",sim.replacement, envir=.GlobalEnv)
-   assign(".simHooked",TRUE,envir=.GlobalEnv)
 }
+
+######################################################
+#       
+# zeligOrigSim
+#       
+# [Internal]
+#
+# used by ZeligHooks to patch Zelig sim call
+# zelig hook will update this replace this
+######################################################
+
+zeligOrigSim <- local({
+           osim <- NULL
+           function(new)
+              if(!missing(new)) osim <<- new else osim 
+        })
 
 
 ######################################################
@@ -309,44 +324,71 @@ ZeligHooks<-function (...) {
 # 
 ######################################################
 
-mergeSims<-function(x) {
-  tsim=x[[1]]
-  if (inherits(x[[1]],"zelig.strata")) {
-     simlevs=names(tsim)
-  } else {
-     simlevs=c(1)
-     tsim=list(tsim)
-  }
-  for (lev in simlevs) {
-     tqev=NULL
-     tqpr=NULL
-     tpar=NULL
-
-     for (tmpl in x) {
-        if (!inherits(x[[1]],"zelig.strata")){
-           tmp=list(tmpl)
-        } else {
-           tmp=tmpl
+mergeSims<- function (x) 
+{
+    tsim = x[[1]]
+    if (inherits(x[[1]], "zelig.strata")) {
+        simlevs = names(tsim)
+    }
+    else {
+        simlevs = c(1)
+        tsim = list(tsim)
+    }
+    for (lev in simlevs) {
+	tqi=NULL
+        tpar = NULL
+        for (tmpl in x) {
+            if (!inherits(x[[1]], "zelig.strata")) {
+                tmp = list(tmpl)
+            }
+            else {
+                tmp = tmpl
+            }
+            tpar = rblist(tpar, tmp[[lev]]$par)
+            tqi = rblist(tqi, tmp[[lev]]$qi)
         }
-        tpar=rbind(tpar, tmp[[lev]]$par)
-        tqev=rbind(tqev, tmp[[lev]]$qi$ev)
-        tqpr=rbind(tqpr, tmp[[lev]]$qi$ev)
-     }
-
-     dimnames(tpar)=dimnames(tsim[[lev]]$par)
-     tsim[[lev]]$par=tpar
-     if (!is.null(tsim[[lev]]$qi$ev)) {
-         tsim[[lev]]$qi$ev=tqev
-     }
-     if (!is.null(tsim[[lev]]$qi$pr)) {
-         tsim[[lev]]$qi$pr=tqpr
-     }
-  }
-  if (!inherits(x[[1]],"zelig.strata")){
-     tsim=tsim[[1]]
-  }
-  return(tsim)
+        dimnames(tpar) = dimnames(tsim[[lev]]$par)
+        tsim[[lev]]$par = tpar
+        tsim[[lev]]$qi = tqi
+    }
+    if (!inherits(x[[1]], "zelig.strata")) {
+        tsim = tsim[[1]]
+    }
+    return(tsim)
 }
+
+######################################################
+#       
+# rblist
+#       
+# [Internal]
+#
+# Merges the rows of all elements of two lists
+#       
+# Parameters:
+#
+# l1,l2 - lists to merge
+# 
+######################################################
+
+
+rblist<-function(l1,l2,deparse.level=1) {
+	if (is.null(l1) || length(l1)==0) {
+		return(l2)
+	} 
+	if (is.null(l2) || length(l2)==0) {
+		return(l1)
+	} 
+
+	if(!is.list(l1) || !is.list(l2)) {
+		return(rbind(l1,l2,deparse.level=0))
+	}
+	for (i in 1:length(l1)) {
+		l1[[i]]=rbind(l1[[i]],l2[[i]], deparse.level=deparse.level)	
+	}
+	return(l1)
+}
+	
 
 ######################################################
 #       

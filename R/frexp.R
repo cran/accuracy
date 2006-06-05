@@ -73,7 +73,7 @@ function(x,correct, use.LAE=TRUE) {
 
         res[nas]=NA
         res[nonzeros]= -1 * 
-                log10(abs(x[nonzeros]-correct[nonzeros])/correct[nonzeros]) 
+                log10(abs(x[nonzeros]-correct[nonzeros])/abs(correct[nonzeros])) 
         if (use.LAE) {
                 res[zeros]=-1*log10(abs(x[zeros]-correct[zeros]))
         } else {
