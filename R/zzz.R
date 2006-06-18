@@ -19,6 +19,7 @@
   if (sum(search()=="package:Zelig")>0) {
   	ZeligHooks()
   }
+  print(citation("accuracy"))
   return(TRUE)
 }
 

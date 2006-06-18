@@ -311,6 +311,11 @@ sensitivitySummaryIteration<-function(iteration) {
 		coef.formula=NULL
 	    }
 	}
+
+	if (is.array(cf) && length(dim(cf)==3)) {
+		cf=coefarrayFlatten(cf)
+	}
+
 	if ( is.null(dim(cf)[2]) || (dim(cf)[2]<2) ) {
 		coef.betas=cf
 		coef.stderrs=NULL
@@ -325,6 +330,41 @@ sensitivitySummaryIteration<-function(iteration) {
 	attr(tmp,"coef.stderrs") = coef.stderrs
 	attr(tmp,"coef.formula") = coef.formula
 	return(tmp)	
+}
+
+
+######################################################
+#          
+# coefarrayFlatten
+#          
+# [Internal]
+#
+# Attemts to extract betas from coef arrays
+#       
+# Parameters:
+#
+#	x- 3d array of coefficients, as returned by lme
+#       
+######################################################
+
+coefarrayFlatten<-function(x, silent=T) {
+  if (!inherits(x,"array")) {
+    return(x)
+  } else {
+    if (length(dim(x))!=3) {
+        if (!silent) {
+          warning("can't reshape")
+        }
+        return(x)
+    }
+  }
+  tmpft=aperm(x,c(1,3,2))
+  dft=dim(tmpft)
+  dim(tmpft)=c(dft[1]*dft[2],dft[3])
+  dimnames(tmpft)[[2]]=dimnames(x)[[2]]
+  dimnames(tmpft)[[1]]=as.vector(
+    outer(dimnames(x)[[1]],dimnames(x)[[3]],function(...)paste(...,sep=":")))
+  return(tmpft)
 }
 
 ######################################################

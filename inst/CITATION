@@ -10,14 +10,14 @@ citEntry(entry="Book",
          edition = "First",
          address      = "New York",
          year         = 2003,
-         note         = "ISBN 0-471-23633-0",
-         note         = "Software: R Package, Accuracy, version 1.11 ",
+         ISBN 		= "ISBN 0-471-23633-0",
+         note         = "Software: R Package, Accuracy, version 1.18 ",
          url          = "http://www.hmdc.harvard.edu/micah_altman/numal/",
          
          textVersion = 
          paste("Altman, M., Gill, J. and M.P. McDonald (2003)", 
                "Numerical Issues in Statistical Computing for the Social Scientist.",
                "John Wiley and Sons, New York.",
-              "(Software version: R Package, Accuracy, version 1.11)",
+              "(Software version: R Package, Accuracy, version 1.18)",
 	       "ISBN 0-471-23633-0.")
 )

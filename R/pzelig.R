@@ -286,8 +286,10 @@ ZeligHooks<-function (...) {
        getFromNamespace("zeligOrigSim","accuracy")()(object,x,...)
     }
    }
-   body(sim,envir=as.environment("package:Zelig"))=body(sim.replacement)
+   #body(sim,envir=as.environment("package:Zelig"))=body(sim.replacement)
    environment(sim.replacement)=environment(zelig);
+   unlockBinding("sim",as.environment("package:Zelig"))
+   assign("sim",sim.replacement, envir=as.environment("package:Zelig"))
    assignInNamespace("sim",sim.replacement,"Zelig")
    assign("sim",sim.replacement, envir=.GlobalEnv)
 }

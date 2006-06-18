@@ -4,7 +4,6 @@
 \alias{gammatst}
 \alias{normtst}
 \alias{ttst}
-\alias{LRE}
 \title{ Benchmark data to test the accuracy of statistical distribution functions, function to compute log relative error }
 \description{
 	This is benchmark data, used to test the accuracy of statistical distribution functions. Also included is a function for computing log-relative error, a measure of accuracy.
@@ -15,12 +14,8 @@
 	data(gammatst)
 	data(normtst)
 	data(chisqtst)
-	LRE(x,correct, use.LAE=TRUE)
 }
 \arguments{
-  \item{x}{ vector of computed values}
-  \item{correct}{ vector of correct values}
-  \item{use.LAE}{use log absolute error if $c_i$==0. If false, returns NA where $c_i$==0}
 } 
 
 \value{ 

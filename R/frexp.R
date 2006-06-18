@@ -43,44 +43,10 @@ function(v) {
 	i = which(is.finite(v) | !is.na(v))
 	tmp = .C("R_frexp", PACKAGE="accuracy", as.double(v[i]), as.integer(length(v[i])),
 		mantissa=double(length(v[i])),
-		exponent=integer(length(v[i])))
+		exponent=integer(length(v[i])), DUP=FALSE)
 	r[i,] = cbind(tmp$mantissa,tmp$exponent)
 	dimnames(r)[[2]]=c("Mantissa","Exponent")
 	return(r)
-}
-
-######################################################
-#       
-# LRE
-#       
-# Calculates the Log Relative Error between two values.
-#       
-# Parameters:
-#
-# See the R documentation file for details of each argument and return value
-# 
-######################################################
-
-
-
-"LRE"<-
-function(x,correct, use.LAE=TRUE) {
-        zeros = which(x==0)
-        nonzeros = which(x!=0)
-        nas = which(x==NA)
-
-        res=double(length(x))
-
-        res[nas]=NA
-        res[nonzeros]= -1 * 
-                log10(abs(x[nonzeros]-correct[nonzeros])/abs(correct[nonzeros])) 
-        if (use.LAE) {
-                res[zeros]=-1*log10(abs(x[zeros]-correct[zeros]))
-        } else {
-                res[zeros]=NA
-        }
-
-        return(res)
 }
 
 ######################################################

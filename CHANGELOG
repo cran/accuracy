@@ -49,3 +49,7 @@
 -- don't inject sim() for now
 1.17
 -- fix LRE, re-fix sim
+1.18
+-- update LRE to handle arrays, preserve structure
+-- add functions for comparing model results
+-- fix sensitivity handling of models that return arrays from summary(coef())  
