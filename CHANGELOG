@@ -53,3 +53,8 @@
 -- update LRE to handle arrays, preserve structure
 -- add functions for comparing model results
 -- fix sensitivity handling of models that return arrays from summary(coef())  
+1.19
+-- update to true random routines to handle
+	- blocking on /dev/rand more gracefully (R can block forever on opem)
+	- added random.org as an entropy source
+	- handling failures at random.org and hotbits

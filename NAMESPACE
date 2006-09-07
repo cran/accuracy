@@ -4,7 +4,7 @@
 export(frexp)
 
 # true random numbers
-export(initPool, resetSeed,runifT)
+export(resetSeed,runifT)
 export(runifS) # 1.06
 
 # generalized inverse

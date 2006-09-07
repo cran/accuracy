@@ -31,6 +31,7 @@
 # and only refreshed when the pool is empty. Each of the exposed routines draws from
 # the same pool
 
+
 ######################################################
 #
 # runifS
@@ -44,13 +45,13 @@
 ######################################################
 
 
-"runifS" <- function(n, ... , period=10000) {
+"runifS" <- function(n, ... , period=10000,maxTries=10,silent=TRUE) {
 	k = floor(n/period)
-	resetSeed()
+	resetSeed(maxTries=maxTries,silent=silent)
 	res=runif(n-(period*k), ...)
 	if (k>0) {
 	   for (i in 1:k) {
-		resetSeed()
+		resetSeed(maxTries=maxTries,silent=silent)
 		res = c(res,runif(period))
 	   }
 	}
@@ -70,16 +71,18 @@
 ######################################################
 
 
-"runifT" <- function(n, min=0, max=1) {
+"runifT" <- function(n, min=0, max=1,maxTries=10,silent=TRUE) {
 	if (min>=max) {
 		stop("Max must be > min")
 	}
-	tmp = trueRandom(n)
-	if (is.null(tmp)) {
-		warning("No entropy available, returning pseudo-random numbers")
-		r = runif(n, min, max)
-	} else { 
-		r =(tmp/.Machine$integer.max  + 1) * ((max-min)/2)
+	tmp = trueRandom(n,maxTries=maxTries,silent=silent)
+	r =(tmp/.Machine$integer.max  + 1) * ((max-min)/2)
+	if (length(tmp)<n) {
+		if(!silent) {	
+			warning("Not enough entropy available, returning some pseudo-random numbers")
+		}
+		r = c(r,runif(n-length(r), min, max))
+		sample(r,n)
 	}
 	return(r)
 }
@@ -94,38 +97,45 @@
 #
 # See the R documentation file for details of each argument and return value
 # 
+#
 ######################################################
 
 
-"trueRandom" <-function (n) {
+"trueRandom" <-function (n, maxTries=100,silent=TRUE) {
 	if (length(n)>1) {
 		size=length(n)
 	} else {
 		size = n
 	}
 
+	tr=integer(0)
+
 	if (!exists(".EntropyPool",envir=.GlobalEnv)) {
-		pool=refreshPool(silent=TRUE)
+		pool=refreshPool(silent=silent)
 		if (is.null(pool)) {
-			return(NULL)
+			return(tr)
 		}
 	} else {
 		pool=get(".EntropyPool",envir=.GlobalEnv)
 	}
 
-	tr = integer(size)
-	i = 1
-	while (i<=size) {
+	tries=0;
+	while ( (tries<maxTries) && (length(tr)<size)) {
 		if (pool$current < 1)  {
-			pool=refreshPool(silent=TRUE)
+			pool=refreshPool(silent=silent)
+			tries = tries+1
+			if ((tries<maxTries) && (pool$current<1)) {
+				Sys.sleep(options()$timeout)
+			}
 			next
 		} 
-		tr[i] = pool$pool[pool$current]
-		pool$current = pool$current -1
-		i= i+1
-	}	
-
-	assign(".EntropyPool",pool,envir=.GlobalEnv)
+		needed = size-length(tr)
+		chunk = min(needed,pool$current)
+		tmp = pool$pool[(pool$current-chunk+1):pool$current]	
+		tr = c(tr,tmp)
+		pool$current = pool$current-chunk
+		assign(".EntropyPool",pool,envir=.GlobalEnv)
+	}
 	return(tr)
 }
 
@@ -142,10 +152,12 @@
 ######################################################
 
 
-"resetSeed" <-function() {
-	s = trueRandom(1)
-	if (is.null(s)) {
-		warning("No entropy available, using system time as seed.")
+"resetSeed" <-function(maxTries=10,silent=TRUE) {
+	s = trueRandom(1,maxTries=maxTries,silent=silent)
+	if (is.null(s)|| length(s)==0) {
+		if (!silent) {
+			warning("No entropy available, using system time as seed.")
+		}
 		s = as.integer(Sys.time())
 	}
 	set.seed(s)
@@ -165,51 +177,59 @@
 
 
 
-"initPool"<-function(size=512, hbok=TRUE, devrndok=TRUE, silent=FALSE) {
+"initPool"<-function(hbok=0, rook=0, devrndok=0, silent=FALSE) {
 	entropypool = list()
-	entropypool$size=size
 	entropypool$current=0
-	entropypool$pool=integer(length=size)
+	entropypool$pool=integer(0)
+	entropypool$intinfo = 
+	  .C("R_intinfo", PACKAGE="accuracy", sizeof.int =integer(1),  DUP=FALSE)
 	class(entropypool)="EntropyPool"
 	
-	if (size<1 || size > 10000/.Machine$sizeof.long) {
-		warning("size out of range")
-		return (NULL)
+	ow= options(warn=-1)
+	st = Sys.time()
+
+	if (!file.exists("/dev/random")) {
+                devrndok=.Machine$integer.max
 	}
 
-	w = options("warn")
-	options(warn=-1)
-	if (devrndok) {
+	if (st>hbok) {
 	   tri = integer()
-           tr = try({tri=readBin('/dev/random', integer(0), signed=FALSE)},
-                silent=TRUE)
-           if (inherits(tr, "try-error") || (length(tri) == 0)) {
-                devrndok=FALSE
-           }   
-	}
-  
-	if (hbok) {
-	   tri = integer()
-	   hb = try({hburl(bytes= .Machine$sizeof.long)})
-           if (is.null(hb) || inherits(hb, "try-error")) {
-                hbok=FALSE
+	   hb = hburl(bytes= entropypool$intinfo$sizeof.int)
+           if (is.null(hb)) {
+                hbok=st+300
 	   } else {
-           	tr = try({tri=readBin(hb, integer(0), signed=FALSE)}, silent=TRUE)
+           	tr = try({tri=readBin(hb, integer(0), signed=FALSE, n=65536)}, silent=TRUE)
                  if (inherits(tr, "try-error") || (length(tri) == 0)) {
-                   hbok=FALSE
+                   	hbok=st+600
                  }  else {
 	   		try(close(hb), silent=TRUE)
 		}
 	   }
 	}
-	options(warn=as.integer(w))
-	entropypool$hbok=hbok
-	entropypool$devrndok=devrndok
-	if (!devrndok && !hbok ) {
-		if (!silent) {
-			warning("initialization failed, no true random sources found")
+
+	if (rook) {
+	   tri = integer()
+	   hb = rourl(bytes= entropypool$intinfo$sizeof.int)
+           if (is.null(hb)){
+                rook=st+300
+	   } else {
+           	tr = try({tri=readBin(hb, integer(0), signed=FALSE, n=65536)}, silent=TRUE)
+                 if (inherits(tr, "try-error") || (length(tri) == 0)) {
+                   	rook=st+600
+                 }  else {
+	   		try(close(hb), silent=TRUE)
 		}
-		return(NULL)
+	   }
+	}
+
+	options(ow)
+	entropypool$hbok=hbok
+	entropypool$rook=rook
+	entropypool$devrndok=devrndok
+	if ((st<devrndok) && (st<hbok) && (st<rook)) {
+		if (!silent) {
+			warning("true random sources currently unavailable")
+		}
 	}
 	assign(".EntropyPool",entropypool,envir=.GlobalEnv)
 	refreshPool(silent=silent)
@@ -234,11 +254,40 @@
 ######################################################
 
 
-"hburl" <-function(bytes=1,fmt="bin") {
+"hburl" <-function(bytes=256,fmt="bin") {
+	bytes=round(bytes)
+	if (bytes<1) {
+		bytes =1
+	} else if (bytes>2048) {
+		bytes=2048
+	}
 	hbstring = paste (
 		"http://www.fourmilab.ch/cgi-bin/uncgi/Hotbits?"
-		,"nbytes=",bytes,"&fmt=",fmt, sep="")
-	return(url(hbstring,open="rb"))
+		,"nbytes=", bytes,"&fmt=",fmt, sep="")
+	rtval=try(url(hbstring,open="rb"), silent=TRUE)
+	if (inherits(rtval,"try-error")) {
+		return(NULL)
+	} else {	
+		return(rtval)
+	}
+}
+
+"rourl" <-function(bytes=256,fmt="f") {
+	bytes=round(bytes)
+	if (bytes<1) {
+		bytes =1
+	} else if (bytes>16384) {
+		bytes=16384
+	}
+	hbstring = paste (
+		"http://www.random.org/cgi-bin/randbyte?"
+		,"nbytes=", bytes,"&format=",fmt, sep="")
+	rtval=try(url(hbstring,open="rb"), silent=TRUE)
+	if (inherits(rtval,"try-error")) {
+		return(NULL)
+	} else {	
+		return(rtval)
+	}
 }
 
 ######################################################
@@ -265,15 +314,117 @@
 		}
 	}
 	pool=get(".EntropyPool",envir=.GlobalEnv)
-	if (pool$hbok) {
-		con = hburl(bytes=pool$size)
-		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size)
+	oldpool=pool$pool
+	pool$pool=integer(0)
+	st = Sys.time()
+	timeo = options()$timeout
+
+	if (!silent) {
+		ow= options(warn=-1)
+	}
+	if ((st>pool$rook) && (length(pool$pool)==0)) {
+	   con = rourl()
+	   if (is.null(con)) {
+			if (!silent) {warning("RO connection ERROR");}
+			pool$rook=st+timeo
+	   } else {
+           	tmp = try({readBin(con, integer(0), signed=FALSE, n=65536)}, silent=TRUE)
 		close(con)
-	} else if (pool$devrndok) {
-		con = "/dev/random"
-		pool$pool = readBin(con, integer(0), signed=FALSE,n=pool$size)
+                if (inherits(tmp, "try-error")) {
+			if (!silent) {warning("RO ERROR");}
+			pool$rook=st+timeo
+		} else if (sum(oldpool==tmp)>0) {
+			if (!silent) 	{warning("RO REPEATED POOL")}
+			pool$rook=st+10*timeo
+		} else if (length(tmp)==0) {
+			if (!silent)  {warning("RO NO POOL")}
+			pool$rook=st+timeo
+		} else {
+			pool$pool = tmp
+		}
+	   }
+	}
+
+	if ((st>pool$hbok) && (length(pool$pool)==0)) {
+	   con = hburl()
+	   if (is.null(con)) {
+			if (!silent) {warning("HB connection ERROR");}
+			pool$hbok=st+timeo
+	   } else {
+           	tmp = try({readBin(con, integer(0), signed=FALSE, n=65536)}, silent=TRUE)
+		close(con)
+
+                if (inherits(tmp, "try-error")) {
+			if (!silent) {warning("HB COMMUNICATIONS ERROR");}
+			pool$hbok=st+timeo
+		} else if (isTRUE(all.equal(tmp, 
+			c( 544567129, 1702257000, 1668834592, 1701078373,1870209124, 840987253 , 1869098292,1897951861,1635020661,1919903264,1953450016,1937008962 )))) {
+			if (!silent)	{warning("HB too many request");}
+			pool$hbok=st+180*timeo
+		} else if (sum(oldpool==tmp)>0) {
+			if (!silent) 	{warning("HB REPEATED POOL")}
+			pool$hbok=st+10*timeo
+		} else if (length(tmp)==0) {
+			if (!silent)  {warning("HB NO POOL")}
+			pool$hbok=st+timeo
+		} else {
+			pool$pool = tmp
+		}
+	   }
 	} 
+
+	if ((st>pool$devrndok) && (length(pool$pool)==0)) {
+		tmp= readDevRand()
+		if (isTRUE(all.equal(oldpool,tmp))) {
+			if (!silent) {
+				warning("DEV RANDOM REPEATED POOL")
+			}
+		}
+		pool$pool = tmp
+	} 
+
+	if (!silent) {
+		options(ow)
+	}
 	pool$current=length(pool$pool)
 	assign(".EntropyPool",pool,envir=.GlobalEnv)
 	return(pool)
+}
+
+
+######################################################
+#
+# readDevRand
+#
+# [Internal Function]
+#       
+# Safely reads /dev/random
+#
+# This is a workaround for the fact that /dev/random blocks
+# and R does not handle timeouts on blocking I/O correctly
+# (in fact, open() can block even when block is set to false :-(
+# 
+# Parameters:
+#
+# timeout = timeout value
+# numInts = number of ints to read
+#
+######################################################
+
+
+readDevRand<-function(numInts=32,timeout=options("timeout")[[1]]) {
+	if (!file.exists("/dev/random")) {
+		return(integer(0))
+	}
+	 sleepInt=5
+	 maxTries=ceiling(timeout/sleepInt)
+	 tmp = .C("R_readrand", PACKAGE="accuracy",  as.integer(numInts),
+		as.integer(maxTries), as.integer(sleepInt),
+		 numRead =integer(1), results=integer(numInts), DUP=FALSE)
+	if (tmp$numRead>0) {
+		length(tmp$results)=tmp$numRead
+		return(tmp$results)
+	} else {
+		integer(0)
+	}
 }

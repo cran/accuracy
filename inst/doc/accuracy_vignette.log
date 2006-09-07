@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2006.1.19)  23 JUN 2006 06:20
+This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2006.1.19)  16 JUL 2006 22:09
 **accuracy_vignette.tex
 (./accuracy_vignette.tex{/usr/share/texmf/pdftex/config/pdftex.cfg}
 LaTeX2e <2001/06/01>
@@ -157,9 +157,9 @@ Package: vmargin 2000/08/01
 Package: vmargin 2000/08/01 V2.3 (VK) set document margins
 \PaperWidth=\dimen119
 \PaperHeight=\dimen120
-) (/usr/lib/R/share/texmf/Sweave.sty
+) (/usr/lib64/R/share/texmf/Sweave.sty
 
-LaTeX Warning: You have requested package `/usr/lib/R/share/texmf/Sweave',
+LaTeX Warning: You have requested package `/usr/lib64/R/share/texmf/Sweave',
                but the package provides `Sweave'.
 
 Package: Sweave 
@@ -174,7 +174,7 @@ Style option: `fancyvrb' v2.7, with DG/SPQR fixes <2000/03/21> (tvz)
 \FV@StepNumber=\count103
 \FV@OutFile=\write3
 )
-(/usr/lib/R/share/texmf/upquote.sty
+(/usr/lib64/R/share/texmf/upquote.sty
 Package: upquote 2003/08/11 v1.1 Covington's upright-quote modification to verb
 atim and verb
 
@@ -291,8 +291,8 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
  ) 
 Here is how much of TeX's memory you used:
  3220 strings out of 95437
- 40410 string characters out of 1190233
- 85554 words of memory out of 1000001
+ 40426 string characters out of 1190233
+ 85556 words of memory out of 1000001
  6131 multiletter control sequences out of 10000+50000
  37095 words of font info for 86 fonts, out of 500000 for 1000
  14 hyphenation exceptions out of 1000
@@ -314,4 +314,4 @@ ex/74afc74c.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/share
 y/cm/cmbx10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmtt10.pfb></usr/share
 /texmf/fonts/type1/bluesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/c
 m/cmbx12.pfb>
-Output written on accuracy_vignette.pdf (15 pages, 166850 bytes).
+Output written on accuracy_vignette.pdf (15 pages, 167314 bytes).
