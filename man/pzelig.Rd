@@ -7,7 +7,7 @@
 	extension functions to summarize results.
 }
 \usage{
-sensitivityZelig(z, ptb.R=30, ptb.ran.gen=NULL, ptb.s=NULL, explanatoryOnly=FALSE, summarize=FALSE, simulate=FALSE, simArgs=NULL)
+sensitivityZelig(z, ptb.R=50, ptb.ran.gen=NULL, ptb.s=NULL, explanatoryOnly=FALSE, summarize=FALSE, simulate=FALSE, simArgs=NULL, ptb.rangen.ismatrix=FALSE)
 	pzelig(...)
 }
 \arguments{
@@ -23,6 +23,9 @@ sensitivityZelig(z, ptb.R=30, ptb.ran.gen=NULL, ptb.s=NULL, explanatoryOnly=FALS
                 and can significantly speed up analysis for large datasets.}
   \item{simArgs}{ a list of arguments to pass to psim, if simulate is true}
   \item{\dots}{args as in sensitivityZelig}
+     \item{ptb.rangen.ismatrix}{If true, expects ptb.ran.gen to be a matrix function, for use
+  with correlated noise structure. See below}
+
 }
 \details{
 	Uses \code{sensitivity} to perform sensitivity analysis on a \code{zelig} model.
@@ -65,12 +68,20 @@ Micah Altman
 
 # example requires Zelig.
 
- if (library(Zelig,logical.return=TRUE)) {  
-   data(longley)
+if(!is.R()){
+  # splus version of require ignores quietly!
+  ow<-options(warn=-1)
+}
+ if (require(Zelig,quietly=TRUE)) { 
+   if (is.R()) {
+       data(longley)
+   } else {
+   # accuracy supplies longley for SPLUS automagically, for examples only
 
-   # zelig 2.52 breaks with '.' in formulas
-   #zelig.out=zelig(Employed~.,"ls",longley) # run longley regression
-   zelig.out=zelig(Employed~Year+GNP,"ls",longley) # run longley regression
+      options(ow)
+   }
+   
+   zelig.out=zelig(Employed~.,"ls",longley) # run longley regression
    # default settings
    perturb.zelig.out = sensitivityZelig(zelig.out)		   
 
@@ -106,8 +117,11 @@ Micah Altman
 
    # this provides a summary of the predicted distribution of the explanatory variable
 
-   summary(sim.perturb.zelig.out)
+   print(summary(sim.perturb.zelig.out))
    
+ }
+ if (!is.R()) {
+   options(ow)
  }
 }
 \keyword{misc}

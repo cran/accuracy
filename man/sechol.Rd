@@ -45,18 +45,32 @@ Computing for the Social Scientist}.  John Wiley \& Sons.
 # compare with chol() on a non-singular matrix
 S <- matrix(c(2,0,2.4,0,2,0,2.4,0,3),ncol=3)
 chol(S)
-T <- sechol(S)
-t(T) %*% T
+TS<- sechol(S)
+TS
+t(TS) %*% TS
 
 # an example with a singular matrix
 S <- matrix(c(2,0,2.5,0,2,0,2.5,0,3),ncol=3)
-sechol(S) 
-t(T) %*% T  
+TS<-sechol(S) 
+TS
+t(TS) %*% TS 
     
 # another example with a singular matrix
 S <- matrix(c(2,0,10,0,2,0,10,0,3),ncol=3)
-T <- sechol(S)
-t(T) %*% T  
+TS <- sechol(S)
+TS
+t(TS) %*% TS 
+\dontshow{
+  # unit test
+if (is.R()){
+  selfTest=get("secholTest",envir=environment(sechol))
+} else {
+  selfTest=secholTest
+}
+if (!selfTest()) {
+  	warning("failed self-test")
+}
+}
 }
 \keyword{array}
 \keyword{optimize}

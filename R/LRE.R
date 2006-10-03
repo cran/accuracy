@@ -39,14 +39,14 @@
 "LRE"<-
 function (x, correct, use.LAE = TRUE, cutoff=16)
 {
-    zeros = which(x == 0)
-    nonzeros = which(x != 0)
+    zeros = which(correct == 0)
+    nonzeros = which(correct != 0)
     nas = which(x == NA)
     res = double(length(x))
     res[nas] = NA
     res[nonzeros] = -1 * log10(abs(x[nonzeros] - correct[nonzeros])/abs(correct[nonzeros]))
     if (use.LAE) {
-        res[zeros] = -1 * log10(abs(x[zeros] - abs(correct[zeros])))
+        res[zeros] = -1 * log10(abs(x[zeros]))
     }
     else {
         res[zeros] = NA
@@ -72,23 +72,37 @@ function (x, correct, use.LAE = TRUE, cutoff=16)
 ######################################################
 
 modelsCompare<-function(
-    models=list(),
-    param.function=function(model)coef(summary(model)),
+    model, model2=NULL,
+    param.function=modelBetas,
     similarity.function=LRE,
     summary.function=min
 ) {
 
   # check arguments
+  if (is.null(model2)) {
+	models=model
+  } else {
+  	models = list(model,model2)
+  }
 
   baseline=param.function(models[[1]])
-  tmpComparisons=sapply( models[2:length(models)],
-      function(tmpCmp){similarity.function(param.function(tmpCmp), baseline )},
-      simplify=TRUE)
-  apply(tmpComparisons, 1, summary.function)
-  ret= apply(tmpComparisons, 1, summary.function)
-  names(ret)=names(baseline)
-  dim(ret)=dim(baseline)
-  dimnames(ret)=dimnames(baseline)
+  
+  tmpComparisons=vector(mode="list", length=length(models)-1)
+  for (i in 1:length(tmpComparisons)) {
+    tmpComparisons[[i]]=similarity.function(param.function(models[[i+1]]), baseline )
+  }
+
+  
+  ret= apply(simplify(tmpComparisons), 1, summary.function)
+  if (!is.null(dim(baseline))) {
+	   dim(ret)=dim(baseline)
+  }
+  if (!is.null(names(baseline))) {
+  	names(ret)=names(baseline)
+  }
+  if (!is.null(dimnames(baseline))) {
+  	dimnames(ret)=dimnames(baseline)
+  }
   return(ret)
 
 }
@@ -106,8 +120,12 @@ modelsCompare<-function(
 ######################################################
 
 
-modelsAgree<-function(model, model2, digits=3, ...) {
-  models = list(model,model2)
+modelsAgree<-function(model, model2=NULL, digits=3, ...) {
+  if (is.null(model2)) {
+	models=model
+  } else {
+  	models = list(model,model2)
+  }
   min(modelsCompare(models,...))>=digits
 }
 
@@ -126,4 +144,78 @@ modelsAgree<-function(model, model2, digits=3, ...) {
 modelBetas<-function(model) {
 	tmp=sensitivitySummaryIteration(model)
 	return(attr(tmp,"coef.betas"))
+}
+
+
+######################################################
+#       
+# coefSummary
+#       
+# convenience function, extracts coefficients from summary() of model
+#       
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
+modelSummary<-function(model) {
+	tmp=sensitivitySummaryIteration(model)
+	return(tmp)
+}
+
+######################################################
+#       
+# modelCompareSelfTest 
+#       
+# [Internal Function]
+#
+# self test of perturb, sanity checks
+#       
+# Parameters:
+#
+# silent - print debugging output
+# 
+######################################################
+
+
+modelsCompareSelfTest<-function(silent=TRUE) {
+	status=TRUE
+
+	if (LRE(10,10)!=16 || LRE(10,1)>0 || !isTRUE(all.equal(LRE(1.000001,1),6))
+       || !isTRUE(all.equal(LRE(.01,0),2)) ) {
+		status = FALSE
+		if (!silent) {
+			warning("LRE malfunction")
+		}
+	}
+	
+	data(longley)
+	longley2=as.data.frame(longley+2)
+	
+	l1 = lm(longley)
+	l2 = lm(longley2)
+	
+	if (!modelsAgree(l1,l1)) {
+	  status = FALSE
+		if (!silent) {
+			warning("Identical models should agree")
+		}
+	}
+	
+	if (modelsAgree(l1,l2)) {
+	  status = FALSE
+		if (!silent) {
+			warning("Different models should disagree")
+		}
+	}
+  
+  if (!modelsAgree(l1,l2, digits=1)) {
+	  status = FALSE
+		if (!silent) {
+			warning("Doesn't match rough agreement")
+		}
+	}
+
+	return(status)
 }

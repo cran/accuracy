@@ -55,6 +55,24 @@
 -- fix sensitivity handling of models that return arrays from summary(coef())  
 1.19
 -- update to true random routines to handle
-	- blocking on /dev/rand more gracefully (R can block forever on opem)
+	- blocking on /dev/rand more gracefully (R can block forever on open, we avoid this)
 	- added random.org as an entropy source
 	- handling failures at random.org and hotbits
+1.20
+-- extend modelsAgree list handling
+-- fix modelsCompare scoping problem for param.function
+-- perturbHarness bug for non-numeric vars not in Zelig
+-- more robust to failures of perturbed models
+
+1.21
+-- port to S-Plus
+-- handle correlated perturbations, with matrix perturbation functins
+
+1.22
+-- Fix R 2.4 issues
+
+1.23
+-- Fix some s-plus bugs in examples
+
+1.24
+-- Workaround infelicity in CMD check not ignoring platform conditional code

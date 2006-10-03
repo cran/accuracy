@@ -11,7 +11,7 @@
 \usage{
 plot.sensitivity(x, ask=dev.interactive(), ...)
 anova.sensitivity(object, ...)
-print.sensitivity(x, quiet=T, ...)
+print.sensitivity(x, quiet=TRUE, ...)
 summary.sensitivity(object, ...)
 }
 \arguments{

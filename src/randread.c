@@ -27,7 +27,14 @@
 */
 
 #include <fcntl.h>
+#ifdef MSVC
+#include <io.h>
+#define open _open
+#define read _read
+#define close _close
+#else
 #include <unistd.h>
+#endif
 
 #ifdef NONONBLOCK
 #ifdef HASALARM
@@ -69,6 +76,8 @@ void catch_alarm(int sig_num)
 int readrand (unsigned int numWanted ,unsigned int maxTries,unsigned int sleepInt,
 	int *result) {
    
+   int rv=0, bytesRead=0,  bytesWanted = numWanted * sizeof(int);
+   unsigned int numTries=0; 
    #ifdef NONONBLOCK
    int fd=open("/dev/random",O_RDONLY);
    #ifdef HASALARM
@@ -81,11 +90,13 @@ int readrand (unsigned int numWanted ,unsigned int maxTries,unsigned int sleepIn
    #else
    int fd=open("/dev/random",O_NONBLOCK|O_RDONLY);
    #endif
+   
+  
    if (fd<0) {
-	return (-1);
+    	return (-1);
    }
    
-   int rv=0, bytesRead=0, numTries=0, bytesWanted = numWanted * sizeof(int);
+
   
    while (bytesRead<bytesWanted && numTries<maxTries) {
    	rv = read(fd, (((unsigned char*) result)+bytesRead), bytesWanted-bytesRead);

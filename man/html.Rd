@@ -7,7 +7,7 @@
 	HTML pretty printing methods for use rith R2HTML package
 }
 \usage{
-	HTML.sensitivity.summary(x,...)
+	HTML.sensitivity.summary(x,quiet=TRUE,...)
 	HTML.sensitivity.sim.summary(x,...)
 	HTML.sensitivity.anova(x,...)
 
@@ -15,6 +15,7 @@
 
 \arguments{
   \item{x}{ a sensitivity summary object} 
+  \item{quiet}{ show debugging output } 
   \item{\dots}{ arguments to pass to default functions}
 }
 
@@ -38,9 +39,10 @@ Micah Altman
 \seealso{ See Also as \code{\link{perturb}},  \code{\link[pkg:R2HTML]{HTML}}}
 \examples{
     \dontrun{
-library(R2HTML)
-sp=summary(perturb(longley,lm,Employed~.))
-HTML(sp,file="") # HTML Output
+if(require(R2HTML,quietly=TRUE)){
+  sp=summary(perturb(longley,lm,Employed~.))
+  HTML(sp,file="") # HTML Output
+}
     }
 }
 \keyword{misc}

@@ -51,32 +51,42 @@
 sensitivity<-function(data,statistic,..., ptb.R=50,
   ptb.ran.gen=NULL,
 	ptb.s=NULL,
-	summarize=FALSE
+	summarize=FALSE,
+	keepData=FALSE,
+	ptb.rangen.ismatrix=FALSE
 	) {
 
 	ptb.R=as.integer(trunc(ptb.R))
 	
+	
 	if (is.null(ptb.ran.gen)) {
+		ptb.rangen.ismatrix=FALSE
     		if (is.null(ptb.s)) {
-     			ptb.ran.gen = sapply(as.data.frame(data), PTBdefaultfn)
+     			ptb.ran.gen = sapply(as.data.frame(data), PTBdefaultfn, simplify=FALSE)
     		} else {
      			ptb.ran.gen = sapply(as.data.frame(data),
-                  		function(x)PTBdefaultfn(x,ptb.s))
+                  		function(x)PTBdefaultfn(x,ptb.s), simplify=FALSE)
      			ptb.s=NULL
     		}
    	}
+	if (ptb.rangen.ismatrix && !is.function(ptb.ran.gen)) {
+	   warning("Can only use one matrix ran.gen function, using first")
+	   ptb.ran.gen=ptb.ran.gen[[1]]
+  }
+	
 
 	if ( (ptb.R<=0) || (length(ptb.R)>1) ) {
 		stop("ptb.R must be int > 0")
 	}
+        baseline= perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic,noPerturb=T,...)
 	retval = list(ptb.R);
 	for (i in 1:ptb.R) {
 		if (is.null(ptb.s)) {
 		   retval[[i]]=
-		    perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic,...)
+		    perturbHarness(data=data,ran.gen= ptb.ran.gen,ptb.rangen.ismatrix=ptb.rangen.ismatrix,statistic=statistic,...)
 		} else  {
 		   retval[[i]]=
-		    perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic,...,
+		    perturbHarness(data=data,ran.gen= ptb.ran.gen,ptb.rangen.ismatrix=ptb.rangen.ismatrix, statistic=statistic,...,
 			ptb.s=ptb.s)
 		} 
 		if (summarize) {
@@ -94,6 +104,7 @@ sensitivity<-function(data,statistic,..., ptb.R=50,
 	   attr(retval, "statistic") = statistic
 	   class(retval)="sensitivity"
 	}
+	attr(retval, "baseline") = baseline
 	return(retval)
 }
 
@@ -114,47 +125,75 @@ sensitivity<-function(data,statistic,..., ptb.R=50,
 #       
 ######################################################
 
-perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL,nameData=F) {
+perturbHarness<-function(data,ran.gen,statistic,..., ptb.s=NULL,nameData=F,keepData=F, noPerturb=F,ptb.rangen.ismatrix=F) {
 	ndata = as.data.frame(data)
-	if (length(ran.gen)==1) {
-		ind=which(sapply(ndata,is.numeric))
-		ran.gen=replicate(ncol(ndata),ran.gen)
-		if (!is.null(ptb.s)) {
-			ptb.s = replicate(ncol(ndata),ptb.s)
-		}
-	} else if (length(ran.gen)!=ncol(ndata)) {
-		stop("ran.gen must be a single function, or a vector of functions of length ncol(df)")
-	} else {
-		ind = which(sapply(ran.gen,is.function))
-	}
-
-	for ( i in ind ) {
-		if (is.null(ptb.s[[i]])) {
-			ndata[[i]] = ran.gen[[i]](ndata[[i]])
-		} else {
-			ndata[[i]] = ran.gen[[i]](ndata[[i]],size=ptb.s[i])
-		}
+	if (!noPerturb) {
+    if (length(ran.gen)==1 && ptb.rangen.ismatrix==FALSE) {
+		  ind=1:ncol(ndata)
+		  ran.gen=replicate(ncol(ndata),ran.gen)
+		  if (!is.null(ptb.s)) {
+			 ptb.s = replicate(ncol(ndata),ptb.s)
+		  }
+	  } else if (length(ran.gen)!=ncol(ndata) && ptb.rangen.ismatrix==FALSE) {
+		  stop("ran.gen must be a single function, or a vector of functions of length ncol(df)")
+	  } else if (ptb.rangen.ismatrix && !is.function(ran.gen)) {
+	     stop("ran.gen must be a single function, or a vector of functions of length ncol(df)")
+	  } else  if (!ptb.rangen.ismatrix) {
+		  ind = which(sapply(ran.gen,is.function))
+	  }
+    
+    if (ptb.rangen.ismatrix==FALSE) {
+	    for ( i in ind ) {
+		    if (is.null(ptb.s[[i]])) {
+			    ndata[[i]] = ran.gen[[i]](ndata[[i]])
+		    } else {
+			    ndata[[i]] = ran.gen[[i]](ndata[[i]],size=ptb.s[i])
+		    }
+	    }
+    } else {
+      if (is.null(ptb.s)) {
+		    ndata = ran.gen(ndata)
+      } else {
+		    ndata = ran.gen(ndata,size=ptb.s)
+      }
+      if (!is.R()){
+        ndata=as.data.frame(ndata)
+      }
+    }  
 	}
 	
-        res=NULL
-        if (class(statistic)=="function")    {
-           ne = new.env(parent=environment(statistic))
-           environment(statistic)=ne
-           assign("ndata",ndata,envir=ne)
+   res=NULL
+   if (class(statistic)=="function")    { 
+     if (is.R()) { 
+        ne = new.env(parent=environment(statistic))
+        environment(statistic)=ne
+        assign("ndata",ndata,envir=ne)
+     }
 	   if (nameData) {
-           	res = statistic(data=as.name("ndata"),...)
+        if (is.R()) {
+           	res = tryR(statistic(data=as.name("ndata"),...), silent=T)
+       	} else {
+       	    res=tryR(eval(as.call(list(statistic,data=as.name("ndata"),...))))
+   	    }
 	   } else {
-           	res = statistic(data=ndata,...)
+	     if (is.R()) {
+           	res = tryR(statistic(data=ndata,...),silent=T)
+     	 } else {
+     	       res=tryR(eval(as.call(list(statistic,data=ndata,...))))
+     	 }
 	   }
-        }  else  {
+   }  else  {
 	   if (nameData) {
-           	res= do.call(statistic,list(...,data=as.name("ndata")))
+           	res= tryR(do.call(statistic,list(...,data=as.name("ndata"))),silent=T)
 	   } else {
-           	res= do.call(statistic,list(...,data=ndata))
+           	res= tryR(do.call(statistic,list(...,data=ndata)),silent=T)
 	   }
-        }
+   }
 
-        return(res)
+	if (keepData) {
+		attr(res,"Perturbed.data")=ndata
+	}
+  return(res)
 	
 }
 
@@ -181,7 +220,7 @@ perturbTest<-function(silent=TRUE) {
 		data(longley, package="datasets")
 	}
 
-	for (i in c(PTBnc,PTBuc)) {
+	for (i in list(PTBnc,PTBuc)) {
 		pl = i(longley)
 		if (sum(pl==longley) != 0) {
 			status=FALSE
@@ -198,7 +237,7 @@ perturbTest<-function(silent=TRUE) {
 			}
 		}
 	}
-	for (i in c(PTBms,PTBn,PTBu)) {
+	for (i in list(PTBms,PTBn,PTBu)) {
 		pl = i(longley)
 		if (sum(pl==longley) != 0) {
 			status=FALSE
@@ -215,7 +254,7 @@ perturbTest<-function(silent=TRUE) {
 			}
 		}
 	}
-	for (i in c(PTBns,PTBus)) {
+	for (i in list(PTBns,PTBus)) {
 		pl = i(longley)
 		if (sum(pl==longley) != 0) {
 			status=FALSE
@@ -232,7 +271,7 @@ perturbTest<-function(silent=TRUE) {
 			}
 		}
 	}
-	for (i in c(PTBnbr,PTBubr)) {
+	for (i in list(PTBnbr,PTBubr)) {
 		t = runif(20)*2-1
 		pl = i(t, lbound=-1, ubound=1)
 		if (sum(t>=1) > 0 || sum(t<=-1)> 0) {
@@ -246,7 +285,7 @@ perturbTest<-function(silent=TRUE) {
 
 	#data test
 	plongley = perturb(longley,lm,Employed~., ptb.R=10,
-    	   ptb.ran.gen=c(PTBi, replicate(5,PTBus),PTBi), ptb.s=c(1,replicate(5,.001),1))
+    	   ptb.ran.gen=c(list(PTBi), replicate(5,PTBus,simplify=FALSE),list(PTBi)), ptb.s=c(1,replicate(5,.001),1))
 	sp=summary(plongley)
 	coef= attr(sp,"coef.betas.m")
 	if (nrow(coef)!=10 || ncol(coef)!=7) {
@@ -275,96 +314,13 @@ summary.sensitivity<-function (object,...) {
 		tmps[[i]] = sensitivitySummaryIteration(object[[i]])
 	}
 	ret = sensitivitySummaryMerge(tmps)	
-	attr(ret, "R") = attr(object, "R")
+        if(!is.null(attr(object,"baseline"))) {
+       		attr(ret,"baselineSummary") =sensitivitySummaryIteration(attr(object,"baseline"))
+        }
+
+	attr(ret, "origR") = attr(object, "R")
 	class(ret)="sensitivity.summary";	
 	return (ret);
-}
-
-######################################################
-#          
-# sensitivitySummaryIteration
-#          
-# [Internal]
-#
-# Extracts the coefficients and standard errors from the
-# results of running summary() on an arbitrary analysis
-#       
-# Parameters:
-#
-# iteration - object produced by summary, must support
-#		coef() method
-#       
-######################################################
-
-
-sensitivitySummaryIteration<-function(iteration) {
-	# generate individual summaries for list of replications
-	tmp = try(summary(iteration),silent=T)
-	if (is.null(cf<-coef(tmp)) || inherits( tmp,"try-error")){
-	   if(is.null(cf<-coef(iteration))) {
-		return(NULL)
-	   }
-	}
-	coef.names=names(cf)
-	if ( inherits( coef.formula<-try(tmp[["call"]],silent=T),"try-error")) {
-	   if ( inherits( coef.formula<-try(tmp[["formula"]],silent=T),"try-error")) {
-		coef.formula=NULL
-	    }
-	}
-
-	if (is.array(cf) && length(dim(cf)==3)) {
-		cf=coefarrayFlatten(cf)
-	}
-
-	if ( is.null(dim(cf)[2]) || (dim(cf)[2]<2) ) {
-		coef.betas=cf
-		coef.stderrs=NULL
-	} else {
-		coef.betas=cf[,1]
-		coef.stderrs=cf[,2]
-	}	
-	
-	tmp = coef.betas
- 	attr(tmp,"coef.names") = coef.names
-	attr(tmp,"coef.betas") = coef.betas
-	attr(tmp,"coef.stderrs") = coef.stderrs
-	attr(tmp,"coef.formula") = coef.formula
-	return(tmp)	
-}
-
-
-######################################################
-#          
-# coefarrayFlatten
-#          
-# [Internal]
-#
-# Attemts to extract betas from coef arrays
-#       
-# Parameters:
-#
-#	x- 3d array of coefficients, as returned by lme
-#       
-######################################################
-
-coefarrayFlatten<-function(x, silent=T) {
-  if (!inherits(x,"array")) {
-    return(x)
-  } else {
-    if (length(dim(x))!=3) {
-        if (!silent) {
-          warning("can't reshape")
-        }
-        return(x)
-    }
-  }
-  tmpft=aperm(x,c(1,3,2))
-  dft=dim(tmpft)
-  dim(tmpft)=c(dft[1]*dft[2],dft[3])
-  dimnames(tmpft)[[2]]=dimnames(x)[[2]]
-  dimnames(tmpft)[[1]]=as.vector(
-    outer(dimnames(x)[[1]],dimnames(x)[[3]],function(...)paste(...,sep=":")))
-  return(tmpft)
 }
 
 ######################################################
@@ -383,7 +339,8 @@ coefarrayFlatten<-function(x, silent=T) {
 ######################################################
 
 sensitivitySummaryMerge<-function(s) {
-	n = length(s)
+	s=s[which(sapply(s,is.null)==FALSE)]
+	n = length(s)	
 
 	# check consistency and summarize
 	coef.names = coef.names.m = attr(s[[1]],"coef.names")
@@ -407,10 +364,11 @@ sensitivitySummaryMerge<-function(s) {
 		warning("replications do not match (", i,")")
 	}
 	ret = list(coef.betas.m)
-	row.names(coef.betas.m) = NULL
-	row.names(coef.stderrs.m) = NULL
+	rownames(coef.betas.m) = NULL
+	rownames(coef.stderrs.m) = NULL
 
 	attr(ret,"coef.names.m") = coef.names.m
+	attr(ret,"R")=n
 	attr(ret,"coef.betas.m") = coef.betas.m
 	attr(ret,"coef.stderrs.m") = coef.stderrs.m
 

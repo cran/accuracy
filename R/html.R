@@ -5,7 +5,7 @@
 # Part of the Accuracy package. Available from www.r-project.org and
 # www.hmdc.harvard.edu/numerical_issues/
 #
-#    Copyright (C) 2004  Micah Altman
+#    Copyright (C) 2004-6 Micah Altman
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -31,41 +31,33 @@
 # HTML() methods
 #
 
-HTML.sensitivity.summary<-function(x, ...) {
-   HTML("Sensitivity of coefficients to perturbations:\n",...)
-   HTML(hSummary(attr(x,"coef.betas.m")),...)
-
-    if (!is.null(attr(x,"coef.stderrs.m"))) {
-        HTML ("\n\nSensitivity of stderrs to perturbations:\n",...)
-        HTML (hSummary(attr(x,"coef.stderrs.m")),...)
-     }
+HTML.sensitivity.summary<-function(x,quiet=TRUE,...) {
+    printGoodRuns(x,printMethod=HTML,...)
+    printBetaSummary(x,printMethod=HTML,...)
+    if (!quiet) {
+      printErrSummary(x,printMethod=HTML,...)
+    }
 }
 
-HTML.sensitivity.anova<-function(x,...) {
-        HTML("\nsumsq:\n\n",...)
-        HTML(hSummary(attr(x,"coef.sumsq.m")), ...)
-        HTML("\nmeansq:\n\n",...)
-        HTML(hSummary(attr(x,"coef.meansq.m")),...)
-        HTML("\npr:\n\n",...)
-        HTML(hSummary(attr(x,"coef.pr.m")),...)
-
+HTML.sensitivity.anova<-function(x,...) {      
+    printGoodRuns(x,printMethod=HTML,...)
+    printAnovaSummary(x,printMethod=HTML,...)
 }
 
 #
 # print() methods 
 # 
 
-print.sensitivity.summary<-function(x,quiet=T,...) {
-     cat("Sensitivity of coefficients to perturbations:\n")
-     print(hSummary(attr(x,"coef.betas.m")),...)
 
-     if (!is.null(attr(x,"coef.stderrs.m"))) {
-        cat("\n\nSensitivity of stderrs to perturbations:\n")
-        print(hSummary(attr(x,"coef.stderrs.m")),...)
-     }
+print.sensitivity.summary<-function(x,quiet=TRUE,...) {
+    printGoodRuns(x,...)
+    printBetaSummary(x,...)
+    if (!quiet) {
+      printErrSummary(x,...)
+    }
 }
 
-print.sensitivity<-function(x,quiet=T,...) {
+print.sensitivity<-function(x,quiet=TRUE,...) {
   print("perturbation list")
 	if (!quiet) {
      cat("ran.gen: \n")
@@ -75,31 +67,13 @@ print.sensitivity<-function(x,quiet=T,...) {
 	   cat("statistic: \n")
 	   print(attr(x,"statistic"))
    }
-  cat("Class: \n",class(x[[1]]),"\n\n")
+  cat("Class: \n", class(attr(x,"baseline")),"\n\n")
   cat("Replications: \n",attr(x,"R"),"\n\n")
 }
 
-print.sensitivity.anova<-function(x,quiet=T,...) {
-   if (!quiet) {
-        cat("statistic: \n")
-        print(attr(x,"statistic"))
-        cat("s: \n")
-        print(attr(x,"s"))
-
-        cat("Replications: \n",attr(x,"R"),"\n\n")
-        cat("ran.gen: \n")
-        print(attr(x,"ran.gen"))
-        cat("formula: \n","\n\n")
-        print(attr(x,"coef.formula"))
-    }
-
-        cat("\nsumsq:\n\n")
-        print(hSummary(attr(x,"coef.sumsq.m")))
-        cat("\nmeansq:\n\n")
-        print(hSummary(attr(x,"coef.meansq.m")))
-        cat("\npr:\n\n")
-        print(hSummary(attr(x,"coef.pr.m")))
-
+print.sensitivity.anova<-function(x,quiet=TRUE,...) {
+   printGoodRuns(x,...)
+   printAnovaSummary(x,...)
 }
 
 #
@@ -108,13 +82,18 @@ print.sensitivity.anova<-function(x,quiet=T,...) {
 
 plot.sensitivity.summary<-function(x,...) {
    cf=as.data.frame(attr(x,"coef.betas.m"))
-   op=par(no.readonly=T)
+   if (is.R()){
+      op=par(no.readonly=T)
+   } else {
+      op=par()
+   }
    par(mfrow=c(1,length(cf)))
    for (i in 1:length(cf)) {
        boxplot(cf[i],...)
        title(main=names(cf[i]))
    }
    par(op)
+   return(invisible())
 }
 
 plot.sensitivity<-function(x,ask=dev.interactive(),...) {
@@ -150,17 +129,17 @@ anova.sensitivity<-function(object,...) {
         # generate individual summaries for list of replications
         for (i in 1:n) {
 
-      	    tmp = anova(object[[i]])
+      	    tmp = try(anova(object[[i]]),silent=FALSE)
                 if (!inherits(tmp,"anova")) {
 		               warning("Could not perform anova on perturbation #", i);
 	                 	next;
                 } 
                 coef.names = attr(tmp,"row.names")
-	              coef.df = tmp$"Df"
-  	            coef.sumsq=tmp$"Sum Sq"
-  	            coef.meansq=tmp$"Mean Sq"
-	              coef.f=tmp$"F value"
-	              coef.pr=tmp$"Pr(>F)"
+	              coef.df = tmp[[1]]
+  	            coef.sumsq=tmp[[2]]
+  	            coef.meansq=tmp[[3]]
+	              coef.f=tmp[[4]]
+	              coef.pr=tmp[[5]]
                
                 attr(tmp,"coef.names") = coef.names
                 attr(tmp,"coef.df") = coef.df
@@ -170,7 +149,8 @@ anova.sensitivity<-function(object,...) {
                 attr(tmp,"coef.pr") = coef.pr          
                 s[[i]]=tmp
         }
-              # check consistency and summarize
+        s=s[which(sapply(s,is.null)==FALSE)]
+        # check consistency and summarize
         coef.names = attr(s[[1]],"coef.names")
         coef.names.m = coef.names
         coef.df = attr(s[[1]],"coef.df")
@@ -203,7 +183,7 @@ anova.sensitivity<-function(object,...) {
         }
 
 
-        row.names(coef.names.m) = NULL
+        rownames(coef.names.m) = NULL
         attr(s,"coef.names.m") = coef.names.m
 
         attr(s,"coef.df.m") = rename.matrix(coef.df.m,"DF")
@@ -213,7 +193,9 @@ anova.sensitivity<-function(object,...) {
         attr(s,"coef.f.m") = rename.matrix(coef.f.m,coef.names.m)
 
         attr(s, "ran.gen")= attr(object, "ran.gen")
-        attr(s, "R") = attr(object, "R")
+        attr(s, "R") = length(s)
+        attr(s, "origR") = attr(object, "R")
+
         attr(s, "s") = attr(object, "s")
         attr(s,"statistic") = attr(object, "statistic")
 
@@ -244,7 +226,7 @@ anova.sensitivity<-function(object,...) {
 ######################################################
 
 rename.matrix<-function(m,nm){
-     row.names(m)=NULL
+     rownames(m)=NULL
      m=as.data.frame(matrix(m,ncol=length(nm)))
      names(m)=nm
      return(m)
@@ -305,6 +287,67 @@ hSummary<-function(df) {
         resm=rbind(resm,res)
      }
      colnames(resm) = c("mean","stdev","min", "2.5%","97.5%","max")
-     row.names(resm)=colnames(df)
+     rownames(resm)=colnames(df)
      return(resm)
+}
+
+
+###########################################
+#
+# Internal subroutines used in printing
+#
+###########################################
+
+printBetaSummary<-function(x,printMethod=print,...) {
+	hs = hSummary(attr(x,"coef.betas.m"))
+        baseline= attr(x,"baselineSummary")
+   if(!is.null(baseline)) {
+		hs[,2] = attr(baseline,"coef.betas")
+		colnames(hs)[2]="(Original Beta)"
+		colnames(hs)[1]="Mean Perturbed beta"
+		if (!is.null(attr(baseline,"coef.stderrs"))) {
+			hs[,3] = attr(baseline,"coef.stderrs")
+			colnames(hs)[3]="(Original Stderr)"
+			hs=hs[,1:5]
+			flags=character(length=length(dim(hs)[1]))
+			for (i in 1:dim(hs)[1]) {
+			   if ( ((hs[i,2]-1.96*hs[i,3]) > hs[i,4]) ||
+               ((hs[i,2]+1.96*hs[i,3]) < hs[i,5])
+            ) {
+               flags[i]="*"
+         }
+         else {
+               flags[i]=""
+         }
+      }
+      hs=cbind(as.data.frame(hs),flags)
+      names(hs)[6]="[Out of Bounds]"
+		}
+  }
+	printMethod(hs,...)
+}
+
+printErrSummary<-function(x,printMethod=print,...) {
+    if (!is.null(attr(x,"coef.stderrs.m"))) {
+        printMethod ("\n\nSensitivity of stderrs to perturbations:\n",...)
+        printMethod (hSummary(attr(x,"coef.stderrs.m")),...)
+     }
+}
+
+printGoodRuns<-function(x,printMethod=print,catMethod=cat, ...) {
+     printMethod(paste("Sensitivity of coefficients over ", attr(x,"R"), " perturbations:"),...)
+     if (attr(x,"R")!=attr(x,"origR")) {
+        failures=attr(x,"origR")-attr(x,"R")
+        printMethod(paste("( ", failures, " failures )"),...)
+     }   
+}
+
+printAnovaSummary<-function(x,printMethod=print,...) {
+        printMethod("",...)
+        printMethod("sumsq:",...)
+        printMethod(hSummary(attr(x,"coef.sumsq.m")), ...)
+        printMethod("meansq:",...)
+        printMethod(hSummary(attr(x,"coef.meansq.m")),...)
+        printMethod("pr:",...)
+        printMethod(hSummary(attr(x,"coef.pr.m")),...)
 }

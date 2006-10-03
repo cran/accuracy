@@ -1,9 +1,8 @@
-\name{de Haan Global Optimality Test}
+\name{dehaan}
 
 \alias{dehaan}
 
-\title{Function to test that an optimum from MLE, NLS, or other non-linear optization
-routine is a global optimum}
+\title{dehaan global optimality test}
 
 \description{
 Implements the de Haan test for identification of the global optimum of a likelihood
@@ -78,19 +77,32 @@ Micah Altman
   # is implemented using the negative of the sum of squares for consistency
   # with the deHaan framework of maximum likelihood.
 
-  data("BOD",package="stats")
-  stval=expand.grid(A = seq(10, 100, 10), lrc = seq(.5, .8, .1))
-  llfun<-function(A,lrc)
+  BOD <-
+structure(list(Time = c(1, 2, 3, 4, 5, 7), demand = c(8.3, 10.3, 
+19, 16, 15.6, 19.8)), .Names = c("Time", "demand"), row.names = c("1", 
+"2", "3", "4", "5", "6"), class = "data.frame", reference = "A1.4, p. 270")
+  stval<-expand.grid(A = seq(10, 100, 10), lrc = seq(.5, .8, .1))
+  llfun<-function(A,lrc,BOD)
         -sum((BOD$demand - A*(1-exp(-exp(lrc)*BOD$Time)))^2)
-  lls=NULL 
+  lls<-NULL 
   for (i in 1:nrow(stval))  {
-     lls = rbind(lls, llfun(stval[i,1], stval[i,2]))
+     lls = rbind(lls, llfun(stval[i,1], stval[i,2],BOD))
   }
   fm1 <- nls(demand ~ A*(1-exp(-exp(lrc)*Time)),  
                 data = BOD, start = c(A = 20, lrc = log(.35)))
   ss = -sum(resid(fm1)^2)
   dehaan(lls, ss)
 
+\dontshow{
+  if (is.R()){
+    selfTest=get("dehaanSelftest",envir=environment(dehaan))
+  } else {
+    selfTest=dehaanSelftest
+  }
+  if (!selfTest()) {
+  	warning("failed self-test")
+  }
+}
 }
 
 \keyword{manip}

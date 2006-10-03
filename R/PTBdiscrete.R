@@ -108,6 +108,12 @@ PTBfactor<-function(x,r) {
 ######################################################
 
 reclass.mat.diag<-function(n,q) {
+     if (n==0) {
+        return(integer())
+     }
+     if (n==1) {
+        return(1)
+     }
   p=1-q
   # mostly a diagnal with 1's in the upper
 	d = diag(1-p/2,nrow=n,ncol=n)
@@ -142,6 +148,12 @@ reclass.mat.diag<-function(n,q) {
 ######################################################
 
 reclass.mat.random<-function(n,q) {
+     if (n==0) {
+        return(integer())
+     }
+     if (n==1) {
+        return(1)
+     }
   p=1-q
   d = matrix(data=0, nrow=n, ncol=n)
 	d[upper.tri(d)]=1
@@ -213,12 +225,13 @@ PTBdiscrete<-function(x,r=NULL,q=.99) {
 ######################################################
 
 reclass.mat.default<-function(x,q=.99) {
+
      if (is.logical(x)) {
         r=reclass.mat.random(2,q)
      } else if(is.numeric(x)) {
        r=reclass.mat.diag(length(levels(as.factor(x))),q)
      } else if(is.ordered(x)) {
-       reclass.mat.diag(length(levels(x)),q)
+       r=reclass.mat.diag(length(levels(x)),q)
      } else {
         r=reclass.mat.random(length(levels(as.factor(x))),q)
      }
@@ -241,12 +254,13 @@ reclass.mat.default<-function(x,q=.99) {
 PTBdefaultfn<-function(vec,q=.99) {
 
     if (is.numeric(vec) && !is.discrete(vec)) {
-       return(function(x){PTBus(x,1-q)})
+       eval(substitute(function(x){PTBus(x,s)},list(s={1-q})))
     } else {
        tmpr=reclass.mat.default(vec,q)
-       return(function(x){PTBdiscrete(x,tmpr)})
+       eval(substitute(function(x){PTBdiscrete(x,s)},list(s=tmpr)))
     }
 }
+
 
 ######################################################
 #       
@@ -589,19 +603,16 @@ PTBmultiunif<-function(x , size=1 , centered=FALSE, scaled=FALSE, reps=1) {
 ##############################################################
 
 PTBmu.gen<-function(reps=1) {
-        return (
-                tmpfunc<-function(x, size=1) {
-                        return(PTBmultiunif(x,reps=reps,size=size))
-                }
-        ) 
+     
+     eval(substitute(function(x, size=1) 
+        {return(PTBmultiunif(x,reps=reps,size=size))}
+        ,list(reps=reps)))
 }
         
 PTBmn.gen<-function(reps=1) {
-        return (
-                tmpfunc<-function(x, size=1) {
-                        return(PTBmultinorm(x,reps=reps,size=size))
-                } 
-        )               
+     eval(substitute(function(x, size=1) 
+        {return(PTBmultinorm(x,reps=reps,size=size))}
+        ,list(reps=reps)))              
 }       
 ##################################################################
 #
@@ -775,8 +786,6 @@ PTBnsbr<-function(x, size=1, lbound=0,ubound=1) {
 }
 
 PTBnsbrr<-function(x, size=1, lbound=0,ubound=1) {
-	cat("statistic: \n")
-	print(attr(x,"statistic"))
 	ptbBndHarness(x,lbound,ubound,size=size,mode="relresample",scaled=TRUE,
 		ran.gen=PTBunif)
 }

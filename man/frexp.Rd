@@ -40,6 +40,18 @@ y = frexp(x)
 y
 # this is now true by construction
 x==y[,1] *2^y[,2]
+\dontshow{
+#unit test
+if (is.R()){
+  selfTest=get("frexpTest",envir=environment(frexp))
+} else {
+  selfTest=frexpTest
+}
+if (!selfTest()) {
+  	warning("failed self-test")
+}
+
+}
 }
 \keyword{manip}
 \keyword{misc}

@@ -38,11 +38,16 @@ Micah Altman
 
 
 \seealso{ \code{\link{perturb}}, \code{\link{reclass.mat.random}}}
-\examples{
-	x=ceiling(runif(1:100)*3)		# vector taking on 3 discrete levels
-	rx = reclass.mat.random(3,.95)	# reclassification matrix, prob of change  = .05
-	rpx=replicate(10,PTBdiscrete(x,rx),simplify=FALSE) # 100 perturbations
-	matches = sapply(rpx,function(y)(sum(y==x)))	# how many matches to original vector
+\examples{  
+	x<-ceiling(runif(1:100)*3)		# vector taking on 3 discrete levels
+	rx <-reclass.mat.random(3,.95)	# reclassification matrix, prob of change  = .05
+	rpx<-replicate(10,PTBdiscrete(x,rx),simplify=FALSE) # 100 perturbations
+	if (is.R()) {
+     matches <-sapply(rpx,function(y)(sum(y==x)))	# how many matches to original vector
+  } else {
+     # Splus variation
+     matches <-sapply(rpx,substitute(function(y)(sum(y==x))))
+  }
 	summary(matches)				# mean should be close to .95
 }
 \keyword{misc}

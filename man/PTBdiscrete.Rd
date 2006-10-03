@@ -1,7 +1,5 @@
 \name{PTBdiscrete}
 \alias{PTBdiscrete}
-\alias{PTBlogical}
-\alias{PTBcharacter}
 \title{Function to perturb vectors of discrete numeric values or factors, logicals, characters}
 \description{
 	This uses a reclassification matrix to perturb a vector discrete values.
@@ -49,7 +47,12 @@ Micah Altman
 	x=ceiling(runif(1:100)*3)		# vector taking on 3 discrete levels
 	rx = reclass.mat.random(3,.95)	# reclassification matrix, prob of change  = .05
 	rpx=replicate(100,PTBdiscrete(x,rx),simplify=FALSE) # 100 perturbations
-	matches = sapply(rpx,function(y)(sum(y==x)))	# how many matches to original vector
+	if (is.R()) {
+     matches <-sapply(rpx,function(y)(sum(y==x)))	# how many matches to original vector
+  } else {
+     # Splus variation
+     matches <-sapply(rpx,substitute(function(y)(sum(y==x))))
+  }
 	summary(matches)				# mean should be close to .95
 }
 \keyword{misc}

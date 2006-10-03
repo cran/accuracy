@@ -3,7 +3,6 @@
 \alias{resetSeed}
 \alias{runifT}
 \alias{runifS}
-\alias{initPool}
 \title{ Function to return TRUE (not pseudo) random numbers, based on system and networked entropy collection. }
 \description{
 	This function makes use of hardware-generated entropy to supply 
@@ -79,8 +78,7 @@ Micah Altman
 
 \dontshow{
 # only needed  to pass R CMD check on online windows
-w = options("warn");
-options(warn=0);
+ow = options("warn"=0)
 }
 
 # reset the seed for runif() based on a true random value
@@ -88,15 +86,23 @@ options(warn=0);
 resetSeed()
 y=runif(100000)
 ty= table(trunc(5*y))
-print(ty);
-chisq.test(ty)
+print(ty)
+if (is.R()) {
+  chisq.test(ty)
+} else {
+  chisq.test(t(cbind(as.numeric(names(ty)),as.matrix(ty))))
+}
 
 # generate true random values directly (may block for long periods if 
 # if entropy pool is empty)
 y=runifS(100000)
 ty= table(trunc(5*y))
-print(ty);
-chisq.test(ty)
+print(ty)
+if (is.R()) {
+  chisq.test(ty)
+} else {
+  chisq.test(t(cbind(as.numeric(names(ty)),as.matrix(ty))))
+}
 
 \dontrun{
 y=runifT(100)
@@ -105,7 +111,7 @@ print(ty);
 chisq.test(ty)
 }
 \dontshow{
-options(warn=as.integer(w));
+options(ow);
 }
 
 }

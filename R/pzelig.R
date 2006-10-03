@@ -52,13 +52,14 @@ pzelig<-function(...) {
 }
 
 sensitivityZelig = function (z,
-  ptb.R=30,
+  ptb.R=50,
   ptb.ran.gen=NULL,
         ptb.s=NULL,
         explanatoryOnly=FALSE,
 	summarize=FALSE,
 	simulate=FALSE,
-	simArgs=NULL
+	simArgs=NULL,
+	ptb.rangen.ismatrix=FALSE
   ) {
   if (simulate) {
 	summarize=TRUE
@@ -86,13 +87,14 @@ sensitivityZelig = function (z,
   framevars = c(depvars, expvars)
   perturbedData=eval(tmpz$call$data,tmpenv)[framevars]
   if (is.null(ptb.ran.gen)) {
+    ptb.rangen.ismatrix=FALSE;
     if (is.null(ptb.s)) {
-         ptb.ran.gen = sapply(as.data.frame(perturbedData), PTBdefaultfn)
+         ptb.ran.gen = sapply(as.data.frame(perturbedData), PTBdefaultfn, simplify=FALSE)
     } else {
      ptb.default.size=ptb.s
      ptb.s=NULL
      ptb.ran.gen = sapply(as.data.frame(perturbedData),
-                  function(x)PTBdefaultfn(x,ptb.default.size))
+                  function(x)PTBdefaultfn(x,ptb.default.size), simplify=FALSE)
 
     }
 
@@ -129,20 +131,23 @@ sensitivityZelig = function (z,
           ptb.s=ptb.s,
 	  summarize=summarize,
 	  simulate=simulate,
-	  simArgs=simArgs
+	  simArgs=simArgs,
+	  ptb.rangen.ismatrix=ptb.rangen.ismatrix
 	)
 	
   } else {
-      pz=perturb(
+      pz=sensitivity(
           perturbedData,
           zfun,
           ptb.R=ptb.R,
           ptb.ran.gen=ptb.ran.gen,
           ptb.s=ptb.s,
-	  summarize=summarize
+	  summarize=summarize,
+	  ptb.rangen.ismatrix=ptb.rangen.ismatrix
 	)
   }
   attr(pz,"origZelig")=z;
+  attr(pz,"baseline")=z;
   attr(pz,"origZeligEnv")=sys.parent();
   return(pz)
 }
@@ -171,28 +176,27 @@ sensitivityZelig = function (z,
 # 
 ######################################################
 
-perturbAndSim<-function (data, statistic , ptb.R, ptb.ran.gen, ptb.s, summarize, simulate, simArgs) {
+perturbAndSim<-function (data, statistic , ptb.R, ptb.ran.gen, ptb.s, summarize, simulate, simArgs, ptb.rangen.ismatrix) {
         retval = list(ptb.R);
 	simlist = list(ptb.R);
 
         for (i in 1:ptb.R) {
                 if (is.null(ptb.s)) {
                    retval[[i]]=
-                    perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic,nameData=TRUE)
+                    perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic,nameData=TRUE,ptb.rangen.ismatrix=ptb.rangen.ismatrix)
                 } else  {
                    retval[[i]]=
-                    perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic, ptb.s=ptb.s, nameData=TRUE)
+                    perturbHarness(data=data,ran.gen= ptb.ran.gen,statistic=statistic, ptb.s=ptb.s, nameData=TRUE,ptb.rangen.ismatrix=ptb.rangen.ismatrix)
                 }
 		if (simulate) {
 			simArgs$object = retval[[i]]
-			simlist[[i]]=do.call("sim",simArgs)
+			simlist[[i]]=try(do.call("sim",simArgs),silent=TRUE)
 		}
                 if (summarize) {
                         retval[[i]] = sensitivitySummaryIteration(retval[[i]])
                 }
         }
 
-        attr(retval, "R") = ptb.R
         if (summarize) {
           retval = sensitivitySummaryMerge(retval)
           class(retval)="sensitivity.summary"
@@ -202,11 +206,15 @@ perturbAndSim<-function (data, statistic , ptb.R, ptb.ran.gen, ptb.s, summarize,
            attr(retval, "statistic") = statistic
            class(retval)="sensitivity"
         }
+
 	if (simulate) {
   		attr(simlist,"mergedSims")=mergeSims(simlist);
   		class(simlist)="sensitivity.sim"
 		retval$sim=simlist
 	}
+
+        attr(retval, "origR") = ptb.R
+        attr(retval, "R") = ptb.R - sum(sapply(simlist,function(i)inherits(i,"try-error")))
         return(retval)
 
 }
@@ -227,20 +235,17 @@ perturbAndSim<-function (data, statistic , ptb.R, ptb.ran.gen, ptb.s, summarize,
 
 
 psim<-function(object,x=setx(object),...) {
+   ptb.R = length(object)
    if (length(object)==0) {
         warning("zero length perturbation list")
         return(NULL)
    }
 
-  if (inherits(try(sim(object[[1]],setx(object),num=c(5,2)),silent=F ),"try-error"))
-  {
-        warning("perturbed model does not support sim method")
-        return(NULL)
-  }
-
-  res = sapply(object,function(tmp){sim(tmp,x,...)}, simplify=F)
+  res = sapply(object,function(tmp){try(sim(tmp,x,...),silent=T)}, simplify=F)
   attr(res,"mergedSims")=mergeSims(res);
   class(res)="sensitivity.sim"
+  attr(res, "origR") = ptb.R
+  attr(res, "R") = ptb.R - sum(sapply(res,function(i)inherits(i,"try-error")))
   return(res)
 }
 
@@ -275,6 +280,7 @@ setx.sensitivity<-function (obj, ...) {
 ######################################################
 
 ZeligHooks<-function (...) {
+ if(is.R()) {
    if (!is.null(zeligOrigSim())) {
         return(TRUE)
    } 
@@ -286,12 +292,12 @@ ZeligHooks<-function (...) {
        getFromNamespace("zeligOrigSim","accuracy")()(object,x,...)
     }
    }
-   #body(sim,envir=as.environment("package:Zelig"))=body(sim.replacement)
    environment(sim.replacement)=environment(zelig);
    unlockBinding("sim",as.environment("package:Zelig"))
    assign("sim",sim.replacement, envir=as.environment("package:Zelig"))
    assignInNamespace("sim",sim.replacement,"Zelig")
    assign("sim",sim.replacement, envir=.GlobalEnv)
+  }
 }
 
 ######################################################
@@ -304,11 +310,13 @@ ZeligHooks<-function (...) {
 # zelig hook will update this replace this
 ######################################################
 
-zeligOrigSim <- local({
+if (is.R()) {
+   zeligOrigSim <- local({
            osim <- NULL
            function(new)
               if(!missing(new)) osim <<- new else osim 
         })
+}
 
 
 ######################################################
@@ -328,6 +336,8 @@ zeligOrigSim <- local({
 
 mergeSims<- function (x) 
 {
+    sapply(x,function(i)inherits(i,"try-error")) 
+    x=x[which(sapply(x,function(i)inherits(i,"try-error")) == FALSE)]
     tsim = x[[1]]
     if (inherits(x[[1]], "zelig.strata")) {
         simlevs = names(tsim)
@@ -436,24 +446,39 @@ print.sensitivity.sim<-function(x,...) {
 }
 
 print.sensitivity.sim.summary<-function(x,...) {
-  cat("\n\n****",x$reps, " COMBINED perturbation simulations","\n")
+  cat("\n\n****",attr(x,"R"), " COMBINED perturbation simulations","\n")
+     if (attr(x,"R")!=attr(x,"origR")) {
+        failures=attr(x,"origR")-attr(x,"R")
+        cat(paste("( ", failures, " failures )\n"))
+     }
   print(x$zsum,...)
 }
 
 HTML.sensitivity.sim.summary<-function(x,...) {
   HTML(
-    paste("\n\n****",x$reps, " COMBINED perturbation simulations","\n",sep=""), ...)
+    paste("\n\n****",attr(x,"R"), " COMBINED perturbation simulations","\n",sep=""), ...)
+     if (attr(x,"R")!=attr(x,"origR")) {
+        failures=attr(x,"origR")-attr(x,"R")
+        HTML(paste("( ", failures, " failures )\n"),...)
+     }
   HTML(x$zsum,...)
 }
 
 plot.sensitivity.sim<-function(x,...) {
-  cat("\n\n****",length(x), " COMBINED perturbation simulations","\n")
+  cat("\n\n****",attr(x,"R") , " COMBINED perturbation simulations","\n")
+     if (attr(x,"R")!=attr(x,"origR")) {
+        failures=attr(x,"origR")-attr(x,"R")
+        cat(paste("( ", failures, " failures )\n"))
+     }
   return(plot(attr(x,"mergedSims"),...))
 }
 
 summary.sensitivity.sim<-function(object,...) {
   ret=list();
   ret$zsum=summary(attr(object,"mergedSims"),...)
+   attr(ret, "origR") = attr(object,"origR")
+   attr(ret, "R") = attr(object,"R")
+   
   ret$reps=length(object)
   class(ret)="sensitivity.sim.summary"
   ret

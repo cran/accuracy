@@ -6,18 +6,18 @@ citEntry(entry="Book",
                              as.person("J. Gill"),
                              as.person("M.P. McDonald")
 				),
-	 publisher = "John Wiley \& Sons",
+	 publisher = "John Wiley & Sons",
          edition = "First",
          address      = "New York",
          year         = 2003,
          ISBN 		= "ISBN 0-471-23633-0",
-         note         = "Software: R Package, Accuracy, version 1.19 ",
+         note         = "Software: R Package, Accuracy, version 1.24 ",
          url          = "http://www.hmdc.harvard.edu/micah_altman/numal/",
          
          textVersion = 
          paste("Altman, M., Gill, J. and M.P. McDonald (2003)", 
                "Numerical Issues in Statistical Computing for the Social Scientist.",
                "John Wiley and Sons, New York.",
-              "(Software version: R Package, Accuracy, version 1.19)",
+              "(Software version: R Package, Accuracy, version 1.24)",
 	       "ISBN 0-471-23633-0.")
 )

@@ -24,13 +24,19 @@
 */
 
 #include <math.h>
+#include <time.h>
 
 void R_frexp(double v[], int *nv, double mantissa[], int exp[]) {
 
 	int i, tmpi;
-	
+	                                                         
 	for (i=0; i < *nv; i++) {
 		mantissa[i] = 	frexp(v[i], &tmpi);
 		exp[i]=tmpi;
 	}
 }
+
+void R_time (int *seconds) {
+    *seconds = (int) time(NULL);
+}
+  

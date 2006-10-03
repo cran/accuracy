@@ -242,13 +242,12 @@ of \emph{predicted values} to measurememnt error.
 To illustrate, we replicate Longley's analysis (above), using
 \texttt{zelig()} (instead of \texttt{lm()}) to run the OLS model, and the convenience function
  \texttt{sensitivityZelig()} to run the sensitivity analysis:
-<<echo=FALSE,results=hide>>= 
-        library(Zelig)
-@
 \vbox{
 <<>>= 
+if (require("Zelig",quietly=T,warn.conflicts=F)) {
         zelig.out=zelig(Employed~GNP.deflator+GNP+Unemployed+Armed.Forces+Population+Year,"ls",longley) # run longley regression
         perturb.zelig.out = sensitivityZelig(zelig.out)                   
+}
 @
 }
 
@@ -266,15 +265,19 @@ the predicted distribution of the explanatory variable:
 
 \vbox{
 <<>>=
+if (require("Zelig",quietly=T,warn.conflicts=F)) {
         # set values of explanatory variables
         setx.out=setx(perturb.zelig.out, Year=1955)       
         # run simulations
         sim.perturb.zelig.out = psim(perturb.zelig.out,setx.out)
         # summarize
-        summary(sim.perturb.zelig.out)
+        print(summary(sim.perturb.zelig.out))
+}
 @
 <<fig=TRUE,height=2>>=
+if (require("Zelig",quietly=T,warn.conflicts=F)) {
         plot(sim.perturb.zelig.out)
+}
 @
 }
 

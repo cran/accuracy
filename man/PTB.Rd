@@ -148,16 +148,16 @@ Micah Altman
 	sum(which(x!=x.i))	# also 0
 
 	sum(x-x.m)		# should be quite small, very close to 0
-	sum(which(x!=x.m))	# should be near 1000
+	length(which(x!=x.m))	# should be near 1000
 
 	sum(x-x.u)		# should be small
-	sum(which(x!=x.m))	# should be near 1000
+	length(which(x!=x.m))	# should be near 1000
 
 	sum(x-x.us)		# should be small
-	sum(which(x!=x.m))	# should be near 1000
+	length(which(x!=x.m))	# should be near 1000
 
 	sum(x-x.uc)		# should be near 0
-	sum(which(x!=x.m))	# should be near 1000
+	length(which(x!=x.m))	# should be near 1000
 	
 }
 \keyword{misc}

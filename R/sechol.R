@@ -158,15 +158,17 @@
 		warning("sechol alters PD matrix")
      }
      S <- matrix(c(2,0,10,0,2,0,10,0,3),ncol=3)
-     t =(
-	  sum(
-	   signif(sechol(S), digits=10) == 
-	   matrix(c(1.414213562,0,0,0,1.414234971,0,7.071067812
-		,0,0.007781680058), ncol=3)
-	  ) == 9 )
-
+     
+     if (!is.R()){
+      isTRUE<-function (x) identical(TRUE, x)
+     }
+        
+     t = isTRUE(
+           all.equal(matrix(signif(sechol(S), digits=10),ncol=3), 
+	         matrix(c(1.414213562,0,0,0,1.414234971,0,7.071067812,0,0.007781680058), ncol=3)))
+	  
      if (!t && !silent) {
-		warning("sechol results don't match benchmark")
+		     warning("sechol results don't match benchmark")
      }
      rv= rv && t
      return(rv)

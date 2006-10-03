@@ -86,6 +86,16 @@ dehaan<-function(llTest, llMax, pval=.05 ) {
 
 
 starr<-function(betas, tol=.0001, dmethod="euclidean") {
+   if (!is.R()){
+      dist2full <- function(dis)
+      {
+        n <- attr(dis, "Size")
+        full <- matrix(0, n, n)
+        full[lower.tri(full)] <- dis
+        full + t(full)
+      }
+   }
+
 
   if (!is.matrix(betas)) {
     stop("betas must be matrix")
@@ -101,13 +111,17 @@ starr<-function(betas, tol=.0001, dmethod="euclidean") {
 	return(1)
   }
  
-  dm = as.matrix(dist(betas,method=dmethod))
+  if (is.R()) {
+    dm = as.matrix(dist(betas,method=dmethod))
+  } else {
+    dm = dist2full(dist(betas,metric=dmethod))
+  }
   optc = integer(n)
   for (i in 1:n) {
         optc[i] = sum(dm[i,]<tol)
   }
 
-  sortInd = sort(optc,decreasing=TRUE,index.return=TRUE)$ix
+  sortInd = rev(order(optc))
   for (i in sortInd) {
     if (optc[i]>0) {
     tmp=optc[i]
@@ -125,6 +139,9 @@ starr<-function(betas, tol=.0001, dmethod="euclidean") {
   return(rv)
                               
 }
+
+
+
 
 ######################################################
 #       

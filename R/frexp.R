@@ -41,9 +41,15 @@ function(v) {
 	r = replicate(length(v), NA)
 	r = cbind(r,r)
 	i = which(is.finite(v) | !is.na(v))
-	tmp = .C("R_frexp", PACKAGE="accuracy", as.double(v[i]), as.integer(length(v[i])),
-		mantissa=double(length(v[i])),
-		exponent=integer(length(v[i])), DUP=FALSE)
+	if (is.R()) {
+	  tmp = .C("R_frexp", PACKAGE="accuracy", as.double(v[i]), as.integer(length(v[i])),
+		  mantissa=double(length(v[i])),
+		  exponent=integer(length(v[i])), DUP=FALSE)
+  } else {
+    tmp = .C("R_frexp",  as.double(v[i]), as.integer(length(v[i])),
+		  mantissa=double(length(v[i])),
+		  exponent=integer(length(v[i])), COPY=FALSE )
+  }
 	r[i,] = cbind(tmp$mantissa,tmp$exponent)
 	dimnames(r)[[2]]=c("Mantissa","Exponent")
 	return(r)

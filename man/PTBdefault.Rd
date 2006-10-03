@@ -27,13 +27,28 @@ be used to generate the default reclassification matrix. For character vectors, 
 \examples{
 
 x=1:100
-rpx=replicate(100,x,simplify=FALSE) # perturb using the default method
-# This produces equivalent results, but is faster, since reclass matrices are not recalculated on each
-# replication
-#fx=PTBdefault(x,q=.95) 
-#rpx=replicate(100,fx(x),simplify=FALSE) 
-matches = sapply(rpx,function(y)(sum(y==x)))	# how many matches to original vector
-summary(matches)				# mean should be close to .95
+ # perturb using the default method
+rpx=replicate(100,PTBdefault(x),simplify=FALSE)
+# how many matches to original vector? mean should be close to 95
+	if (is.R()) {
+     matches <-sapply(rpx,function(y)(sum(y==x)))	# how many matches to original vector
+  } else {
+     # Splus variation
+     matches <-sapply(rpx,substitute(function(y)(sum(y==x))))
+  }	
+summary(matches)				
+# This produces equivalent results, but is faster, 
+# since reclass matrices are not recalculated on each replication   
+
+fx=PTBdefaultfn(x,q=.95) 
+rpx=replicate(100,fx(x),simplify=FALSE) 
+	if (is.R()) {
+     matches <-sapply(rpx,function(y)(sum(y==x)))	# how many matches to original vector
+  } else {
+     # Splus variation
+     matches <-sapply(rpx,substitute(function(y)(sum(y==x))))
+  }	
+summary(matches)			
 
 }
 \references{

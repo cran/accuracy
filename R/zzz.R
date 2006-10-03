@@ -1,34 +1,38 @@
-.onLoad <- function(lib, pkg) {
-  if((version$major<1) ||(version$minor<6 && version$major==1)) {
-    stop("This version for R 1.6 or later")
-  }
-  if (!frexpTest(FALSE)) {
-  	warning("frexp: failed self-test")
-  }
-  if (!perturbTest()) {
-  	warning("perturb: failed self-test")
-  } 
-  if (!secholTest()) {
-  	warning("sechol: failed self-test")
-  }
-  setHook(packageEvent("perturb", "attach"), PerturbHooks)
-  if (sum(search()=="package:perturb")>0) {
-	PerturbHooks()
-  }
-  setHook(packageEvent("Zelig", "attach"), ZeligHooks)
-  if (sum(search()=="package:Zelig")>0) {
-  	ZeligHooks()
-  }
-  print(citation("accuracy"))
+# for R
+
+
+if (is.R()) {
+  .onLoad <- function(lib, pkg) {
+    setHook(packageEvent("Zelig", "attach"), ZeligHooks)
+    if (sum(search()=="package:Zelig")>0) {
+  	   ZeligHooks()
+    }
+    print(citation("accuracy"))
   return(TRUE)
+  }
+
 }
 
+#for S-Plus
 
-PerturbHooks<-function (...) {
-     cat("\n\n****ACCURACY: detaching perturb package because of conflicts with accuracy, but keeping reclassify\n(use help('reclassify',package='perturb') for help)\n\n")
-     penv = as.environment("package:perturb")
-     rec = get("reclassify",envir=penv)
-     assign("reclassify",rec, envir=.GlobalEnv)
-     detach("package:perturb")
+if (!is.R()) {
+  # hack for R check
+  myRequire <- require
+
+  .First.lib <- function(lib.loc, section) {
+  
+    if (myRequire(pkgutils,quietly=TRUE)){
+      print(citation("accuracy", lib.loc = lib.loc))
+    } else  {
+      
+            cat("To cite the accuracy package in publications use:\n\n",
+                paste("Altman, M., Gill, J. and M.P. McDonald (2003)",
+               "Numerical Issues in Statistical Computing for the Social Scientist.",
+               "John Wiley and Sons, New York.",
+              "(Software version: R Package, accuracy, version 1.23)",
+               "ISBN 0-471-23633-0.\n\n"))
+    }
+  return(TRUE)
+  }
+
 }
-

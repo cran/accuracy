@@ -1,8 +1,7 @@
-\name{Starr Global Optimality Test}
+\name{starr}
 \alias{starr}
 
-\title{Function to test that an optimum from MLE, NLS, or other non-linear optization
-	routine is a global optimum}
+\title{staff global optimum test}
 
 \description{ Implements the Starr test for identification of the global optimum of a
 	likelihood surface. }
@@ -62,13 +61,19 @@ Micah Altman
 	x=rbind(c(1,1,1), c(1,2,1), c(1,1.1,1), c(1,2,1), c(3,4,5));
 	starr(rbind(1,1,2,2));
 
-  	data("BOD",package="stats")
+      #BODmodel
+        
+      BOD <-
+structure(list(Time = c(1, 2, 3, 4, 5, 7), demand = c(8.3, 10.3, 
+19, 16, 15.6, 19.8)), .Names = c("Time", "demand"), row.names = c("1", 
+"2", "3", "4", "5", "6"), class = "data.frame", reference = "A1.4, p. 270")
+
        stval=expand.grid(A = seq(10, 100, 10), lrc = seq(.5, .8, .1))
-       llfun<-function(A,lrc)
+       llfun<-function(A,lrc,BOD)
              -sum((BOD$demand - A*(1-exp(-exp(lrc)*BOD$Time)))^2)
        lls=NULL 
        for (i in 1:nrow(stval))  {
-          lls = rbind(lls, llfun(stval[i,1], stval[i,2]))
+          lls = rbind(lls, llfun(stval[i,1], stval[i,2],BOD))
        }
        fm1 <- nls(demand ~ A*(1-exp(-exp(lrc)*Time)),  
                      data = BOD, start = c(A = 20, lrc = log(.35)))
@@ -82,6 +87,19 @@ Micah Altman
                      data = BOD, start = c(A=stval[i,1], lrc = stval[i,2]))))
       }
        starr(llb)
+       
+\dontshow{
+
+
+if (is.R()){
+  selfTest=get("starrSelftest",envir=environment(starr))
+} else {
+  selfTest=starrSelftest
+}
+if (!selfTest()) {
+  	warning("failed self-test")
+}
+}
 
 }
 \keyword{manip}

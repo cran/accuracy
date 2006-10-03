@@ -5,7 +5,7 @@
 \description{
 This function replicates an statistical analysis using slightly perturbed
 versions of the original input data, and then analyzes the sensitivity of the
-model to susch changes.  This can be used to draw attention to
+model to such changes.  This can be used to draw attention to
         inferences that cannot be supported confidently given the current
         data, model, and algorithm/implementation,
 
@@ -13,7 +13,7 @@ model to susch changes.  This can be used to draw attention to
 }
 \usage{
 sensitivity(data, statistic, ..., ptb.R = 50, ptb.ran.gen = NULL , ptb.s = NULL, 
-	summarize=FALSE)
+	summarize=FALSE,  keepData = FALSE, ptb.rangen.ismatrix=FALSE)
 perturb(...)
 }
 \arguments{
@@ -26,6 +26,9 @@ perturb(...)
   \item{ptb.s}{ a size, or vector of sizes, to be used in the vector perturbation functions}
   \item{summarize}{ if true, return a sensitivity summary, as would \code{summary(sensitivity())}. This 
 reduces system memory use and can significantly speed up the analysis of large datasets. }
+   \item{keepData}{ for debugging, store data for each perturbation }
+     \item{ptb.rangen.ismatrix}{If true, expects ptb.ran.gen to be a matrix function, for use 
+  with correlated noise structure. See below}
 
 }
 \details{
@@ -89,10 +92,15 @@ Micah Altman
 # 
 # Summary should show that estimated coefficients are not substantively affected by noise.
 
+if (!is.R()){
+  # workaround MASS data bug in SPLUS
+  require(MASS,quietly=TRUE)
+}
+
 data(anorexia,package="MASS")
 panorexia = sensitivity(anorexia, glm, Postwt ~ Prewt + Treat + offset(Prewt),
      family=gaussian, 
-    ptb.R=100, ptb.ran.gen=c(PTBi,PTBus,PTBus), ptb.s=c(1,.005,.005) )
+    ptb.R=100, ptb.ran.gen=list(PTBi,PTBus,PTBus), ptb.s=c(1,.005,.005) )
 summary(panorexia)
 
 # Use classic longley dataset. The model is numerically unstable, 
@@ -107,26 +115,25 @@ plongley = sensitivity(longley,lm,Employed~.) # defaults
 
 # Alternatively, choose specific perturbation functions
 #
-#plongley = sensitivity(longley,lm,Employed~., ptb.R=100, 
-#    ptb.ran.gen=c(PTBi, replicate(5,PTBus),PTBi), ptb.s=c(1,replicate(5,.001),1))
+plongley2 = sensitivity(longley,lm,Employed~., ptb.R=100, 
+    ptb.ran.gen=c(list(PTBi), replicate(5,PTBus,simplify=FALSE),list(PTBi)), ptb.s=c(1,replicate(5,.001),1))
 
 # summarizes range
 sp=summary(plongley)
 print(sp)
-plot(sp) # plots rance of influence
+plot(sp) # plots boxplots of the distribution of the coefficients under perturbatione
 
 # models with anova methods can also be summarized this way
 anova(plongley) 
 
+\dontrun{
 # plots different replications
 plot(plongley) # plots the perturbed replications individually, pausing in between
-plot(sp) # plots boxplots of the distribution of the coefficients under perturbation
 
 
 # plots anova results (where applicable)
 plot(anova(plongley))
-
-
+}
 
 # look in summary object to extract more ...
 names(attributes(sp))
@@ -136,10 +143,15 @@ coef= attr(sp,"coef.betas.m")
 summary(coef)
 
 
+
+
 # Example where model does not accept a dataset as an argument...
 
 # MLE does not accept a dataset as an argument, so need to
 # create a wrapper function
+#
+# 
+if (is.R()) {
      library(stats4)
      mleD<-function(data,lld,...) {
            # construct LL function with embedded data
@@ -158,13 +170,63 @@ summary(coef)
      }
 
      dat=as.data.frame(cbind( 0:10 , c(26, 17, 13, 12, 20, 5, 9, 8, 5, 4, 8) ))
-
+                                                    
      llD<-function(data, ymax=15, xhalf=6)
          -sum(stats::dpois(data[[2]], lambda=ymax/(1+data[[1]]/xhalf), log=TRUE))
+     
+     \dontshow{
+     # ignore numerical warnings for example
+     ow=options(warn=-1)
+     }
+     print(summary(sensitivity(dat, mleD,llD)))
+     \dontshow{
+     options(ow)
+     }
+}
 
-     summary(sensitivity(dat, mleD,llD))
+# An example of using correlated noise by supplying a matrix noise function
+# Note that the function can be an anonymous function supplied in the call itself
 
+  \dontshow{
+  if (!is.R()){
+     # SPLUS ignores quietly
+     ow=options(warn=-1)
+  }
+  }
+  if (require(MASS,quietly=TRUE)) {
+  \dontshow{
+  if (!is.R()){
+     # SPLUS ignores quietly
+     ow=options(ow)
+  }
+  }
 
+    plongleym=sensitivity(longley,lm,Employed~.,
+      ptb.rangen.ismatrix=TRUE,
+      ptb.ran.gen=
+      function(x,size=1){
+             mvrnorm(n=dim(x)[1],mu=rep(0,dim(x)[1]),
+                     Sigma=matrix(.9,nrow=dim(x)[1],ncol=dim(x)[1]))*size+x}
+    )
+    print(summary(plongleym))
+  }
+  \dontshow{
+  if (!is.R()){
+     # SPLUS ignores quietly
+     ow=options(ow)
+  }
+  }
+ \dontshow{
+   	#unit test
+	if (is.R()){
+  		selfTest=get("perturbTest",envir=environment(perturb))
+	} else {
+  		selfTest=perturbTest
+	}
+	if (!selfTest()) {
+ 		warning("failed self-test")
+	}  
+ }
 
 }
 \keyword{misc}
