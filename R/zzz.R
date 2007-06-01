@@ -29,7 +29,7 @@ if (!is.R()) {
                 paste("Altman, M., Gill, J. and M.P. McDonald (2003)",
                "Numerical Issues in Statistical Computing for the Social Scientist.",
                "John Wiley and Sons, New York.",
-              "(Software version: R Package, accuracy, version 1.23)",
+              "(Software version: R Package, accuracy, version 1.25)",
                "ISBN 0-471-23633-0.\n\n"))
     }
   return(TRUE)

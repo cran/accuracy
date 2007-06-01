@@ -303,11 +303,11 @@ printBetaSummary<-function(x,printMethod=print,...) {
         baseline= attr(x,"baselineSummary")
    if(!is.null(baseline)) {
 		hs[,2] = attr(baseline,"coef.betas")
-		colnames(hs)[2]="(Original Beta)"
-		colnames(hs)[1]="Mean Perturbed beta"
+		colnames(hs)[2]="(Orig. Est.)"
+		colnames(hs)[1]="Perturb Est."
 		if (!is.null(attr(baseline,"coef.stderrs"))) {
 			hs[,3] = attr(baseline,"coef.stderrs")
-			colnames(hs)[3]="(Original Stderr)"
+			colnames(hs)[3]="(Orig. Stderr)"
 			hs=hs[,1:5]
 			flags=character(length=length(dim(hs)[1]))
 			for (i in 1:dim(hs)[1]) {
@@ -321,7 +321,7 @@ printBetaSummary<-function(x,printMethod=print,...) {
          }
       }
       hs=cbind(as.data.frame(hs),flags)
-      names(hs)[6]="[Out of Bounds]"
+      names(hs)[6]="[Unstable]"
 		}
   }
 	printMethod(hs,...)
@@ -329,7 +329,8 @@ printBetaSummary<-function(x,printMethod=print,...) {
 
 printErrSummary<-function(x,printMethod=print,...) {
     if (!is.null(attr(x,"coef.stderrs.m"))) {
-        printMethod ("\n\nSensitivity of stderrs to perturbations:\n",...)
+        printMethod("Sensitivity of stderrs to perturbations:",...)
+	printMethod("",...);
         printMethod (hSummary(attr(x,"coef.stderrs.m")),...)
      }
 }

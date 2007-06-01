@@ -64,7 +64,7 @@ sensitivityZelig = function (z,
   if (simulate) {
 	summarize=TRUE
   }
-  if (!inherits(z,"strata") && is.null(z$zelig)) {
+  if (!inherits(z,"strata") && is.null(z$zelig) && z$call[[1]]!="zelig") {
                 warning("z is not a zelig object")
                 return(NULL)
   }
@@ -207,14 +207,17 @@ perturbAndSim<-function (data, statistic , ptb.R, ptb.ran.gen, ptb.s, summarize,
            class(retval)="sensitivity"
         }
 
+        attr(retval, "origR") = ptb.R
+        attr(retval, "R") = ptb.R - sum(sapply(retval,function(i)inherits(i,"try-error")))
+
 	if (simulate) {
   		attr(simlist,"mergedSims")=mergeSims(simlist);
   		class(simlist)="sensitivity.sim"
+        	attr(simlist, "origR") = ptb.R
+        	attr(simlist, "R") = ptb.R - sum(sapply(simlist,function(i)inherits(i,"try-error")))
 		retval$sim=simlist
 	}
 
-        attr(retval, "origR") = ptb.R
-        attr(retval, "R") = ptb.R - sum(sapply(simlist,function(i)inherits(i,"try-error")))
         return(retval)
 
 }

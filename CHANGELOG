@@ -76,3 +76,6 @@
 
 1.24
 -- Workaround infelicity in CMD check not ignoring platform conditional code
+
+1.25
+-- bugfix for pzelig with simulate=TRUE

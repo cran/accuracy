@@ -34,10 +34,8 @@
 %%%%%%%
 %%% Vignette Headers
 %%%%%%%
-
-%\VignetteKeywords{statistical computing}
-%\VignetteVersion{1.0}
-%\VignetteTitle{Tools For Accurate and Reliable Statistical Computing} 
+%\VignetteIndexEntry{Tools For Accurate and Reliable Statistical Computing}
+%\VignetteTitle{Accuracy Overview}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DOCUMENT STARTS

@@ -1,6 +1,6 @@
 # stub makefile, does nothing, but causes R CMD build not to force rebuild pdf file
 
-REVAL=TRUE
+REVAL=FALSE
 
 all:	accuracy_vignette.pdf
 

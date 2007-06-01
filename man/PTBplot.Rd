@@ -9,10 +9,10 @@
  Perturbations objects can be printed, summarized, and plotted .
 }
 \usage{
-plot.sensitivity(x, ask=dev.interactive(), ...)
-anova.sensitivity(object, ...)
-print.sensitivity(x, quiet=TRUE, ...)
-summary.sensitivity(object, ...)
+\method{plot}{sensitivity}(x, ask=dev.interactive(), ...)
+\method{anova}{sensitivity}(object, ...)
+\method{print}{sensitivity}(x, quiet=TRUE, ...)
+\method{summary}{sensitivity}(object, ...)
 }
 \arguments{
   \item{x}{ perturb object to plotted or printed }
