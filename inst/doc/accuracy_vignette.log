@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2006.1.9)  1 JUN 2007 18:24
+This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2006.1.9)  11 JUN 2007 15:01
 **accuracy_vignette.tex
 (./accuracy_vignette.tex{/usr/share/texmf/pdftex/config/pdftex.cfg}
 LaTeX2e <2001/06/01>
@@ -295,7 +295,7 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Here is how much of TeX's memory you used:
  3222 strings out of 95437
  40492 string characters out of 1188002
- 90556 words of memory out of 1000001
+ 89556 words of memory out of 1000001
  6131 multiletter control sequences out of 10000+50000
  37095 words of font info for 86 fonts, out of 500000 for 1000
  14 hyphenation exceptions out of 1000
@@ -317,4 +317,4 @@ ex/74afc74c.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/share
 y/cm/cmbx10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmtt10.pfb></usr/share
 /texmf/fonts/type1/bluesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/c
 m/cmbx12.pfb>
-Output written on accuracy_vignette.pdf (15 pages, 173104 bytes).
+Output written on accuracy_vignette.pdf (15 pages, 172906 bytes).

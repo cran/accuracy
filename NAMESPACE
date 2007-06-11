@@ -49,11 +49,16 @@ S3method(print, sensitivity.sim) # 1.05
 S3method(plot, sensitivity.sim) # 1.05
 S3method(print, sensitivity.sim.summary) 
 S3method(summary, sensitivity.sim) # 1.05
+S3method(print,accFirstLook)
+S3method(plot,accFirstLook)
 
 # R2HTML Support
 export(HTML.sensitivity.summary)
 export(HTML.sensitivity.sim.summary)
 export(HTML.sensitivity.anova)
+
+# v 1.27
+export(firstLook)
 
 
 #import for onLoad and forceDispatch

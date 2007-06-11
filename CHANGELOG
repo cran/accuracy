@@ -79,3 +79,9 @@
 
 1.25
 -- bugfix for pzelig with simulate=TRUE
+
+1.26
+-- bugfix for change in zelig identification
+
+1.27
+-- add data exploration method
