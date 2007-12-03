@@ -1,5 +1,5 @@
-This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2006.1.9)  11 JUN 2007 15:01
-**accuracy_vignette.tex
+This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2007.11.8)  7 DEC 2007 21:57
+**accuracy_vignette
 (./accuracy_vignette.tex{/usr/share/texmf/pdftex/config/pdftex.cfg}
 LaTeX2e <2001/06/01>
 Babel <v3.7h> and hyphenation patterns for american, french, german, ngerman, n
@@ -151,15 +151,23 @@ Package: thumbpdf 2002/05/26 v3.2 Inclusion of thumbnails (HO)
 Package thumbpdf Warning: Thumbnail data file `accuracy_vignette.tpt' not found
 .
 
-) (/usr/share/texmf/tex/latex/misc/vmargin.sty
+) (/usr/share/texmf/tex/latex/natbib/natbib.sty
+Package: natbib 2000/07/24 7.0a (PWD)
+\bibhang=\skip48
+\bibsep=\skip49
+LaTeX Info: Redefining \cite on input line 508.
+\c@NAT@ctr=\count101
+)
+(/usr/share/texmf/tex/latex/misc/vmargin.sty
 Package: vmargin 2000/08/01
 
 Package: vmargin 2000/08/01 V2.3 (VK) set document margins
 \PaperWidth=\dimen119
 \PaperHeight=\dimen120
-) (/usr/lib64/R/share/texmf/Sweave.sty
+) (/nfs/home/M/maltman/R-2.6.1/R-2.6.1/share/texmf/Sweave.sty
 
-LaTeX Warning: You have requested package `/usr/lib64/R/share/texmf/Sweave',
+LaTeX Warning: You have requested package `/nfs/home/M/maltman/R-2.6.1/R-2.6.1/
+share/texmf/Sweave',
                but the package provides `Sweave'.
 
 Package: Sweave 
@@ -167,14 +175,14 @@ Package: Sweave
 Package: fancyvrb 2000/03/21
 
 Style option: `fancyvrb' v2.7, with DG/SPQR fixes <2000/03/21> (tvz)
-\FV@CodeLineNo=\count101
+\FV@CodeLineNo=\count102
 \FV@InFile=\read1
 \FV@TabBox=\box29
-\c@FancyVerbLine=\count102
-\FV@StepNumber=\count103
+\c@FancyVerbLine=\count103
+\FV@StepNumber=\count104
 \FV@OutFile=\write3
 )
-(/usr/lib64/R/share/texmf/upquote.sty
+(/nfs/home/M/maltman/R-2.6.1/R-2.6.1/share/texmf/upquote.sty
 Package: upquote 2003/08/11 v1.1 Covington's upright-quote modification to verb
 atim and verb
 
@@ -208,113 +216,123 @@ File: t1aer.fd 1997/11/16 Font definitions for T1/aer.
 )))) (./accuracy_vignette.aux)
 \openout1 = `accuracy_vignette.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 45.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 45.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 49.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 49.
 
 (/usr/share/texmf/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    ... okay on input line 49.
 
 (/usr/share/texmf/tex/context/base/supp-pdf.tex
 (/usr/share/texmf/tex/context/base/supp-mis.tex
 loading : Context Support Macros / Missing
-\protectiondepth=\count104
-\scratchcounter=\count105
+\protectiondepth=\count105
+\scratchcounter=\count106
 \scratchtoks=\toks22
 \scratchdimen=\dimen121
-\scratchskip=\skip48
+\scratchskip=\skip50
 \scratchmuskip=\muskip11
 \scratchbox=\box30
 \scratchread=\read2
 \scratchwrite=\write4
 \zeropoint=\dimen122
-\minusone=\count106
+\minusone=\count107
 \thousandpoint=\dimen123
 \emptytoks=\toks23
 \nextbox=\box31
 \nextdepth=\dimen124
 \everyline=\toks24
-\!!counta=\count107
-\!!countb=\count108
-\recursecounter=\count109
+\!!counta=\count108
+\!!countb=\count109
+\recursecounter=\count110
 )
 loading : Context Support Macros / PDF
-\nofMPsegments=\count110
-\nofMParguments=\count111
+\nofMPsegments=\count111
+\nofMParguments=\count112
 \everyMPtoPDFconversion=\toks25
 )
-LaTeX Font Info:    Try loading font information for T1+aett on input line 79.
- (/usr/share/texmf/tex/latex/ae/t1aett.fd
-File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
-)
-<accuracy_vignette-003.pdf, id=1, 433.62pt x 216.81pt>
-File: accuracy_vignette-003.pdf Graphic file (type pdf)
-
-<use accuracy_vignette-003.pdf> [1
-
-{/usr/share/texmf/dvips/config/pdftex.map}]
-[2 <./accuracy_vignette-003.pdf>]
-LaTeX Font Info:    Try loading font information for U+msa on input line 146.
+LaTeX Font Info:    Try loading font information for U+msa on input line 68.
  (/usr/share/texmf/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2002/01/19 v2.2g AMS font definitions
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 146.
+LaTeX Font Info:    Try loading font information for U+msb on input line 68.
+
 (/usr/share/texmf/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2002/01/19 v2.2g AMS font definitions
-) [3] [4]
+)
+LaTeX Font Info:    Try loading font information for T1+aess on input line 73.
 
-LaTeX Font Warning: Font shape `T1/aett/bx/n' undefined
-(Font)              using `T1/aett/m/n' instead on input line 262.
+(/usr/share/texmf/tex/latex/ae/t1aess.fd
+File: t1aess.fd 1997/11/16 Font definitions for T1/aess.
+)
+LaTeX Font Info:    Try loading font information for T1+aett on input line 74.
 
-[5] <accuracy_vignette-009.pdf, id=57, 433.62pt x 144.54pt>
-File: accuracy_vignette-009.pdf Graphic file (type pdf)
+(/usr/share/texmf/tex/latex/ae/t1aett.fd
+File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
+) [1
 
-<use accuracy_vignette-009.pdf> [6] [7 <./accuracy_vignette-009.pdf>] [8]
-[9]
-Overfull \vbox (1599.64261pt too high) has occurred while \output is active []
+{/usr/share/texmf/dvips/config/pdftex.map}] [2] [3] [4] [5] [6] [7] [8] [9] [10
+] [11] [12]
+<accuracy_vignette-plot1a.pdf, id=102, 505.89pt x 433.62pt>
+File: accuracy_vignette-plot1a.pdf Graphic file (type pdf)
 
+<use accuracy_vignette-plot1a.pdf> [13 <./accuracy_vignette-plot1a.pdf>]
+[14] [15] [16] [17]
+LaTeX Font Info:    Try loading font information for TS1+aer on input line 789.
 
-[10] [11] [12] [13] [14] [15] (./accuracy_vignette.aux)
+ (/nfs/home/M/maltman/R-2.6.1/R-2.6.1/share/texmf/ts1aer.fd
+File: ts1aer.fd 
+)
+LaTeX Font Info:    Font shape `TS1/aer/m/n' in size <10.95> not available
+(Font)              Font shape `TS1/cmr/m/n' tried instead on input line 789.
+[18] <accuracy_vignette-plot2a.pdf, id=129, 433.62pt x 144.54pt>
+File: accuracy_vignette-plot2a.pdf Graphic file (type pdf)
 
-LaTeX Font Warning: Some font shapes were not available, defaults substituted.
-
- ) 
+<use accuracy_vignette-plot2a.pdf> [19] [20 <./accuracy_vignette-plot2a.pdf>]
+[21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33] [34]
+(./accuracy_vignette.bbl [35] [36] [37] [38]) [39] (./accuracy_vignette.aux) )
+(\end occurred inside a group at level 1) 
 Here is how much of TeX's memory you used:
- 3222 strings out of 95437
- 40492 string characters out of 1188002
- 89556 words of memory out of 1000001
- 6131 multiletter control sequences out of 10000+50000
- 37095 words of font info for 86 fonts, out of 500000 for 1000
+ 3585 strings out of 95437
+ 45067 string characters out of 1190233
+ 95636 words of memory out of 1000001
+ 6470 multiletter control sequences out of 10000+50000
+ 49533 words of font info for 107 fonts, out of 500000 for 1000
  14 hyphenation exceptions out of 1000
- 35i,8n,22p,543b,217s stack positions out of 1500i,500n,5000p,200000b,5000s
- 110 PDF objects out of 300000
+ 35i,10n,24p,613b,406s stack positions out of 1500i,500n,5000p,200000b,5000s
+ 208 PDF objects out of 300000
  0 named destinations out of 131072
  10 words of extra memory for PDF output out of 65536
-{/usr/share/texmf/dvips/tetex/bbad153f.enc}</usr/share/texmf/fonts/type1/blue
-sky/cm/cmsy6.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy8.pfb>{/usr/share
-/texmf/dvips/tetex/aae443f0.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmmi8.
-pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/share/texmf/fonts
-/type1/bluesky/cm/cmmi10.pfb>{/usr/share/texmf/dvips/tetex/09fbbfac.enc}</usr/s
-hare/texmf/fonts/type1/bluesky/cm/cmtt12.pfb></usr/share/texmf/fonts/type1/blue
-sky/cm/cmtt9.pfb>{/usr/share/texmf/dvips/tetex/f7b6d320.enc}</usr/share/texmf/f
-onts/type1/bluesky/cm/cmr9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr6.pf
-b></usr/share/texmf/fonts/type1/bluesky/cm/cmr8.pfb>{/usr/share/texmf/dvips/tet
-ex/74afc74c.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/share
-/texmf/fonts/type1/bluesky/cm/cmsltt10.pfb></usr/share/texmf/fonts/type1/bluesk
-y/cm/cmbx10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmtt10.pfb></usr/share
-/texmf/fonts/type1/bluesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/c
-m/cmbx12.pfb>
-Output written on accuracy_vignette.pdf (15 pages, 172906 bytes).
+{/usr/share/texmf/dvips/tetex/aae443f0
+.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmmib10.pfb>{/usr/share/texmf/dvi
+ps/tetex/bbad153f.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmsy6.pfb> </var
+/lib/texmf/pk/ljfour/jknappen/tc/tcrm1095.600pk>{/usr/share/texmf/dvips/tetex/f
+7b6d320.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmbx8.pfb></usr/share/texm
+f/fonts/type1/bluesky/cm/cmbx10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cm
+ex10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy8.pfb></usr/share/texmf/f
+onts/type1/bluesky/cm/cmmi8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10
+.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmmi10.pfb></usr/share/texmf/font
+s/type1/bluesky/cm/cmb10.pfb>{/usr/share/texmf/dvips/tetex/09fbbfac.enc}</usr/s
+hare/texmf/fonts/type1/bluesky/cm/cmtt9.pfb></usr/share/texmf/fonts/type1/blues
+ky/cm/cmss9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsltt10.pfb></usr/sha
+re/texmf/fonts/type1/bluesky/cm/cmsy9.pfb></usr/share/texmf/fonts/type1/bluesky
+/cm/cmmi9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr9.pfb></usr/share/tex
+mf/fonts/type1/bluesky/cm/cmr6.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmt
+t10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmss10.pfb></usr/share/texmf/f
+onts/type1/bluesky/cm/cmr8.pfb>{/usr/share/texmf/dvips/tetex/74afc74c.enc}</usr
+/share/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/share/texmf/fonts/type1/bl
+uesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmbx12.pfb>
+Output written on accuracy_vignette.pdf (39 pages, 288268 bytes).

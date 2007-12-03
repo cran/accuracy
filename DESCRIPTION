@@ -1,7 +1,7 @@
 Package: accuracy
 Title: Tools for testing and improving accuracy of statistical results. 
-Version: 1.28
-Date: 2007-6-11
+Version: 1.29
+Date: 2007-12-03
 Author: Micah Altman, Jeff Gill, Michael P. McDonald
 Description: This is a suite of tools designed to test and improve the accuracy of
 	statistical computation, including: Summarization of the sensitivity of linear 
@@ -19,6 +19,6 @@ Headshot: http://www.hmdc.harvard.edu/micah_altman/micah_altman.jpg
 BorkSummary: Thees ees e-a sueete-a of tools deseegned to-a test end eemprove-a ze-a eccurecy of steteesteecel computeteeon
 Suggests: Zelig
 Imports: methods
-License: GPL 2.0
+License: AGPL (>3.0), with attribution as per LICENSE file
 URL: http://www.r-project.org, http://www.hmdc.harvard.edu/micah_altman/numal/
-Packaged: Mon Jun 11 15:01:01 2007; maltman
+Packaged: Fri Dec  7 21:57:07 2007; maltman

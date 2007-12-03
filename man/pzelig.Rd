@@ -81,7 +81,10 @@ if(!is.R()){
       options(ow)
    }
    
-   zelig.out=zelig(Employed~.,"ls",longley) # run longley regression
+   # not used due to zelig bug: zelig.out=zelig(Employed~.,"ls",longley) 
+   # run longley regression
+   zelig.out=zelig(Employed~GNP.deflator+GNP+Unemployed+Armed.Forces+Population+Year,"ls",longley)
+
    # default settings
    perturb.zelig.out = sensitivityZelig(zelig.out)		   
 

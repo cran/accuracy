@@ -1,23 +1,23 @@
 citHeader("To cite the Accuracy package in publications use:")
 
-citEntry(entry="Book",
-         title = "Numerical Issues in Statistical Computing for the Social Scientist",
+citEntry(entry="@article",
+         title = "Accuracy: Tools for Accurate and Reliable Statistical Computing",
          author = personList(as.person("M. Altman"), 
                              as.person("J. Gill"),
                              as.person("M.P. McDonald")
 				),
-	 publisher = "John Wiley & Sons",
+	 journal="Journal of Statistical Software",
          edition = "First",
-         address      = "New York",
-         year         = 2003,
-         ISBN 		= "ISBN 0-471-23633-0",
-         note         = "Software: R Package, Accuracy, version 1.25 ",
+         volume = "21",
+         issue = "11",
+         year         = 2008,
+         note         = "Software: R Package, Accuracy, version 1.29 ",
          url          = "http://www.hmdc.harvard.edu/micah_altman/numal/",
          
          textVersion = 
-         paste("Altman, M., Gill, J. and M.P. McDonald (2003)", 
-               "Numerical Issues in Statistical Computing for the Social Scientist.",
-               "John Wiley and Sons, New York.",
-              "(Software version: R Package, Accuracy, version 1.25)",
-	       "ISBN 0-471-23633-0.")
+         paste("Altman, M., Gill, J. and M.P. McDonald (2007)", 
+               "Accuracy: Tools for Accurate and Reliable Statistical Computing",
+               "Journal of Statistical Software: 21(1).",
+              "(Software version: R Package, Accuracy, version 1.29)"
+	       )
 )
