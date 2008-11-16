@@ -71,19 +71,22 @@ Micah Altman
 if(!is.R()){
   # splus version of require ignores quietly!
   ow<-options(warn=-1)
-}
- if (require(Zelig,quietly=TRUE)) { 
-   if (is.R()) {
-       data(longley)
-   } else {
+} else {
+   data(longley)
    # accuracy supplies longley for SPLUS automagically, for examples only
+}
 
+# workaround for Zelig < 3.4 & R 2.8 & possible broken build environment
+goodZelig <- require(Zelig,quietly=TRUE) && (!inherits(try(zelig(Employed~GNP,"ls",longley,cite=FALSE),silent=TRUE),"try-error"))
+if (!is.R()) {
       options(ow)
-   }
+}
+if (goodZelig) { 
    
    # not used due to zelig bug: zelig.out=zelig(Employed~.,"ls",longley) 
    # run longley regression
-   zelig.out=zelig(Employed~GNP.deflator+GNP+Unemployed+Armed.Forces+Population+Year,"ls",longley)
+   
+   zelig.out=try(zelig(Employed~GNP.deflator+GNP+Unemployed+Armed.Forces+Population+Year,"ls",longley),silent=TRUE)
 
    # default settings
    perturb.zelig.out = sensitivityZelig(zelig.out)		   

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2007.11.8)  7 DEC 2007 21:57
+This is pdfTeX, Version 3.14159-1.10b (Web2C 7.4.5) (format=pdflatex 2007.11.8)  16 NOV 2008 12:28
 **accuracy_vignette
 (./accuracy_vignette.tex{/usr/share/texmf/pdftex/config/pdftex.cfg}
 LaTeX2e <2001/06/01>
@@ -140,7 +140,7 @@ Package: array 1998/05/13 v2.3m Tabular extension package (FMi)
 \extratabsurround=\skip46
 \backup@length=\skip47
 )
-(/usr/share/latex2html/texinputs/url.sty
+(/usr/share/texmf/tex/latex/html/url.sty
 Package: url 1999/03/02  ver 1.4  Verb mode for urls, email addresses, and file
  names
 )
@@ -164,14 +164,9 @@ Package: vmargin 2000/08/01
 Package: vmargin 2000/08/01 V2.3 (VK) set document margins
 \PaperWidth=\dimen119
 \PaperHeight=\dimen120
-) (/nfs/home/M/maltman/R-2.6.1/R-2.6.1/share/texmf/Sweave.sty
-
-LaTeX Warning: You have requested package `/nfs/home/M/maltman/R-2.6.1/R-2.6.1/
-share/texmf/Sweave',
-               but the package provides `Sweave'.
-
+) (./Sweave.sty
 Package: Sweave 
-(/usr/share/texmf/tex/latex/fancyvrb/fancyvrb.sty
+ (/usr/share/texmf/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 2000/03/21
 
 Style option: `fancyvrb' v2.7, with DG/SPQR fixes <2000/03/21> (tvz)
@@ -182,7 +177,7 @@ Style option: `fancyvrb' v2.7, with DG/SPQR fixes <2000/03/21> (tvz)
 \FV@StepNumber=\count104
 \FV@OutFile=\write3
 )
-(/nfs/home/M/maltman/R-2.6.1/R-2.6.1/share/texmf/upquote.sty
+(/usr/lib64/R/share/texmf/upquote.sty
 Package: upquote 2003/08/11 v1.1 Covington's upright-quote modification to verb
 atim and verb
 
@@ -291,48 +286,65 @@ File: accuracy_vignette-plot1a.pdf Graphic file (type pdf)
 
 <use accuracy_vignette-plot1a.pdf> [13 <./accuracy_vignette-plot1a.pdf>]
 [14] [15] [16] [17]
-LaTeX Font Info:    Try loading font information for TS1+aer on input line 789.
+LaTeX Font Info:    Try loading font information for TS1+aett on input line 791
+.
+ (/usr/lib64/R/share/texmf/ts1aett.fd
+File: ts1aett.fd 
+)
+LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 791
+.
 
- (/nfs/home/M/maltman/R-2.6.1/R-2.6.1/share/texmf/ts1aer.fd
+(/usr/share/texmf/tex/latex/base/ts1cmtt.fd
+File: ts1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `TS1/aett/m/n' in size <10.95> not available
+(Font)              Font shape `TS1/cmtt/m/n' tried instead on input line 791.
+ [18] [19]
+LaTeX Font Info:    Try loading font information for TS1+aer on input line 830.
+
+
+(/usr/lib64/R/share/texmf/ts1aer.fd
 File: ts1aer.fd 
 )
 LaTeX Font Info:    Font shape `TS1/aer/m/n' in size <10.95> not available
-(Font)              Font shape `TS1/cmr/m/n' tried instead on input line 789.
-[18] <accuracy_vignette-plot2a.pdf, id=129, 433.62pt x 144.54pt>
+(Font)              Font shape `TS1/cmr/m/n' tried instead on input line 830.
+ [20]
+<accuracy_vignette-plot2a.pdf, id=137, 433.62pt x 144.54pt>
 File: accuracy_vignette-plot2a.pdf Graphic file (type pdf)
 
-<use accuracy_vignette-plot2a.pdf> [19] [20 <./accuracy_vignette-plot2a.pdf>]
-[21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33] [34]
-(./accuracy_vignette.bbl [35] [36] [37] [38]) [39] (./accuracy_vignette.aux) )
+<use accuracy_vignette-plot2a.pdf> [21] [22 <./accuracy_vignette-plot2a.pdf>]
+[23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36]
+(./accuracy_vignette.bbl [37] [38] [39] [40]) [41] (./accuracy_vignette.aux) )
 (\end occurred inside a group at level 1) 
 Here is how much of TeX's memory you used:
- 3585 strings out of 95437
- 45067 string characters out of 1190233
- 95636 words of memory out of 1000001
- 6470 multiletter control sequences out of 10000+50000
- 49533 words of font info for 107 fonts, out of 500000 for 1000
+ 3613 strings out of 95437
+ 45395 string characters out of 1190233
+ 95619 words of memory out of 1000001
+ 6491 multiletter control sequences out of 10000+50000
+ 49831 words of font info for 108 fonts, out of 500000 for 1000
  14 hyphenation exceptions out of 1000
  35i,10n,24p,613b,406s stack positions out of 1500i,500n,5000p,200000b,5000s
- 208 PDF objects out of 300000
+ 214 PDF objects out of 300000
  0 named destinations out of 131072
  10 words of extra memory for PDF output out of 65536
 {/usr/share/texmf/dvips/tetex/aae443f0
 .enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmmib10.pfb>{/usr/share/texmf/dvi
 ps/tetex/bbad153f.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmsy6.pfb> </var
-/lib/texmf/pk/ljfour/jknappen/tc/tcrm1095.600pk>{/usr/share/texmf/dvips/tetex/f
-7b6d320.enc}</usr/share/texmf/fonts/type1/bluesky/cm/cmbx8.pfb></usr/share/texm
-f/fonts/type1/bluesky/cm/cmbx10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cm
-ex10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy8.pfb></usr/share/texmf/f
-onts/type1/bluesky/cm/cmmi8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10
-.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmmi10.pfb></usr/share/texmf/font
-s/type1/bluesky/cm/cmb10.pfb>{/usr/share/texmf/dvips/tetex/09fbbfac.enc}</usr/s
-hare/texmf/fonts/type1/bluesky/cm/cmtt9.pfb></usr/share/texmf/fonts/type1/blues
-ky/cm/cmss9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsltt10.pfb></usr/sha
-re/texmf/fonts/type1/bluesky/cm/cmsy9.pfb></usr/share/texmf/fonts/type1/bluesky
-/cm/cmmi9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr9.pfb></usr/share/tex
-mf/fonts/type1/bluesky/cm/cmr6.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmt
-t10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmss10.pfb></usr/share/texmf/f
-onts/type1/bluesky/cm/cmr8.pfb>{/usr/share/texmf/dvips/tetex/74afc74c.enc}</usr
-/share/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/share/texmf/fonts/type1/bl
-uesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmbx12.pfb>
-Output written on accuracy_vignette.pdf (39 pages, 288268 bytes).
+/lib/texmf/pk/ljfour/jknappen/tc/tcrm1095.600pk> </var/lib/texmf/pk/ljfour/jkna
+ppen/tc/tctt1095.600pk>{/usr/share/texmf/dvips/tetex/f7b6d320.enc}</usr/share/t
+exmf/fonts/type1/bluesky/cm/cmbx8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/
+cmbx10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmex10.pfb></usr/share/texm
+f/fonts/type1/bluesky/cm/cmsy8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmm
+i8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/share/texmf/fo
+nts/type1/bluesky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmb10.
+pfb>{/usr/share/texmf/dvips/tetex/09fbbfac.enc}</usr/share/texmf/fonts/type1/bl
+uesky/cm/cmtt9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmss9.pfb></usr/sha
+re/texmf/fonts/type1/bluesky/cm/cmsltt10.pfb></usr/share/texmf/fonts/type1/blue
+sky/cm/cmsy9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmmi9.pfb></usr/share
+/texmf/fonts/type1/bluesky/cm/cmr9.pfb></usr/share/texmf/fonts/type1/bluesky/cm
+/cmr6.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmtt10.pfb></usr/share/texmf
+/fonts/type1/bluesky/cm/cmss10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr
+8.pfb>{/usr/share/texmf/dvips/tetex/74afc74c.enc}</usr/share/texmf/fonts/type1/
+bluesky/cm/cmti10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr10.pfb></usr/
+share/texmf/fonts/type1/bluesky/cm/cmbx12.pfb>
+Output written on accuracy_vignette.pdf (41 pages, 295061 bytes).

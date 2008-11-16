@@ -45,7 +45,7 @@
 %%% DOCUMENT STARTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage{/nfs/home/M/maltman/R-2.6.1/R-2.6.1/share/texmf/Sweave}
+\usepackage{Sweave}
 \begin{document}
 
 
@@ -417,7 +417,7 @@ R> modelsCompare(list(fit1, fit2, fit3, fit4, fit5), param.function = modelBetas
 \end{Sinput}
 \begin{Soutput}
     ymax    xhalf 
-3.186575 2.822472 
+3.170011 3.226001 
 \end{Soutput}
 \end{Schunk}
 
@@ -573,12 +573,12 @@ R> print(summary(plongley), digits = 1)
 \begin{Soutput}
 [1] "Sensitivity of coefficients over  500  perturbations:"
              Perturb Est. (Orig. Est.) (Orig. Stderr)   2.5%  97.5% [Unstable]
-(Intercept)        -3e+03       -3e+03          9e+02 -5e+03 -8e+02          *
-GNP.deflator        5e-03        2e-02          8e-02 -1e-01  1e-01           
-GNP                -2e-02       -4e-02          3e-02 -8e-02  5e-02          *
+(Intercept)        -3e+03       -3e+03          9e+02 -5e+03 -1e+03          *
+GNP.deflator        8e-03        2e-02          8e-02 -1e-01  1e-01           
+GNP                -3e-02       -4e-02          3e-02 -8e-02  4e-02          *
 Unemployed         -2e-02       -2e-02          5e-03 -3e-02 -8e-03          *
 Armed.Forces       -1e-02       -1e-02          2e-03 -1e-02 -6e-03          *
-Population         -9e-02       -5e-02          2e-01 -5e-01  3e-01           
+Population         -7e-02       -5e-02          2e-01 -5e-01  3e-01           
 Year                2e+00        2e+00          5e-01  5e-01  2e+00          *
 \end{Soutput}
 \end{Schunk}
@@ -604,6 +604,17 @@ R> if (require("NISTnls", quietly = TRUE)) {
 +     print(summary(thurber.out), digits = 1)
 + }
 \end{Sinput}
+\begin{Soutput}
+[1] "Sensitivity of coefficients over  50  perturbations:"
+   Perturb Est. (Orig. Est.) (Orig. Stderr)   2.5% 97.5% [Unstable]
+b1        1e+03        1e+03          5e+00  1e+03 1e+03           
+b2        3e+02        2e+02          8e+00  2e+02 3e+02          *
+b3        1e+02        7e+01          1e+01  7e+01 1e+02          *
+b4        2e+00        1e+01          5e+00 -1e+01 1e+01          *
+b5        1e+00        1e+00          3e-02  1e+00 1e+00          *
+b6        4e-01        4e-01          1e-02  4e-01 5e-01          *
+b7        7e-02        5e-02          7e-03  5e-02 1e-01          *
+\end{Soutput}
 \end{Schunk}
 }
                           
@@ -686,9 +697,9 @@ R> print(summary(panorexia), digits = 1)
 \begin{Soutput}
 [1] "Sensitivity of coefficients over  500  perturbations:"
             Perturb Est. (Orig. Est.) (Orig. Stderr) 2.5% 97.5% [Unstable]
-(Intercept)         49.8         49.8           13.4 48.4  51.4           
+(Intercept)         49.8         49.8           13.4 48.1  51.2           
 Prewt               -0.6         -0.6            0.2 -0.6  -0.5           
-TreatCont           -4.1         -4.1            1.9 -4.3  -3.9           
+TreatCont           -4.1         -4.1            1.9 -4.2  -4.0           
 TreatFT              4.6          4.6            2.1  4.4   4.7           
 \end{Soutput}
 \end{Schunk}
@@ -765,10 +776,40 @@ To illustrate, we replicate Longley's analysis, using
 \vbox{
 \begin{Schunk}
 \begin{Sinput}
-R> zelig.out <- zelig(Employed ~ GNP.deflator + GNP + Unemployed + 
-+     Armed.Forces + Population + Year, "ls", longley)
-R> perturb.zelig.out <- sensitivityZelig(zelig.out)
+R> data(longley)
+R> goodZelig <- require(Zelig, quietly = TRUE) && (!inherits(try(zelig(Employed ~ 
++     GNP, "ls", longley, cite = FALSE), silent = TRUE), "try-error"))
 \end{Sinput}
+\begin{Soutput}
+## 
+##  Zelig (Version 3.4-0, built: 2008-10-28)
+##  Please refer to http://gking.harvard.edu/zelig for full documentation 
+##  or help.zelig() for help with commands and models supported by Zelig.
+##
+
+##  Zelig project citations:
+##    Kosuke Imai, Gary King, and Olivia Lau. 2005. ``Zelig: Everyone's
+##    Statistical Software,'' http://gking.harvard.edu/zelig.
+##  and
+##    Kosuke Imai, Gary King, and Olivia Lau. 2009 (forthcoming). ``Toward A Common
+##    Framework for Statistical Analysis and Development,'' Journal of Computational
+##    and Graphical Statistics, http://gking.harvard.edu/files/abs/z-abs.shtml
+
+##  To cite individual Zelig models, please use the citation format printed with
+##  each model run and in the documentation.
+##
+\end{Soutput}
+\begin{Sinput}
+R> if (goodZelig) {
++     zelig.out <- zelig(Employed ~ GNP.deflator + GNP + Unemployed + 
++         Armed.Forces + Population + Year, "ls", longley)
++     perturb.zelig.out <- sensitivityZelig(zelig.out)
++ }
+\end{Sinput}
+\begin{Soutput}
+How to cite this model in Zelig:
+Kosuke Imai, Gary King, and Oliva Lau. 2007. "ls: Least Squares Regression for Continuous Dependent Variables" in Kosuke Imai, Gary King, and Olivia Lau, "Zelig: Everyone's Statistical Software," http://gking.harvard.edu/zelig
+\end{Soutput}
 \end{Schunk}
 }
 
@@ -789,7 +830,9 @@ the predicted distribution of the explanatory variable.
 \item  This sets the values of the explanatory variables to be used for the predictive simulation:
 \begin{Schunk}
 \begin{Sinput}
-R> setx.out <- setx(perturb.zelig.out, Year = 1955)
+R> if (goodZelig) {
++     setx.out <- setx(perturb.zelig.out, Year = 1955)
++ }
 \end{Sinput}
 \end{Schunk}
 }
@@ -797,7 +840,9 @@ R> setx.out <- setx(perturb.zelig.out, Year = 1955)
 \item  This performs the simulations, using the perturbed models: 
 \begin{Schunk}
 \begin{Sinput}
-R> sim.perturb.zelig.out <- psim(perturb.zelig.out, setx.out)
+R> if (goodZelig) {
++     sim.perturb.zelig.out <- psim(perturb.zelig.out, setx.out)
++ }
 \end{Sinput}
 \end{Schunk}
 }
@@ -805,7 +850,9 @@ R> sim.perturb.zelig.out <- psim(perturb.zelig.out, setx.out)
 \item This reports the range of predicted values, under perturbations. This can be thought of as predictions that are ``robust'' to perturbations, in an informal sense via a summary, and accompanying plot:
 \begin{Schunk}
 \begin{Sinput}
-R> summary(sim.perturb.zelig.out)
+R> if (goodZelig) {
++     summary(sim.perturb.zelig.out)
++ }
 \end{Sinput}
 \begin{Soutput}
 **** 50  COMBINED perturbation simulations 
@@ -818,13 +865,17 @@ Values of X
 1947           1        101.7 387.7      319.3        260.7      117.4 1954
 
 Expected Values: E(Y|X)
-      mean     sd 2.5% 97.5%
-1947 65.31 0.1090 65.1 65.53
+      mean     sd  2.5% 97.5%
+1947 65.31 0.1208 65.07 65.55
 \end{Soutput}
 \end{Schunk}
 \begin{Schunk}
 \begin{Sinput}
-R> plot(sim.perturb.zelig.out)
+R> if (goodZelig) {
++     plot(sim.perturb.zelig.out)
++ } else {
++     plot(1, 1)
++ }
 \end{Sinput}
 \end{Schunk}
 }
@@ -835,7 +886,11 @@ The resulting plot is shown in Figure~\ref{fig:plot2}.
 \begin{figure}
 \begin{Schunk}
 \begin{Sinput}
-R> plot(sim.perturb.zelig.out)
+R> if (goodZelig) {
++     plot(sim.perturb.zelig.out)
++ } else {
++     plot(1, 1)
++ }
 \end{Sinput}
 \begin{Soutput}
 **** 50  COMBINED perturbation simulations 
@@ -933,7 +988,7 @@ R> birthday(y)
 	Chi-squared test for given probabilities
 
 data:  sample(tab, 200, replace = T) 
-X-squared = 36.27, df = 199, p-value = 1
+X-squared = 28.80, df = 199, p-value = 1
 \end{Soutput}
 \end{Schunk}
 }
@@ -950,7 +1005,7 @@ R> birthday(y)
 	Chi-squared test for given probabilities
 
 data:  sample(tab, 200, replace = T) 
-X-squared = 20.56, df = 199, p-value = 1
+X-squared = 23.43, df = 199, p-value = 1
 \end{Soutput}
 \end{Schunk}
 } 

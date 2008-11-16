@@ -676,15 +676,16 @@ of \emph{predicted values} to measurement error.
 To illustrate, we replicate Longley's analysis, using
 \code{zelig()} (instead of \code{lm}) to run the OLS model, and the convenience function
  \code{sensitivityZelig} to run the sensitivity analysis:
-<<echo=FALSE,results=hide>>= 
-        library("Zelig")
-@
 
 \vbox{
 <<>>= 
+data(longley)
+goodZelig <- require(Zelig,quietly=TRUE) && (!inherits(try(zelig(Employed~GNP,"ls",longley,cite=FALSE), silent=TRUE),"try-error"))
+ if (goodZelig) {
 	# Avoid 'Employed~.' because of Zelig bug
         zelig.out <- zelig(Employed~GNP.deflator+GNP+Unemployed+Armed.Forces+Population+Year,"ls",longley) 
         perturb.zelig.out <- sensitivityZelig(zelig.out)                   
+  }
 @
 }
 
@@ -704,26 +705,37 @@ the predicted distribution of the explanatory variable.
 \vbox{
 \item  This sets the values of the explanatory variables to be used for the predictive simulation:
 <<>>=
+
+if (goodZelig) {
         # set values of explanatory variables
         setx.out <- setx(perturb.zelig.out, Year=1955) 
+}
 @    
 }
 \vbox{
 \item  This performs the simulations, using the perturbed models: 
 <<>>=
+if (goodZelig) {
         # run simulation
         sim.perturb.zelig.out <- psim(perturb.zelig.out,setx.out)
- 
+}
 @
 }
 \vbox{
 \item This reports the range of predicted values, under perturbations. This can be thought of as predictions that are ``robust'' to perturbations, in an informal sense via a summary, and accompanying plot:
 <<>>=
+if (goodZelig) {
   summary(sim.perturb.zelig.out)
+}
 @
 <<plot2,eval=FALSE>>=
+ if (goodZelig) {
+
                # summarize
         plot(sim.perturb.zelig.out)
+ } else {
+	plot(1,1) # dummy plot to cause SWEAVE not to bork
+ }
 @
 }
 \end{itemize}

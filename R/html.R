@@ -31,6 +31,16 @@
 # HTML() methods
 #
 
+###
+# Workaround for codetools false warning
+###
+
+HTML<-try(R2HTML::HTML,silent=TRUE)
+if (inherits(HTML,"try-error")){
+	HTML<-print
+}
+
+
 HTML.sensitivity.summary<-function(x,quiet=TRUE,...) {
     printGoodRuns(x,printMethod=HTML,...)
     printBetaSummary(x,printMethod=HTML,...)

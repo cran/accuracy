@@ -74,6 +74,12 @@ sensitivityZelig = function (z,
           tmpz=z
   }
 
+  if (tmpz$call[[1]]=="zelig") {
+	if (!is.null(formals(get("zelig.default",envir=environment(zelig)))$cite)) {
+		tmpz$call$cite<-FALSE
+	}
+  }
+
   tm = tmpz$terms
   if ( class ( datanames <- try ( names( eval(tmpz$call$data,parent.frame())) , silent = T )) !=
         "try-error" ) {

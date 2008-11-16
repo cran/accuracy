@@ -10,14 +10,14 @@ citEntry(entry="@article",
          edition = "First",
          volume = "21",
          issue = "11",
-         year         = 2008,
-         note         = "Software: R Package, Accuracy, version 1.29 ",
+         year         = 2007,
+         note         = "Software: R Package, Accuracy, version 1.30 ",
          url          = "http://www.hmdc.harvard.edu/micah_altman/numal/",
          
          textVersion = 
          paste("Altman, M., Gill, J. and M.P. McDonald (2007)", 
                "Accuracy: Tools for Accurate and Reliable Statistical Computing",
                "Journal of Statistical Software: 21(1).",
-              "(Software version: R Package, Accuracy, version 1.29)"
+              "(Software version: R Package, Accuracy, version 1.31)"
 	       )
 )
