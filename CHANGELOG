@@ -89,3 +89,5 @@
 -- JSS release
 1.29 
 -- zelig bug workarounds
+1.32
+-- Bugfix in runifT

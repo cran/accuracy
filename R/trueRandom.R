@@ -70,21 +70,21 @@
 # 
 ######################################################
 
-
-"runifT" <- function(n, min=0, max=1,maxTries=10,silent=TRUE) {
-	if (min>=max) {
-		stop("Max must be > min")
-	}
-	tmp = trueRandom(n,maxTries=maxTries,silent=silent)
-	r =(tmp/.Machine$integer.max  + 1) * ((max-min)/2)
-	if (length(tmp)<n) {
-		if(!silent) {	
-			warning("Not enough entropy available, returning some pseudo-random numbers")
-		}
-		r = c(r,runif(n-length(r), min, max))
-		sample(r,n)
-	}
-	return(r)
+runifT<-function (n, min = 0, max = 1, maxTries = 10, silent = TRUE) 
+{
+    if (min >= max) {
+        stop("Max must be > min")
+    }
+    tmp = trueRandom(n, maxTries = maxTries, silent = silent)
+    r = tmp/(.Machine$integer.max + 1) * (max - min) + min
+    if (length(tmp) < n) {
+        if (!silent) {
+            warning("Not enough entropy available, returning some pseudo-random numbers")
+        }
+        r = c(r, runif(n - length(r), min, max))
+        sample(r, n)
+    }
+    return(r)
 }
 
 ######################################################

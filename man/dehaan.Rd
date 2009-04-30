@@ -21,7 +21,7 @@ surface.
 }
 
 \details{
-\texttt{dehaan} computes a (1-p) confidence interval for the global optimum of a
+\code{dehaan} computes a (1-p) confidence interval for the global optimum of a
 likelihood surface from a vector of user-supplied randomly chosen likelihood values.  
 A user-supplied candidate maximum likelihood value is evaluated against confidence
 interval.
@@ -29,7 +29,7 @@ interval.
 
 \value{
 
-\texttt{dehaan=TRUE} if the candidate value is greater than the (1-p) confidence
+\code{dehaan=TRUE} if the candidate value is greater than the (1-p) confidence
 interval for the true optimum.
 }
 
@@ -55,10 +55,10 @@ Computing for the Social Scientist}.  John Wiley \& Sons.
 \url{http://www.hmdc.harvard.edu/numerical_issues/}
 
 de Haan, L. 1981.  ``Estimation of the Minimum of a Function Using Order Statistics.''
-\emph{Journal of the American Statistical Association} {\bf 76}, 467-9.
+\emph{Journal of the American Statistical Association} \bold{76}, 467-9.
 
 Veall, M. R. 1990.  ``Testing for a Global Maximum in an Econometric Context.''
-\emph{Econometrica} {\bf 58} 1459-65.
+\emph{Econometrica} \bold{58} 1459-65.
 
 }
 
