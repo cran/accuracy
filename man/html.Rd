@@ -36,7 +36,7 @@ Micah Altman
 }
 
 
-\seealso{ See Also as \code{\link{perturb}},  \code{\link[pkg:R2HTML]{HTML}}}
+\seealso{ See Also as \code{\link{perturb}},  \code{\link[R2HTML]{HTML}}}
 \examples{
     \dontrun{
 if(require(R2HTML,quietly=TRUE)){

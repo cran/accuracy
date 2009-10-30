@@ -1,6 +1,6 @@
 citHeader("To cite the Accuracy package in publications use:")
 
-citEntry(entry="@article",
+citEntry(entry="article",
          title = "Accuracy: Tools for Accurate and Reliable Statistical Computing",
          author = personList(as.person("M. Altman"), 
                              as.person("J. Gill"),

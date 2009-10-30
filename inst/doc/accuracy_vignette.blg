@@ -1,11 +1,11 @@
-This is BibTeX, Version 0.99c (Web2C 7.4.5)
+This is BibTeX, Version 0.99c (Web2C 7.5.7)
 The top-level auxiliary file: accuracy_vignette.aux
 The style file: unsrtnat.bst
 Database file #1: jstatsoft_acc.bib
 You've used 49 entries,
-            2609 wiz_defined-function locations,
-            893 strings with 11385 characters,
-and the built_in function-call counts, 16289 in all, are:
+            2481 wiz_defined-function locations,
+            869 strings with 11122 characters,
+and the built_in function-call counts, 16581 in all, are:
 = -- 1438
 > -- 750
 < -- 35
@@ -18,16 +18,16 @@ call.type$ -- 49
 change.case$ -- 84
 chr.to.int$ -- 47
 cite$ -- 49
-duplicate$ -- 875
-empty$ -- 1478
+duplicate$ -- 915
+empty$ -- 1582
 format.name$ -- 290
-if$ -- 3398
+if$ -- 3502
 int.to.chr$ -- 3
 int.to.str$ -- 50
 missing$ -- 51
-newline$ -- 258
+newline$ -- 260
 num.names$ -- 155
-pop$ -- 358
+pop$ -- 398
 preamble$ -- 1
 purify$ -- 49
 quote$ -- 0
@@ -42,4 +42,4 @@ type$ -- 310
 warning$ -- 0
 while$ -- 144
 width$ -- 0
-write$ -- 657
+write$ -- 659

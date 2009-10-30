@@ -37,8 +37,8 @@ Micah Altman
 
 
 \seealso{ See Also as \code{\link{perturb}},  \code{\link{PTBdefault}},  
-	\code{\link[pkg:Zelig]{setx}},
-	\code{\link[pkg:Zelig]{sim}},
+	\code{\link[Zelig]{setx}},
+	\code{\link[Zelig]{sim}},
 		\code{\link{pzelig}} }
 \examples{
 	# see the example in pzelig()

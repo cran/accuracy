@@ -118,7 +118,7 @@ sensitivitySummaryIteration<-function(iteration) {
 
 
 forceDispatch<-function(f="summary",object=NULL) {
-      res=tryR(do.call(f,list(object)))
+      res=tryR(do.call(f,list(object)),silent=T)
       if (!inherits(res,"try-error")) {
            return(res)
       }

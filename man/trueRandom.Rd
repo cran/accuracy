@@ -2,6 +2,8 @@
 \alias{trueRandom}
 \alias{resetSeed}
 \alias{runifT}
+\alias{rnormS}
+\alias{rstarMix}
 \alias{runifS}
 \title{ Function to return TRUE (not pseudo) random numbers, based on system and networked entropy collection. }
 \description{
@@ -13,7 +15,9 @@ the seed value for subsequent PRNG generation.
 \usage{
 	runifT(n,min=0,max=1,maxTries=10,silent=TRUE)
 	runifS(n,...,period=10000,maxTries=10,silent=TRUE)
-	resetSeed(maxTries=10,silent=TRUE)
+	rnormS(n,...,period=10000,maxTries=10,silent=TRUE)
+	rstarMix(n,...,period=10000,maxTries=10,silent=TRUE,rfunc="runif")
+	resetSeed(maxTries=10,silent=TRUE,kind=NULL,normal.kind=NULL)
 }
 \arguments{
   \item{n}{ number of observations. If 'length(n) > 1', the length is taken to be the number required. }
@@ -23,10 +27,15 @@ the seed value for subsequent PRNG generation.
   \item{period}{number of random numbers to generate before reseeding}
   \item{maxTries}{number of times to attempt to contact entropy source before giving yp}
   \item{silent}{whether to report failures of entropy source generators}
+  \item{rfunc}{random deviate function to use}
+  \item{kind}{sets the kind of random number generator as per \code{set.seed}}
+  \item{normal.kind}{sets the kind of random number generator as per \code{set.seed}}
 }
 
 \details{
-\code{runifS} returns pseudo-random numbers, reseeding with a true random number every period draws.
+\code{runifS} returns uniform pseudo-random numbers, reseeding with a true random number every period draws.
+\code{rnormS} returns normal pseudo-random numbers, reseeding with a true random number every period draws.
+\code{rstarMix} returns random numbers from any specified random number deviant generating function, reseeding with a true random number every period draws. \code{rnormS} and \code{runifS} are simply wrappers around this function
 \code{resetSeed} resets R's own PRNG seed, \code{set.seed}, supplying a true random number
 
 \code{runifT} returns true random numbers in a uniform distribution. This can easily exhaust

@@ -6,6 +6,7 @@ export(frexp)
 # true random numbers
 export(resetSeed,runifT)
 export(runifS) # 1.06
+export(rnormS,rstarMix) # 1.33
 
 # generalized inverse
 export(sechol)

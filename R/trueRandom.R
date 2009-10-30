@@ -34,6 +34,37 @@
 
 ######################################################
 #
+# rstarMix
+#
+# Calls random number generator reseeding periodically from entropy sources
+# 
+# Parameters:
+#
+# See the R documentation file for details of each argument and return value
+# 
+######################################################
+
+
+"rstarMix" <- function(n, ... , period=10000,maxTries=10,silent=TRUE,rfunc="runif") {
+	res<-numeric(n)
+	k = floor(n/period)
+	resetSeed(maxTries=maxTries,silent=silent)
+	remainder <- n-(period*k)
+	if (remainder>0) {
+		res[1:remainder] <- do.call(rfunc, list(n=remainder,...))
+	}
+	if (k>0) {
+	   for (i in 1:k) {
+		resetSeed(maxTries=maxTries,silent=silent)
+		res[(remainder+((i-1)*period)+1):(remainder+(i*period))] <-
+			 do.call(rfunc, list(n=period,...))
+	   }
+	}
+	return(res)
+}
+
+######################################################
+#
 # runifS
 #
 # Calls runif() reseeding periodically from entropy sources
@@ -46,21 +77,15 @@
 
 
 "runifS" <- function(n, ... , period=10000,maxTries=10,silent=TRUE) {
-	k = floor(n/period)
-	resetSeed(maxTries=maxTries,silent=silent)
-	res=runif(n-(period*k), ...)
-	if (k>0) {
-	   for (i in 1:k) {
-		resetSeed(maxTries=maxTries,silent=silent)
-		res = c(res,runif(period))
-	   }
-	}
-	return(res)
+	rstarMix(n=n,...,period=period,maxTries=maxTries,silent=silent)
+}
+"rnormS" <- function(n, ... , period=10000,maxTries=10,silent=TRUE) {
+	rstarMix(n=n,...,period=period,maxTries=maxTries,silent=silent,rfunc="rnorm")
 }
 
 ######################################################
 #
-# runifS
+# runifT
 #       
 # Returns random uniform values drawn from entropy pools
 # 
@@ -70,21 +95,21 @@
 # 
 ######################################################
 
-runifT<-function (n, min = 0, max = 1, maxTries = 10, silent = TRUE) 
-{
-    if (min >= max) {
-        stop("Max must be > min")
-    }
-    tmp = trueRandom(n, maxTries = maxTries, silent = silent)
-    r = tmp/(.Machine$integer.max + 1) * (max - min) + min
-    if (length(tmp) < n) {
-        if (!silent) {
-            warning("Not enough entropy available, returning some pseudo-random numbers")
-        }
-        r = c(r, runif(n - length(r), min, max))
-        sample(r, n)
-    }
-    return(r)
+
+"runifT" <- function(n, min=0, max=1,maxTries=10,silent=TRUE) {
+	if (min>=max) {
+		stop("Max must be > min")
+	}
+	tmp <- trueRandom(n,maxTries=maxTries,silent=silent)
+	r <--((((tmp/.Machine$integer.max)+1)/2)*(max-min)) + min
+	if (length(tmp)<n) {
+		if(!silent) {	
+			warning("Not enough entropy available, returning some pseudo-random numbers")
+		}
+		r = c(r,runif(n-length(r), min, max))
+		sample(r,n)
+	}
+	return(r)
 }
 
 ######################################################
@@ -141,7 +166,7 @@ runifT<-function (n, min = 0, max = 1, maxTries = 10, silent = TRUE)
 #
 # resetSeed
 #       
-# Resets see with true random value
+# Resets seed with true random value
 # 
 # Parameters:
 #
@@ -150,12 +175,22 @@ runifT<-function (n, min = 0, max = 1, maxTries = 10, silent = TRUE)
 ######################################################
 
 
-"resetSeed" <-function(maxTries=10,silent=TRUE) {
+"resetSeed" <-function(maxTries=10,silent=TRUE,kind=NULL,normal.kind=NULL) {
 	oldSeed = NULL
+	# deal with random number kind setting
+	if (!is.null(kind)) {
+		RNGkind(kind=kind)
+	}
+	if (!is.null(normal.kind)) {
+		RNGkind(kind=normal.kind)
+	}
+	
+	# generate a number so that .Random.seed gets set
 	if (exists(".Random.seed")) {
 	   oldSeed=get(".Random.seed")
-  }
-  s = trueRandom(1,maxTries=maxTries,silent=silent)
+  	}
+	runif(1)	
+  	s = trueRandom(length(.Random.seed),maxTries=maxTries,silent=silent)
 	
 	if (is.null(s)|| length(s)==0) {
 		if (!silent) {
@@ -163,8 +198,8 @@ runifT<-function (n, min = 0, max = 1, maxTries = 10, silent = TRUE)
 		}
     s=Sys.time() 
   }
-	set.seed(s)
-	return(oldSeed)
+	retval<-set.seed(s,kind=kind,normal.kind=normal.kind)
+	invisible(retval)
 }
 
 ######################################################
@@ -194,7 +229,7 @@ runifT<-function (n, min = 0, max = 1, maxTries = 10, silent = TRUE)
    if (!file.exists("/dev/random")) {
           devrndok=.Machine$integer.max
    } else {
-           devrndok=.Machine$integer.max
+           devrndok=0
    }
 	entropypool$hbok=hbok
 	entropypool$rook=rook

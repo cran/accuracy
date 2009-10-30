@@ -1,65 +1,68 @@
 \begin{thebibliography}{49}
-\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
-\expandafter\ifx\csname url\endcsname\relax
-  \def\url#1{{\tt #1}}\fi
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
 \bibitem[Altman et~al.(2003)Altman, Gill, and McDonald]{AltGilMcD03}
 M.~Altman, J.~Gill, and M.P. McDonald.
-\newblock {\em Numerical Issues in Statistical Computing for the Social
+\newblock \emph{Numerical Issues in Statistical Computing for the Social
   Scientist}.
 \newblock John Wiley and Sons, New York, 2003.
 
 \bibitem[Altman et~al.(2005)Altman, Gill, and McDonald]{AltGilMcD05}
 M.~Altman, J.~Gill, and M.P. McDonald.
 \newblock A comparison of the numerical properties of ei methods.
-\newblock In G.~King, O.~Rosen, and M.~Tanner, editors, {\em Ecological
+\newblock In G.~King, O.~Rosen, and M.~Tanner, editors, \emph{Ecological
   Inference: New Methodological Strategies}. Cambridge University Press,
   Cambridge, 2005.
 
 \bibitem[McCullough and Vinod(1999)]{MccVin99}
 B.D. McCullough and H.~Vinod.
 \newblock The numerical reliability of econometric software.
-\newblock {\em Journal of Economic Literature}, 37:\penalty0 633--665, 1999.
+\newblock \emph{Journal of Economic Literature}, 37:\penalty0 633--665, 1999.
 
 \bibitem[Altman and McDonald(2002)]{AltMcD02}
 M.~Altman and M.P. McDonald.
 \newblock Choosing reliable statistical software.
-\newblock {\em PS:Poliitical Science \& Politics}, 34:\penalty0 681--687, 2002.
+\newblock \emph{PS:Poliitical Science \& Politics}, 34:\penalty0 681--687,
+  2002.
 
 \bibitem[Altman and McDonald(2003)]{AltMcD03}
 M.~Altman and M.P. McDonald.
 \newblock Replication with attention to numerical accuracy.
-\newblock {\em Poliitical Analysis}, 11:\penalty0 302--307, 2003.
+\newblock \emph{Poliitical Analysis}, 11:\penalty0 302--307, 2003.
 
 \bibitem[AIAA(1998)]{AIAA98}
 AIAA.
 \newblock Editorial policy statement on numerical accuracy and experimental
   uncertainty.
-\newblock {\em AIAA Journal}, 36:\penalty0 1, 1998.
+\newblock \emph{AIAA Journal}, 36:\penalty0 1, 1998.
 
 \bibitem[Stromberg(2004)]{Stromberg04}
 A.J. Stromberg.
 \newblock Why write statistical software? the case of robust statistical
   methods.
-\newblock {\em Journal of Statistical Software}, 10, 2004.
+\newblock \emph{Journal of Statistical Software}, 10, 2004.
 
 \bibitem[Zandt(2005)]{VanZandt05}
 T.~Van Zandt.
 \newblock [review of] numerical issues in statistical computing for the social
   scientist.
-\newblock {\em Journal of the American Statistical Association}, 100:\penalty0
+\newblock \emph{Journal of the American Statistical Association}, 100:\penalty0
   707--8, 2005.
 
 \bibitem[{R Development Core Team}(2007)]{R07}
 {R Development Core Team}.
-\newblock {\em R: A Language and Environment for Statistical Computing}.
+\newblock \emph{R: A Language and Environment for Statistical Computing}.
 \newblock R Foundation for Statistical Computing, Vienna, Austria, 2007.
 \newblock URL \url{http://www.R-project.org}.
 \newblock {ISBN} 3-900051-07-0.
 
 \bibitem[Imai et~al.(2007)Imai, King, and Lau]{Zelig07}
 Kosuke Imai, Gary King, and Olivia Lau.
-\newblock {\em Zelig: Everyone's Statistical Software}, 2007.
+\newblock \emph{Zelig: Everyone's Statistical Software}, 2007.
 \newblock URL \url{http://gking.harvard.edu/zelig}.
 \newblock R package version 2.8-3.
 
@@ -67,35 +70,35 @@ Kosuke Imai, Gary King, and Olivia Lau.
 F.~Leisch.
 \newblock Sweave: Dynamic generation of statistical reports using literate data
   analysis.
-\newblock In W.~Hardle and B.~Ronz, editors, {\em Compstat 2002 -- Proceedings
+\newblock In W.~Hardle and B.~Ronz, editors, \emph{Compstat 2002 -- Proceedings
   in Computational Statistics}, Heidelberg, 2002. Physika Verlag.
 
 \bibitem[Higham(2002)]{Higham02}
 N.J. Higham.
-\newblock {\em Accuracy and Stability of Numerical Algorithms}.
+\newblock \emph{Accuracy and Stability of Numerical Algorithms}.
 \newblock SIAM Press, Philadelphia, second edition, 2002.
 
 \bibitem[Overton(2001)]{Overton01}
 M.L. Overton.
-\newblock {\em Numerical Computing with IEEE Floating Point Arithmetic}.
+\newblock \emph{Numerical Computing with IEEE Floating Point Arithmetic}.
 \newblock SIAM Press, Philadelphia, 2001.
 
 \bibitem[Lucas et~al.(2007)Lucas, Scholz, Boehme, and Jasson]{gmp07}
 Antoine Lucas, Immanuel Scholz, Rainer Boehme, and Sylvain Jasson.
-\newblock {\em gmp: Multiple Precision Arithmetic}, 2007.
+\newblock \emph{gmp: Multiple Precision Arithmetic}, 2007.
 \newblock URL \url{http://mulcyber.toulouse.inra.fr/projects/gmp}.
 \newblock R package version 0.4-4.
 
 \bibitem[Knuth(1997)]{Knuth97}
 D.~Knuth.
-\newblock {\em The Art of Computer Programming : Seminumerical Algorithms}.
+\newblock \emph{The Art of Computer Programming : Seminumerical Algorithms}.
 \newblock Addison Wesley, 2nd edition, 1997.
 
 \bibitem[Chaitin-Chatelin and
   Traviesas-Caasan(2004{\natexlab{a}})]{ChaiTrav04a}
 F.~Chaitin-Chatelin and E.~Traviesas-Caasan.
 \newblock Precise and the quality of reliable numerical software.
-\newblock In Bo~Einarsson, editor, {\em Accuracy and Reliability in Scientific
+\newblock In Bo~Einarsson, editor, \emph{Accuracy and Reliability in Scientific
   Computing}. SIAM Press, Philadelphia, 2004{\natexlab{a}}.
 
 \bibitem[Beaton et~al.(1976{\natexlab{a}})Beaton, Rubin, and
@@ -103,35 +106,35 @@ F.~Chaitin-Chatelin and E.~Traviesas-Caasan.
 A.~E. Beaton, D.~B. Rubin, and J.L. Barone.
 \newblock The acceptability of regression solutions: Another look at
   computational accuracy.
-\newblock {\em Journal of the American Statistical Association}, 71:\penalty0
+\newblock \emph{Journal of the American Statistical Association}, 71:\penalty0
   158--168, 1976{\natexlab{a}}.
 
 \bibitem[Beaton et~al.(1976{\natexlab{b}})Beaton, Rubin, and
   Barone]{BeaRubBar77}
 A.E. Beaton, D.B. Rubin, and J.L. Barone.
 \newblock More on computational accuracy in regression: Comment.
-\newblock {\em Journal of the American Statistical Association}, 72:\penalty0
+\newblock \emph{Journal of the American Statistical Association}, 72:\penalty0
   600--601, 1976{\natexlab{b}}.
 
 \bibitem[Gill et~al.(1981)Gill, Murray, and Wright]{GilMurWri81}
 P.E. Gill, W.~Murray, and M.H. Wright.
-\newblock {\em Practical Optimization}.
+\newblock \emph{Practical Optimization}.
 \newblock Academic Press, Inc., San Diego, 1981.
 
 \bibitem[Pregibon(1981)]{Pregibon81}
 D.~Pregibon.
 \newblock Logistic regression diagnostics.
-\newblock {\em The Annals of Statistics}, 9:\penalty0 705--724, 1981.
+\newblock \emph{The Annals of Statistics}, 9:\penalty0 705--724, 1981.
 
 \bibitem[Cook(1986)]{Cook86}
 R.D. Cook.
 \newblock Assessment of local influence.
-\newblock {\em Journal of the Royal Statistical Society, Series B},
+\newblock \emph{Journal of the Royal Statistical Society, Series B},
   48:\penalty0 133--169, 1986.
 
 \bibitem[Belsley(1991)]{Belsley91}
 D.~A. Belsley.
-\newblock {\em Conditioning Diagnostics, Collinearity and Weak Data in
+\newblock \emph{Conditioning Diagnostics, Collinearity and Weak Data in
   Regression}.
 \newblock John Wiley \& Sons, New York, 1991.
 
@@ -144,26 +147,26 @@ J.~Hendrickx, B.~Belzer, M.~te~Grotenhuis, and J.~Lammers.
 \bibitem[Parker et~al.(2000)Parker, Pierce, and Eggert]{ParPieEgg00}
 D.S. Parker, B.~Pierce, and P.R. Eggert.
 \newblock Monte carlo arithmetic.
-\newblock {\em Computing in Science and Engineering}, July:\penalty0 58--68,
+\newblock \emph{Computing in Science and Engineering}, July:\penalty0 58--68,
   2000.
 
 \bibitem[Chaitin-Chatelin and
   Traviesas-Caasan(2004{\natexlab{b}})]{ChaiTrav04b}
 F.~Chaitin-Chatelin and E.~Traviesas-Caasan.
 \newblock Qualitative computing.
-\newblock In Bo~Einarsson, editor, {\em Accuracy and Reliability in Scientific
+\newblock In Bo~Einarsson, editor, \emph{Accuracy and Reliability in Scientific
   Computing}. SIAM Press, Philadelphia, 2004{\natexlab{b}}.
 
 \bibitem[Laurent and Cook(1993)]{StlCoo93}
 R.T.~St. Laurent and R.D. Cook.
 \newblock Leverage, local influence and curvature in nonlinear regression.
-\newblock {\em Biometrika}, 80:\penalty0 99--106, 1993.
+\newblock \emph{Biometrika}, 80:\penalty0 99--106, 1993.
 
 \bibitem[Longley(1967)]{Longley67}
 J.W. Longley.
 \newblock An appraisal of computer programs for the electronic computer from
   the point of view of the user.
-\newblock {\em Journal of the American Statistical Association}, 62:\penalty0
+\newblock \emph{Journal of the American Statistical Association}, 62:\penalty0
   819--841, 1967.
 
 \bibitem[Rogers et~al.(1998)Rogers, Filliben, Gill, Guthrie, Lagergren, and
@@ -177,115 +180,115 @@ J.~Rogers, J.~Filliben, L.~Gill, W.~Guthrie, E.~Lagergren, and M.~Vangel.
 
 \bibitem[Cheng and Ness(1999)]{ChengVan99}
 C.~Cheng and J.~W.~Van Ness.
-\newblock {\em Statistical Regression with Measurement Error}.
+\newblock \emph{Statistical Regression with Measurement Error}.
 \newblock Arnold, London, 1999.
 
 \bibitem[Fuller(1987)]{Fuller87}
 W.A. Fuller.
-\newblock {\em Measurement Error Models}.
+\newblock \emph{Measurement Error Models}.
 \newblock John Wiley \& Sons, New York, 1987.
 
 \bibitem[Carroll et~al.(1995)Carroll, Ruppert, and Stefanski]{CarRupStef95}
 R.J. Carroll, D.~Ruppert, and L.~A. Stefanski.
-\newblock {\em Measurement Error in Nonlinear Models}.
+\newblock \emph{Measurement Error in Nonlinear Models}.
 \newblock Chapman \& Hall, London, 1995.
 
 \bibitem[Venables and Ripley(2002)]{VenRip02}
 W.N. Venables and B.D. Ripley.
-\newblock {\em Modern AppliedStatistics with S}.
+\newblock \emph{Modern AppliedStatistics with S}.
 \newblock Springer, New York, fourth edition, 2002.
 
 \bibitem[Gentle(1998)]{Gentle98}
 J.E. Gentle.
-\newblock {\em Random Number Generation and Monte Carlo Methods}.
+\newblock \emph{Random Number Generation and Monte Carlo Methods}.
 \newblock Springer-Verlag, New York, 1998.
 
 \bibitem[Marsaglia and Tsang(2002)]{MarTsa02}
 G.~Marsaglia and T.T. Tsang.
 \newblock Some difficult-to-pass tests of randomness.
-\newblock {\em Journal of Statistical Software}, 7, 2002.
+\newblock \emph{Journal of Statistical Software}, 7, 2002.
 
 \bibitem[Tendys(2002)]{gafit02}
 Telford Tendys.
-\newblock {\em gafit: Genetic Algorithm for Curve Fitting}, 2002.
+\newblock \emph{gafit: Genetic Algorithm for Curve Fitting}, 2002.
 \newblock URL \url{http://www.progsoc.uts.edu.au/~telford/}.
 \newblock R package version 0.4.
 
 \bibitem[Willighagen(2005)]{genalg05}
 Egon Willighagen.
-\newblock {\em genalg: R Based Genetic Algorithm}, 2005.
+\newblock \emph{genalg: R Based Genetic Algorithm}, 2005.
 \newblock R package version 0.1.1.
 
 \bibitem[Jr. and Sekhon(2007)]{rgenoud07}
 Walter R.~Mebane Jr. and Jasjeet~Singh Sekhon.
-\newblock {\em rgenoud: R version of GENetic Optimization Using Derivatives},
+\newblock \emph{rgenoud: R version of GENetic Optimization Using Derivatives},
   2007.
 \newblock URL \url{http://sekhon.berkeley.edu/rgenoud/}.
 \newblock R package version 5.1-13.
 
 \bibitem[Luebeck(2005)]{bhat05}
 E.~Georg Luebeck.
-\newblock {\em Bhat: General likelihood exploration}, 2005.
+\newblock \emph{Bhat: General likelihood exploration}, 2005.
 \newblock R package version 0.9-08.
 
 \bibitem[Turing(1948)]{Turing48}
 A.M. Turing.
 \newblock Rounding-off errors in matrix processes.
-\newblock {\em Quarterly Journal of Mechanics and Applied Mathematics},
+\newblock \emph{Quarterly Journal of Mechanics and Applied Mathematics},
   1:\penalty0 287--308, 1948.
 
 \bibitem[Starr(1979)]{Starr79}
 N.~Starr.
 \newblock Linear estimation of the probability of discovering a new species.
-\newblock {\em Annals of Statistics}, 7:\penalty0 644--52, 1979.
+\newblock \emph{Annals of Statistics}, 7:\penalty0 644--52, 1979.
 
 \bibitem[Finch et~al.(1989)Finch, Mendell, and H.C.Thode]{FinMenTho89}
 S.J. Finch, N.~R. Mendell, and Jr. H.C.Thode.
 \newblock Probabilistic measures of adequacy of a numerical search for a global
   maximum.
-\newblock {\em Journal of the American Statistical Association}, 84:\penalty0
+\newblock \emph{Journal of the American Statistical Association}, 84:\penalty0
   1020--1023, 1989.
 
 \bibitem[Veall(1990)]{Veall90}
 M.R. Veall.
 \newblock Testing for a global maximum in an econometric context.
-\newblock {\em Econometrica}, 58:\penalty0 1459--65, 1990.
+\newblock \emph{Econometrica}, 58:\penalty0 1459--65, 1990.
 
 \bibitem[de~Haan(1981)]{deHaan81}
 L.~de~Haan.
 \newblock Estimation of the minimum of a function using order statistics.
-\newblock {\em Journal of the American Statistical Association}, 76:\penalty0
+\newblock \emph{Journal of the American Statistical Association}, 76:\penalty0
   467--469, 1981.
 
 \bibitem[Schnabel and Eskow(1990)]{SchEsk90}
 R.B. Schnabel and E.~Eskow.
 \newblock A new modified cholesky factorization.
-\newblock {\em SIAM Journal of Scientific Statistical Computing}, 11:\penalty0
+\newblock \emph{SIAM Journal of Scientific Statistical Computing}, 11:\penalty0
   1136--1158, 1990.
 
 \bibitem[Gill and King(2004)]{GilKin04}
 Jeff Gill and Gary King.
 \newblock What to do when your hessian is not invertible: Alternatives to model
   respecification in nonlinear estimation.
-\newblock {\em Sociological Methods and Research}, 32:\penalty0 54--87, 2004.
+\newblock \emph{Sociological Methods and Research}, 32:\penalty0 54--87, 2004.
 
 \bibitem[Gill and Murray(1974)]{GilMur74}
 P.E. Gill and W.~Murray.
 \newblock Newton-type methods for unconstrained and linearly constrained
   optimization.
-\newblock {\em Mathematical Programming}, 7:\penalty0 311--350, 1974.
+\newblock \emph{Mathematical Programming}, 7:\penalty0 311--350, 1974.
 
 \bibitem[Gill and Walker(2005)]{GilWal05}
 Jeff Gill and Lee Walker.
 \newblock Elicited priors for bayesian model specifications in political
   science research.
-\newblock {\em Journal of Politics}, 67:\penalty0 841--872, 2005.
+\newblock \emph{Journal of Politics}, 67:\penalty0 841--872, 2005.
 
 \bibitem[Kadane et~al.(1980)Kadane, Dickey, Winkler, Smith, and
   Peters]{KadDicWin80}
 J.B. Kadane, J.~Dickey, R.~Winkler, W.~Smith, and S.~Peters.
 \newblock Interactive elicitation of opinion for a normal linear model.
-\newblock {\em Journal of the American Statistical Association}, 75:\penalty0
+\newblock \emph{Journal of the American Statistical Association}, 75:\penalty0
   845--854, 1980.
 
 \bibitem[Altman et~al.(2001)Altman, Andreev, Diggory, Krot, King, Kiskis,
@@ -293,7 +296,7 @@ J.B. Kadane, J.~Dickey, R.~Winkler, W.~Smith, and S.~Peters.
 M.~Altman, L.~Andreev, M.~Diggory, M.~Krot, G.~King, D.~Kiskis, E.~Kolster, and
   S.~Verba.
 \newblock An introduction to the virtual data center project and software.
-\newblock In {\em Proceedings of the First ACM and IEEE Joint Conference on
+\newblock In \emph{Proceedings of the First ACM and IEEE Joint Conference on
   Digital Libraries}. ACM Press, New York, 2001.
 
 \end{thebibliography}

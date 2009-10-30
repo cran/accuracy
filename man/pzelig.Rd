@@ -11,7 +11,7 @@ sensitivityZelig(z, ptb.R=50, ptb.ran.gen=NULL, ptb.s=NULL, explanatoryOnly=FALS
 	pzelig(...)
 }
 \arguments{
-  \item{z}{ an analysis output by \code{zelig} }
+  \item{z}{an analysis output by \code{zelig} }
   \item{ptb.R}{ number of replications for perturbation analysis }
   \item{ptb.ran.gen}{ a single function, or a vector of functions to be
 		used to perturb each vector see \code{\link{PTBi}} }
@@ -58,7 +58,7 @@ Micah Altman
 }
 
 
-\seealso{ See Also as \code{\link{perturb}},  \code{\link{PTBdefault}},  \code{\link[pkg:Zelig]{zelig}},
+\seealso{ See Also as \code{\link{perturb}},  \code{\link{PTBdefault}},  \code{\link[Zelig]{zelig}},
 		\code{\link{psim}} }
 \examples{
 

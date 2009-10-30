@@ -42,7 +42,7 @@ Note that because of limits in numerical precision, cumt(invt(P,DF)) is not alwa
 
 Of course, not all possible values of P and DF can be listed.
 The test values for P  were created from systematic and random samples in 
-\{ [1e-12,1-1e-12],0,1 \}, and [0,1E5] respectively.
+{ [1e-12,1-1e-12],0,1 }, and [0,1E5] respectively.
 
 We use Kneusel's ELV program (1989) to calculate the values the cumulative and 
 inverse distributions. The results are claimed by Knsusel to be accurate to 6 digits. We

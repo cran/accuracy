@@ -826,6 +826,11 @@ For illustration we implement a test of randomness \citep{MarTsa02}:
 \vbox{
 This randomly resets the seed used by default PRNG:
 
+<<echo=FALSE>>=  
+# set RNGkind for faster speed during demo
+RNGkind(kind="Super")
+@
+
 <<>>=
      # good quality random number sequence require a true random seed
      old.seed<-resetSeed() 

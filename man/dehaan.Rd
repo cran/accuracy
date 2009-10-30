@@ -21,7 +21,7 @@ surface.
 }
 
 \details{
-\code{dehaan} computes a (1-p) confidence interval for the global optimum of a
+\emph{dehaan} computes a (1-p) confidence interval for the global optimum of a
 likelihood surface from a vector of user-supplied randomly chosen likelihood values.  
 A user-supplied candidate maximum likelihood value is evaluated against confidence
 interval.
@@ -29,7 +29,7 @@ interval.
 
 \value{
 
-\code{dehaan=TRUE} if the candidate value is greater than the (1-p) confidence
+\emph{dehaan=TRUE} if the candidate value is greater than the (1-p) confidence
 interval for the true optimum.
 }
 

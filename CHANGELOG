@@ -89,5 +89,11 @@
 -- JSS release
 1.29 
 -- zelig bug workarounds
-1.32
--- Bugfix in runifT
+1.32 
+-- Fix a bug in runifT
+-- Change licensing metadata for R 2.10
+-- CMD check under 2.10
+1.33 
+-- Versioning issue
+-- fix bug in modelsCompare
+-- Add other random deviates through rstarMix
