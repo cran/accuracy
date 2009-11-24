@@ -102,6 +102,7 @@ if (is.R()) {
   chisq.test(t(cbind(as.numeric(names(ty)),as.matrix(ty))))
 }
 
+\dontrun{
 # generate true random values directly (may block for long periods if 
 # if entropy pool is empty)
 y=runifS(100000)
@@ -113,7 +114,6 @@ if (is.R()) {
   chisq.test(t(cbind(as.numeric(names(ty)),as.matrix(ty))))
 }
 
-\dontrun{
 y=runifT(100)
 ty= table(trunc(5*y))
 print(ty);

@@ -97,3 +97,6 @@
 -- Versioning issue
 -- fix bug in modelsCompare
 -- Add other random deviates through rstarMix
+1.34
+-- Fix examples to take less time in R CMD check
+

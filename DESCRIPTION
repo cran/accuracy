@@ -1,7 +1,7 @@
 Package: accuracy
 Title: Tools for testing and improving accuracy of statistical results.
-Version: 1.33
-Date: 2009-10-30
+Version: 1.34
+Date: 2009-11-24
 Author: Micah Altman, Jeff Gill, Michael P. McDonald
 Description: This is a suite of tools designed to test and improve the
         accuracy of statistical computation, including: Summarization
@@ -24,6 +24,6 @@ Imports: methods
 License: AGPL-3 + file LICENSE
 URL: http://www.r-project.org,
         http://www.hmdc.harvard.edu/micah_altman/numal/
-Packaged: 2009-10-30 15:07:02 UTC; micahaltman
+Packaged: 2009-11-24 17:54:35 UTC; micahaltman
 Repository: CRAN
-Date/Publication: 2009-10-30 15:22:38
+Date/Publication: 2009-11-25 08:29:34
