@@ -101,7 +101,8 @@
 		stop("Max must be > min")
 	}
 	tmp <- trueRandom(n,maxTries=maxTries,silent=silent)
-	r <--((((tmp/.Machine$integer.max)+1)/2)*(max-min)) + min
+	#r <--((((tmp/.Machine$integer.max)+1)/2)*(max-min)) + min
+	r <-(as.numeric(tmp)+.Machine$integer.max)/(2*.Machine$integer.max) * (max-min) + min
 	if (length(tmp)<n) {
 		if(!silent) {	
 			warning("Not enough entropy available, returning some pseudo-random numbers")

@@ -416,8 +416,8 @@ Then use \code{modelsCompare} to generate a report on the list of models.
 R> modelsCompare(list(fit1, fit2, fit3, fit4, fit5), param.function = modelBetas)
 \end{Sinput}
 \begin{Soutput}
-    ymax    xhalf 
-1.949893 1.722298 
+     ymax     xhalf 
+1.1535703 0.9177295 
 \end{Soutput}
 \end{Schunk}
 
@@ -574,11 +574,11 @@ R> print(summary(plongley), digits = 1)
 [1] "Sensitivity of coefficients over  500  perturbations:"
              Perturb Est. (Orig. Est.) (Orig. Stderr)   2.5%  97.5% [Unstable]
 (Intercept)        -3e+03       -3e+03          9e+02 -5e+03 -7e+02          *
-GNP.deflator        7e-03        2e-02          8e-02 -1e-01  1e-01           
-GNP                -2e-02       -4e-02          3e-02 -7e-02  5e-02          *
-Unemployed         -2e-02       -2e-02          5e-03 -3e-02 -8e-03          *
+GNP.deflator        1e-02        2e-02          8e-02 -1e-01  1e-01           
+GNP                -3e-02       -4e-02          3e-02 -8e-02  5e-02          *
+Unemployed         -2e-02       -2e-02          5e-03 -3e-02 -7e-03          *
 Armed.Forces       -1e-02       -1e-02          2e-03 -1e-02 -6e-03          *
-Population         -8e-02       -5e-02          2e-01 -5e-01  3e-01           
+Population         -7e-02       -5e-02          2e-01 -4e-01  3e-01           
 Year                2e+00        2e+00          5e-01  4e-01  2e+00          *
 \end{Soutput}
 \end{Schunk}
@@ -768,12 +768,41 @@ To illustrate, we replicate Longley's analysis, using
 R> data(longley)
 R> goodZelig <- require(Zelig, quietly = TRUE) && (!inherits(try(zelig(Employed ~ 
 +     GNP, "ls", longley, cite = FALSE), silent = TRUE), "try-error"))
+\end{Sinput}
+\begin{Soutput}
+## 
+##  Zelig (Version 3.4-5, built: 2009-03-13)
+##  Please refer to http://gking.harvard.edu/zelig for full
+##  documentation or help.zelig() for help with commands and
+##  models supported by Zelig.
+##
+
+##  Zelig project citations:
+##    Kosuke Imai, Gary King, and Olivia Lau. (2009).
+##    ``Zelig: Everyone's Statistical Software,''
+##    http://gking.harvard.edu/zelig.
+##  and
+##    Kosuke Imai, Gary King, and Olivia Lau. (2008).
+##    ``Toward A Common Framework for Statistical Analysis
+##    and Development,'' Journal of Computational and
+##    Graphical Statistics, Vol. 17, No. 4 (December)
+##    pp. 892-913. 
+
+##  To cite individual Zelig models, please use the citation format printed with
+##  each model run and in the documentation.
+##
+\end{Soutput}
+\begin{Sinput}
 R> if (goodZelig) {
 +     zelig.out <- zelig(Employed ~ GNP.deflator + GNP + Unemployed + 
 +         Armed.Forces + Population + Year, "ls", longley)
 +     perturb.zelig.out <- sensitivityZelig(zelig.out)
 + }
 \end{Sinput}
+\begin{Soutput}
+How to cite this model in Zelig:
+Kosuke Imai, Gary King, and Oliva Lau. 2007. "ls: Least Squares Regression for Continuous Dependent Variables" in Kosuke Imai, Gary King, and Olivia Lau, "Zelig: Everyone's Statistical Software," http://gking.harvard.edu/zelig
+\end{Soutput}
 \end{Schunk}
 }
 
@@ -818,6 +847,20 @@ R> if (goodZelig) {
 +     summary(sim.perturb.zelig.out)
 + }
 \end{Sinput}
+\begin{Soutput}
+**** 50  COMBINED perturbation simulations 
+
+  Model: ls 
+  Number of simulations: 1000 
+
+Values of X 
+     (Intercept) GNP.deflator   GNP Unemployed Armed.Forces Population Year
+1947           1        101.7 387.7      319.3        260.7      117.4 1954
+
+Expected Values: E(Y|X)
+      mean     sd  2.5% 97.5%
+1947 65.31 0.1193 65.06 65.54
+\end{Soutput}
 \end{Schunk}
 \begin{Schunk}
 \begin{Sinput}
@@ -842,6 +885,9 @@ R> if (goodZelig) {
 +     plot(1, 1)
 + }
 \end{Sinput}
+\begin{Soutput}
+**** 50  COMBINED perturbation simulations 
+\end{Soutput}
 \end{Schunk}
 \includegraphics{accuracy_vignette-plot2a}
 \caption{\label{fig:plot2} Posterior of dependent variable across perturbations}
@@ -936,7 +982,7 @@ R> birthday(y)
 	Chi-squared test for given probabilities
 
 data:  sample(tab, 200, replace = T) 
-X-squared = 21.8241, df = 199, p-value = 1
+X-squared = 26.46, df = 199, p-value = 1
 \end{Soutput}
 \end{Schunk}
 }
@@ -953,7 +999,7 @@ R> birthday(y)
 	Chi-squared test for given probabilities
 
 data:  sample(tab, 200, replace = T) 
-X-squared = 23.2212, df = 199, p-value = 1
+X-squared = 27.79, df = 199, p-value = 1
 \end{Soutput}
 \end{Schunk}
 } 
@@ -1151,12 +1197,12 @@ R> S <- matrix(c(2, 0, 2.5, 0, 2, 0, 2.5, 0, 3), ncol = 3)
 R> sechol(S)
 \end{Sinput}
 \begin{Soutput}
-         [,1]    [,2]        [,3]
-[1,] 1.414214 0.00000 1.767766953
-[2,] 0.000000 1.41422 0.000000000
-[3,] 0.000000 0.00000 0.004262202
+      [,1]  [,2]     [,3]
+[1,] 1.414 0.000 1.767767
+[2,] 0.000 1.414 0.000000
+[3,] 0.000 0.000 0.004262
 attr(,"delta")
-[1] 1.816636e-05
+[1] 1.817e-05
 \end{Soutput}
 \end{Schunk}
 }
@@ -1196,10 +1242,10 @@ R> S <- matrix(c(2, 0, 2.4, 0, 2, 0, 2.4, 0, 3), ncol = 3)
 R> print(try(chol(S)))
 \end{Sinput}
 \begin{Soutput}
-         [,1]     [,2]      [,3]
-[1,] 1.414214 0.000000 1.6970563
-[2,] 0.000000 1.414214 0.0000000
-[3,] 0.000000 0.000000 0.3464102
+      [,1]  [,2]   [,3]
+[1,] 1.414 0.000 1.6971
+[2,] 0.000 1.414 0.0000
+[3,] 0.000 0.000 0.3464
 \end{Soutput}
 \begin{Sinput}
 R> sechol.out <- sechol(S)
@@ -1229,10 +1275,10 @@ R> sechol.out <- sechol(S)
 R> t(sechol.out) %*% sechol.out
 \end{Sinput}
 \begin{Soutput}
-     [,1]     [,2]     [,3]
-[1,]    2 0.000000 10.00000
-[2,]    0 2.000061  0.00000
-[3,]   10 0.000000 50.00006
+     [,1] [,2] [,3]
+[1,]    2    0   10
+[2,]    0    2    0
+[3,]   10    0   50
 \end{Soutput}
 \end{Schunk}
 \end{itemize}
@@ -1335,15 +1381,15 @@ Call:  glm(formula = Y.vec ~ X.mat[, -1], family = binomial(link = "probit"))
 
 Coefficients:
                          (Intercept)         X.mat[, -1]Percent Low Income  
-                          -2.036e+04                             2.028e-01  
+                           -2.04e+04                              2.03e-01  
   X.mat[, -1]Mean Teacher Experience         X.mat[, -1]Per-Pupil Spending  
-                          -7.419e-01                             4.073e+00  
+                           -7.42e-01                              4.07e+00  
 X.mat[, -1]Percent Minority Teachers                 X.mat[, -1]Class Size  
-                           9.046e+00                            -9.872e+00  
+                            9.05e+00                             -9.87e+00  
 
 Degrees of Freedom: 7 Total (i.e. Null);  2 Residual
-Null Deviance:	    11.09 
-Residual Deviance: 2.996e-10 	AIC: 12 
+Null Deviance:	    11.1 
+Residual Deviance: 3e-10 	AIC: 12 
 \end{Soutput}
 \end{Schunk}
 }
@@ -1372,9 +1418,9 @@ R> star.pars
 \end{Sinput}
 \begin{Soutput}
                  Constant        Percent Low Income   Mean Teacher Experience 
-               1.55672155                0.03890147               -0.34391193 
+                  1.55672                   0.03890                  -0.34391 
        Per-Pupil Spending Percent Minority Teachers                Class Size 
-               0.01008860                0.99276824               -3.42488161 
+                  0.01009                   0.99277                  -3.42488 
 \end{Soutput}
 \end{Schunk}
 }
@@ -1388,20 +1434,13 @@ R> star.hess <- dd.log.like(star.prob$par, X.mat, Y.vec)
 R> matrix(star.hess, nrow = 6)
 \end{Sinput}
 \begin{Soutput}
-              [,1]          [,2]          [,3]         [,4]         [,5]
-[1,]     -2.189485     -69.78984     -35.30545    -10947.97     -47.6213
-[2,]    -69.789839   -2702.64572   -1123.47956   -348954.67   -1528.5343
-[3,]    -35.305448   -1123.47956    -676.82459   -176529.98    -769.3303
-[4,] -10947.973083 -348954.66829 -176529.97647 -54742603.37 -238118.0040
-[5,]    -47.621302   -1528.53432    -769.33034   -238118.00   -1036.1738
-[6,]    -44.610760   -1430.00748    -710.76161   -223064.75    -971.0367
-              [,6]
-[1,]     -44.61076
-[2,]   -1430.00748
-[3,]    -710.76161
-[4,] -223064.74631
-[5,]    -971.03666
-[6,]    -916.57322
+           [,1]       [,2]       [,3]      [,4]       [,5]       [,6]
+[1,]     -2.189     -69.79     -35.31    -10948     -47.62     -44.61
+[2,]    -69.790   -2702.65   -1123.48   -348955   -1528.53   -1430.01
+[3,]    -35.305   -1123.48    -676.82   -176530    -769.33    -710.76
+[4,] -10947.973 -348954.67 -176529.98 -54742603 -238118.00 -223064.75
+[5,]    -47.621   -1528.53    -769.33   -238118   -1036.17    -971.04
+[6,]    -44.611   -1430.01    -710.76   -223065    -971.04    -916.57
 \end{Soutput}
 \begin{Sinput}
 R> strsplit(try(solve(star.hess)), ":")
@@ -1449,7 +1488,7 @@ R> round(sechol(star.vc), 4)
 [5,]    0  0.0000 0.0000  0.0000  0.0009  0.0000
 [6,]    0  0.0000 0.0000  0.0000  0.0000  0.0010
 attr(,"delta")
-[1] 8.695462e-07
+[1] 8.695e-07
 \end{Soutput}
 \end{Schunk}
 }
